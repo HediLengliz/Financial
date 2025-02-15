@@ -1,0 +1,179 @@
+services:
+  # ----------------- Databases -----------------
+  user_db:
+    image: postgres
+    container_name: user_db
+    environment:
+      POSTGRES_USER: user_admin
+      POSTGRES_PASSWORD: user_password
+      POSTGRES_DB: userdb
+    volumes:
+      - user_data:/var/lib/postgresql/data
+    ports:
+      - "5433:5432"
+    networks:
+      - microservices-net
+
+  project_db:
+    image: postgres
+    container_name: project_db
+    environment:
+      POSTGRES_USER: project_admin
+      POSTGRES_PASSWORD: project_password
+      POSTGRES_DB: projectdb
+    volumes:
+      - project_data:/var/lib/postgresql/data
+    ports:
+      - "5434:5432"
+    networks:
+      - microservices-net
+
+  financial_db:
+    image: postgres
+    container_name: financial_db
+    environment:
+      POSTGRES_USER: financial_admin
+      POSTGRES_PASSWORD: financial_password
+      POSTGRES_DB: financialdb
+    volumes:
+      - financial_data:/var/lib/postgresql/data
+    ports:
+      - "5435:5432"
+    networks:
+      - microservices-net
+
+  inspection_db:
+    image: mongo
+    container_name: inspection_db
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: inspection_admin
+      MONGO_INITDB_ROOT_PASSWORD: inspection_password
+    volumes:
+      - inspection_data:/data/db
+    ports:
+      - "27018:27017"
+    networks:
+      - microservices-net
+
+  timesheet_db:
+    image: mongo
+    container_name: timesheet_db
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: timesheet_admin
+      MONGO_INITDB_ROOT_PASSWORD: timesheet_password
+    volumes:
+      - timesheet_data:/data/db
+    ports:
+      - "27019:27017"
+    networks:
+      - microservices-net
+
+  procurement_db:
+    image: postgres
+    container_name: procurement_db
+    environment:
+      POSTGRES_USER: procurement_admin
+      POSTGRES_PASSWORD: procurement_password
+      POSTGRES_DB: procurementdb
+    volumes:
+      - procurement_data:/var/lib/postgresql/data
+    ports:
+      - "5436:5432"
+    networks:
+      - microservices-net
+
+  # ---------------- Message Broker ----------------
+  # zookeeper:
+  #   image: confluentinc/cp-zookeeper:7.0.0
+  #   container_name: zookeeper
+  #   environment:
+  #     ZOOKEEPER_CLIENT_PORT: 2181
+  #     ZOOKEEPER_TICK_TIME: 2000
+  #   networks:
+  #     - microservices-net
+
+  # kafka:
+  #   image: confluentinc/cp-kafka:7.0.0
+  #   container_name: kafka
+  #   depends_on:
+  #     - zookeeper
+  #   environment:
+  #     KAFKA_BROKER_ID: 1
+  #     KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+  #     KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+  #     KAFKA_CREATE_TOPICS: "tasks:3:1,notifications:3:1"
+  #   ports:
+  #     - "9092:9092"
+  #   networks:
+  #     - microservices-net
+
+  # ---------------- Monitoring & Tools ----------------
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@tensai.com
+      PGADMIN_DEFAULT_PASSWORD: tensai
+    ports:
+      - "5050:80"
+    networks:
+      - microservices-net
+
+  mongo-express:
+    image: mongo-express
+    container_name: mongo_express
+    environment:
+      ME_CONFIG_MONGODB_SERVER: mongodb
+      ME_CONFIG_MONGODB_ADMINUSERNAME: tensai
+      ME_CONFIG_MONGODB_ADMINPASSWORD: tensai
+    ports:
+      - "8081:8081"
+    depends_on:
+      - inspection_db
+      - timesheet_db
+    networks:
+      - microservices-net
+
+  # zipkin:
+  #   image: openzipkin/zipkin
+  #   container_name: zipkin
+  #   ports:
+  #     - "9411:9411"
+  #   networks:
+  #     - microservices-net
+
+  # mail-dev:
+  #   image: maildev/maildev
+  #   container_name: mail_dev
+  #   ports:
+  #     - "1080:1080"  # MailDev web interface
+  #     - "1025:1025"  # SMTP server
+  #   networks:
+  #     - microservices-net
+
+  # ---------------- Angular App ----------------
+#  angular-app:
+#    build: .
+#    container_name: angular_app
+#    ports:
+#      - "4200:4200"
+#    volumes:
+#      - ./:/app
+#      - /app/node_modules
+#    environment:
+#      NODE_ENV: development
+#    command: npm start
+#    networks:
+#      - microservices-net
+
+networks:
+  microservices-net:
+    driver: bridge
+
+volumes:
+  user_data:
+  project_data:
+  financial_data:
+  inspection_data:
+  timesheet_data:
+  procurement_data:
