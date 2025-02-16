@@ -7,11 +7,14 @@
         <option value="$PROJECT_DIR$/Backend/services/Configservice/pom.xml" />
         <option value="$PROJECT_DIR$/Backend/services/discovery/pom.xml" />
         <option value="$PROJECT_DIR$/Backend/services/configservice/pom.xml" />
+        <option value="$PROJECT_DIR$/Backend/services/projects/pom.xml" />
+        <option value="$PROJECT_DIR$/Backend/services/projets/pom.xml" />
       </list>
     </option>
     <option name="ignoredFiles">
       <set>
         <option value="$PROJECT_DIR$/Backend/services/Configservice/pom.xml" />
+        <option value="$PROJECT_DIR$/Backend/services/projects/pom.xml" />
       </set>
     </option>
   </component>
