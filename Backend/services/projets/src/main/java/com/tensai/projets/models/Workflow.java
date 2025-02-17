@@ -1,10 +1,15 @@
 package com.tensai.projets.models;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+
 import java.util.List;
 
 @Entity
-public class Project {
+@Getter
+@Setter
+public class Workflow {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -12,17 +17,14 @@ public class Project {
     private String name;
     private String description;
 
-    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Workflow> workflows; // Link workflows to the project
+    @ManyToOne
+    @JoinColumn(name = "project_id")
+    private Project project; // Reference to the parent project
 
-    // No-argument constructor (required by Hibernate)
-    public Project() {}
+    @OneToMany(mappedBy = "workflow", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Task> tasks; // Tasks represent the steps in the workflow
 
-    // Constructor with parameters
-    public Project(String name, String description) {
-        this.name = name;
-        this.description = description;
-    }
+    // Getters and setters
 
     // Getters and setters
     public Long getId() {
@@ -37,6 +39,10 @@ public class Project {
         return name;
     }
 
+    public List<Task> getTasks() {
+        return tasks;
+    }
+
     public void setName(String name) {
         this.name = name;
     }
@@ -49,11 +55,13 @@ public class Project {
         this.description = description;
     }
 
-    public List<Workflow> getWorkflows() {
-        return workflows;
+    public Project getProject() {
+        return project;
     }
 
-    public void setWorkflows(List<Workflow> workflows) {
-        this.workflows = workflows;
+    public void setProject(Project project) {
+        this.project = project;
     }
+
+
 }
