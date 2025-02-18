@@ -1,0 +1,545 @@
+<div class="container-fluid">
+    <div>
+      <div class="row mb-8 align-items-center">
+        <div class="col-xxl-10 col-xl-8 col-lg-6 col-md-12 col-12 mb-3 mb-lg-0">
+          <div class="d-flex">
+            <!-- <a
+              [routerLink]="['/dashboard/feature/add-todo', featureId]"
+              class="btn btn-primary"
+              id="contact-modal-button"
+              data-bs-toggle="modal"
+              data-bs-target="#contact-modal"
+              >+ Create New Task</a
+            > -->
+            <h3 class="mb-0 me-5">Task List: </h3>
+            <h3 class="mb-0"> {{ featureName }} </h3>
+          </div>
+        </div>
+        <div class="col-xxl-1 col-xl-2 col-lg-3 col-md-12 pe-lg-2">
+          <select
+            class="form-select mb-2 mb-lg-0"
+            [(ngModel)]="selectedStatus"
+            (change)="filterTasks()"
+          >
+            <option value="" disabled selected>Status</option>
+            <option value="pending">Pending</option>
+            <option value="planning">Planning</option>
+            <option value="processing">Processing</option>
+            <option value="completed">Completed</option>
+            <option value="done">Done</option>
+            <option value="hold">Hold</option>
+            <option value="recheck">Recheck</option>
+            <option value="not_to_do">Not to do</option>
+          </select>
+        </div>
+        <div class="col-xxl-1 col-xl-2 col-lg-3 col-md-12 ps-lg-2">
+          <select
+            class="form-select"
+            [(ngModel)]="selectedPriority"
+            (change)="filterTasks()"
+          >
+            <option value="" disabled selected>Priority</option>
+            <option value="high">High</option>
+            <option value="medium">Medium</option>
+            <option value="low">Low</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-12">
+        <div class="card mb-6">
+          <div class="card-body">
+            <div class="table-responsive">
+              <table class="table mb-0 text-nowrap table-centered table-bordered">
+                <thead class="table-light">
+                  <tr>
+                    <th style="width: 8px;"><i class="bi bi-pencil icon-xs"></i></th>
+                    <th><i class="bi bi-people"></i> Assignee</th>
+                    <th><i class="bi bi-card-text"></i> Name</th>
+                    <th><i class="bi bi-exclamation-triangle-fill"></i> Status</th>
+                    <th><i class="bi bi-flag-fill"></i> Priority</th>
+                    <th><i class="bi bi-calendar"></i> Start Date</th>
+                    <th><i class="bi bi-calendar"></i> End Date</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngIf="errorMessage" class="table-row border-bottom">
+                    <td colspan="7" class="text-center">{{ errorMessage }}</td>
+                  </tr>
+                  <tr *ngFor="let task of todos; let i = index" class="table-row border-bottom">
+                    <td>
+                      <!-- <a
+                        [routerLink]="[
+                          '/dashboard/feature/todo',
+                          featureId,
+                          'show',
+                          task.id
+                        ]"
+                      >
+                        <i class="bi bi-text-paragraph"></i>
+                      </a> -->
+                      <!-- {{ i + 1 }} -->
+                      <i class="bi bi-three-dots-vertical icon-xs" (click)="showTaskDetail(task.id)" data-bs-toggle="offcanvas"
+                      data-bs-target="#offcanvasRight1"></i>
+                    </td>
+                    <td (click)="editColumn(task, 'user_ids')" class="editable-column">
+                      <div class="avatar-group">
+                        <ng-container *ngFor="let member of task.members">
+                          <span class="avatar avatar-sm">
+                            <img *ngIf="member.user.image_url" [src]="member.user.image_url" alt="avatar" class="rounded-circle imgtooltip" [attr.data-template]="member.name">
+                            <span [id]="member.user.name" class="d-none">
+                              <small class="mb-0">{{ member.name }}</small>
+                            </span>
+                          </span>
+                        </ng-container>
+                      </div>
+                    </td>
+                    <td
+                      (click)="editColumn(task, 'name')"
+                      class="editable-column"
+                    >
+                      <ng-container
+                        *ngIf="!isColumnEditable(task.id, 'name'); else editName"
+                      >
+                        <!-- {{ task.name }} -->
+                        {{ task.name.length > 18 ? task.name.substring(0, 18) + '...' : task.name }}
+                      </ng-container>
+                      <ng-template #editName>
+                        <input
+                          type="text"
+                          class="form-control"
+                          [(ngModel)]="task.name"
+                          (blur)="saveColumn(task, 'name')"
+                        />
+                      </ng-template>
+                    </td>
+                    <td
+                      (click)="editColumn(task, 'status')"
+                      class="editable-column"
+                    >
+                      <ng-container
+                        *ngIf="
+                          !isColumnEditable(task.id, 'status');
+                          else editStatus
+                        "
+                      >
+                        <span
+                          class="ml-auto badge"
+                          [ngClass]="task.status | status"
+                        >
+                          {{ task.status | uppercase }}
+                        </span>
+                      </ng-container>
+                      <ng-template #editStatus>
+                        <select
+                          class="form-select"
+                          name="status"
+                          [(ngModel)]="task.status"
+                          (blur)="saveColumn(task, 'status')"
+                        >
+                          <option value="">Set Status</option>
+                          <option
+                            *ngFor="let status of statuses"
+                            [ngValue]="status"
+                          >
+                            {{ status }}
+                          </option>
+                        </select>
+                      </ng-template>
+                    </td>
+                    <td
+                      (click)="editColumn(task, 'priority')"
+                      class="editable-column"
+                    >
+                      <ng-container
+                        *ngIf="
+                          !isColumnEditable(task.id, 'priority');
+                          else editPriority
+                        "
+                      >
+                        <span
+                          class="ml-auto badge"
+                          [ngClass]="task.priority | priority"
+                        >
+                          {{ task.priority | uppercase }}
+                        </span>
+                      </ng-container>
+                      <ng-template #editPriority>
+                        <select
+                          class="form-select"
+                          name="priority"
+                          [(ngModel)]="task.priority"
+                          (blur)="saveColumn(task, 'priority')"
+                        >
+                          <option value="high">high</option>
+                          <option value="medium">medium</option>
+                          <option value="low">low</option>
+                        </select>
+                      </ng-template>
+                    </td>
+                    <td
+                      (click)="editColumn(task, 'start_date')"
+                      class="editable-column"
+                    >
+                      <ng-container
+                        *ngIf="
+                          !isColumnEditable(task.id, 'start_date');
+                          else editStartDate
+                        "
+                      >
+                        {{ task.start_date | date : "yyyy-MM-dd" }}
+                      </ng-container>
+                      <ng-template #editStartDate>
+                        <input
+                          type="date"
+                          class="form-control"
+                          [(ngModel)]="task.start_date"
+                          (blur)="saveColumn(task, 'start_date')"
+                        />
+                      </ng-template>
+                    </td>
+                    <td
+                      (click)="editColumn(task, 'end_date')"
+                      class="editable-column"
+                    >
+                      <ng-container
+                        *ngIf="
+                          !isColumnEditable(task.id, 'end_date');
+                          else editEndDate
+                        "
+                      >
+                        {{ task.end_date | date : "yyyy-MM-dd" }}
+                      </ng-container>
+                      <ng-template #editEndDate>
+                        <input
+                          type="date"
+                          class="form-control"
+                          [(ngModel)]="task.end_date"
+                          (blur)="saveColumn(task, 'end_date')"
+                        />
+                      </ng-template>
+                    </td>
+                  </tr>
+                  <tr class="table-row border-bottom">
+                    <td colspan="7">
+                      <div class="d-flex align-items-center">
+                        <a
+                          class="text-muted border border-2 rounded-3 card-dashed-hover"
+                          data-bs-toggle="offcanvas"
+                          data-bs-target="#offcanvasRight"
+                        >
+                          <div class="icon-shape icon-sm fs-3">+</div>
+                        </a>
+                        <div class="ms-3">
+                          <h4 class="mb-0 fs-5">
+                            <a class="text-inherit" data-bs-toggle="offcanvas"
+                            data-bs-target="#offcanvasRight">New Task</a>
+                          </h4>
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div
+              class="modal fade"
+              id="exampleModal-2"
+              tabindex="-1"
+              role="dialog"
+              aria-labelledby="exampleModalLabel"
+              aria-hidden="true"
+            >
+              <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">
+                      Modal title ng man
+                    </h5>
+                    <button
+                      type="button"
+                      class="btn-close"
+                      data-bs-dismiss="modal"
+                      aria-label="Close"
+                    ></button>
+                  </div>
+                  <div class="modal-body">
+                    Are you sure you want to delete <strong></strong>?
+                  </div>
+                  <div class="modal-footer">
+                    <button
+                      type="button"
+                      class="btn btn-secondary"
+                      data-bs-dismiss="modal"
+                    >
+                      Close
+                    </button>
+                    <button type="button" class="btn btn-danger">Delete</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div 
+    class="offcanvas offcanvas-end"
+    tabindex="-1"
+    id="offcanvasRight"
+    style="width: 600px"
+  >
+    <div class="offcanvas-body" data-simplebar>
+      <div class="offcanvas-header px-2 pt-0">
+        <h3 class="offcanvas-title" id="offcanvasExampleLabel">Create Task</h3>
+        <button
+          type="button"
+          class="btn-close text-reset"
+          data-bs-dismiss="offcanvas"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="container">
+        <!-- form -->
+        <form #form="ngForm" (ngSubmit)="addTask()">
+          <div class="row">
+            <div class="mb-3 col-12">
+              <label class="form-label"
+                >Name <span class="text-danger">*</span></label
+              >
+              <input
+                type="text"
+                class="form-control"
+                placeholder="Enter project title"
+                name="name"
+                required [(ngModel)]="newTodo.name"
+              />
+            </div>
+            <div class="mb-3 col-12">
+              <label for="textarea-input" class="form-label">Description <span class="text-danger">*</span></label>
+              <textarea class="form-control" id="textarea-input" rows="5" name="description" placeholder="Description" [(ngModel)]="newTodo.description" required>Description</textarea>
+            </div>
+            <div class="mb-3 col-md-6 col-12">
+              <label class="form-label"
+                >Start Date <span class="text-danger">*</span></label
+              >
+              <div class="input-group me-3 flatpickr rounded">
+                <input
+                  id="start-date"
+                  class="form-control"
+                  type="date"
+                  name="start_date"
+                  placeholder="Select Date"
+                  aria-describedby="basic-addon2"
+                  [(ngModel)]="newTodo.start_date"
+                />
+              </div>
+            </div>
+            <div class="mb-3 col-md-6 col-12">
+              <label class="form-label"
+                >End Date <span class="text-danger">*</span></label
+              >
+              <div class="input-group me-3 flatpickr rounded">
+                <input
+                  id="start-date"
+                  class="form-control"
+                  type="date"
+                  name="end_date"
+                  placeholder="Select Date"
+                  aria-describedby="basic-addon2"
+                  [(ngModel)]="newTodo.end_date"
+                />
+              </div>
+            </div>
+            <div class="mb-4 col-md-6 col-12">
+              <label class="form-label">Priority </label>
+              <select class="form-select" name="priority" [(ngModel)]="newTodo.priority" required>
+                <option value="">Set Priority</option>
+                <option value="high">High</option>
+                <option value="medium">Medium</option>
+                <option value="low">Low</option>
+              </select>
+            </div>
+            <div class="mb-4 col-md-6 col-12">
+              <label class="form-label">Status <span class="text-danger">*</span></label>
+              <select class="form-select" name="status" [(ngModel)]="newTodo.status" required>
+                <option value="">Set Status</option>
+                <option *ngFor="let status of statuses" [value]="status">
+                  <span [innerHTML]="status | addstatus">{{ status }}</span>
+                </option>
+              </select>
+            </div>  
+            <div class="mb-4 col-md-6 col-12">
+              <h5 class="mb-4">Team Members</h5>
+              <div class="d-flex align-items-center">
+                <div class="avatar-group">
+                  <span *ngFor="let member of selectedUsers" class="avatar avatar-sm">
+                    <img [src]="member.user.imageUrl" alt="avatar" class="rounded-circle imgtooltip">
+                  </span>
+                </div>
+                <a href="#!" class="btn btn-icon btn-white border border-2 rounded-circle btn-dashed ms-2" data-template="inviteMember" data-bs-toggle="modal" data-bs-target="#inviteMemberModal">
+                  +
+                </a>
+              </div>
+            </div>        
+            <div class="col-md-8"></div>
+            <div class="col-12">
+              <button class="btn btn-primary" data-bs-dismiss="offcanvas"
+              aria-label="Close" type="submit">Submit</button>
+              <button
+                type="button"
+                class="btn btn-outline-primary ms-2"
+                data-bs-dismiss="offcanvas"
+                aria-label="Close"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  <!-- Show Task Detail -->
+  <div 
+    class="offcanvas offcanvas-end"
+    tabindex="-1"
+    id="offcanvasRight1"
+    style="width: 600px"
+  >
+    <div class="offcanvas-body" data-simplebar>
+      <div class="offcanvas-header px-2 pt-0">
+        <h3 class="offcanvas-title" id="offcanvasExampleLabel">Task Detail</h3>
+        <button
+          type="button"
+          class="btn-close text-reset"
+          data-bs-dismiss="offcanvas"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="container">
+        <div class="row">
+          <div class="mb-3 col-md-6">
+            <label class="form-label">Name <span class="text-danger">*</span></label>
+            <p>{{ taskDetail?.name }}</p>
+          </div>
+          <div class="mb-3 col-md-6">
+            <label for="textarea-input" class="form-label">Description <span class="text-danger">*</span></label>
+            <p>{{ taskDetail?.name }}</p>
+          </div>
+          <div class="mb-3 col-md-6 col-12">
+            <label class="form-label">Start Date <span class="text-danger">*</span></label>
+            <p>{{ taskDetail?.start_date | date : "yyyy-MM-dd" }}</p>
+          </div>
+          <div class="mb-3 col-md-6 col-12">
+            <label class="form-label">End Date <span class="text-danger">*</span></label>
+            <p>{{ taskDetail?.end_date | date : "yyyy-MM-dd" }}</p>
+          </div>
+          <div class="mb-3 col-12">
+            <label class="form-label">Assign <span class="text-danger">*</span></label>
+            <div class="avatar-group">
+              <!-- Loop through members -->
+              <ng-container *ngFor="let member of taskDetail?.members">
+                <span class="avatar avatar-sm">
+                  <!-- Check if profile image exists -->
+                  <img *ngIf="member.user.image" [src]="member.user.image" alt="avatar" class="rounded-circle" [attr.data-template]="member.user.name">
+                  <span [id]="member.user.name" class="d-none">
+                    <small class="mb-0">{{ member.user.name }}</small>
+                  </span>
+                </span>
+              </ng-container>
+            </div>
+          </div>
+          <div class="mb-4 col-md-6 col-12">
+            <label class="form-label">Priority </label>
+            <p><span class="ml-auto badge"[ngClass]="taskDetail?.priority | priority">{{ taskDetail?.priority | uppercase }}</span></p>
+          </div>
+          <div class="mb-4 col-md-6 col-12">
+            <label class="form-label">Status <span class="text-danger">*</span></label>
+            <p><span class="ml-auto badge"[ngClass]="taskDetail?.status | status">{{ taskDetail?.status | uppercase }}</span></p>
+          </div>          
+          <div class="col-md-12">
+            <h4>Update Task Member</h4>
+            <div class="d-flex align-items-center">
+              <div class="avatar-group">
+                <span *ngFor="let member of selectedUsers" class="avatar avatar-sm">
+                  <img [src]="member.user.imageUrl" alt="avatar" class="rounded-circle imgtooltip">
+                </span>
+              </div>
+              <a href="#!" class="btn btn-icon btn-white border border-2 rounded-circle btn-dashed ms-2" data-template="inviteMember" data-bs-toggle="modal" data-bs-target="#inviteMemberModal">
+                +
+              </a>
+            </div>
+          </div>
+          <div class="col-12 mt-3">
+            <button
+              type="button" class="btn btn-outline-primary ms-2" data-bs-dismiss="offcanvas" aria-label="Close" (click)="updateUserIds(taskDetail.id)">Update Member
+            </button>
+            <button
+              type="button" class="btn btn-outline-primary ms-2" data-bs-dismiss="offcanvas" aria-label="Close">Close
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="inviteMemberModal" tabindex="-1" role="dialog" aria-labelledby="inviteMemberModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header align-items-center">
+          <h4 class="mb-0" id="inviteMemberModalLabel">Invite Member</h4>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3 mt-1">
+            <input type="search" class="form-control"  name="searchKeyword" placeholder="Search Here" [(ngModel)]="searchKeyword" (input)="search()">
+          </div>
+          <div class="d-flex align-items-center mb-3">
+            <div>Members: </div>
+            <div class="ms-2">
+              <div class="avatar-group">
+                <span class="avatar avatar-sm" *ngFor="let user of tempSelectedUsers">
+                  <img [src]="user.user.imageUrl" alt="avatar" class="rounded-circle imgtooltip">
+                </span>
+              </div>
+            </div>
+          </div>
+          <div>
+            <ul class="list-unstyled contacts-list mb-0">
+              <li class="py-2" *ngFor="let member of employees">
+                <div class="d-flex justify-content-between align-items-center">
+                  <a href="#!" class="text-link contacts-link">
+                    <div class="d-flex">
+                      <div class="avatar avatar-md">
+                        <img [src]="member.user.imageUrl" alt="Image" class="rounded-circle">
+                      </div>
+                      <div class="ms-2">
+                        <h5 class="mb-0">{{ member.user.name }}</h5>
+                        <p class="mb-0 text-muted fs-6">{{ member.designation.name }}</p>
+                      </div>
+                    </div>
+                  </a>
+                  <div>
+                    <a 
+                      class="btn btn-sm" 
+                      [ngClass]="isUserInTempTeam(member) ? 'btn-primary' : 'btn-secondary'" 
+                      (click)="isUserInTempTeam(member) ? removeUserFromTempTeam(member) : addUserToTempTeam(member)">
+                      {{ isUserInTempTeam(member) ? 'Remove' : 'Add' }}
+                    </a>
+                  </div>
+                </div>
+              </li>
+            </ul>
+            <div class="text-end mt-4 mb-2">
+              <a class="btn btn-primary" data-bs-dismiss="modal" (click)="inviteUsers()">+ Invite</a>
+              <a class="btn btn-light bg-gray-400 ms-2" data-bs-dismiss="modal">Close</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  

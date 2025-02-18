@@ -1,0 +1,68 @@
+<!-- card  -->
+<div class="card">
+    <!-- card header  -->
+    <div class="card-header">
+      <h4 class="mb-0">Upcoming task by Assignee</h4>
+    </div>
+    <!-- table  -->
+    <div class="card-body">
+      <div class="table-responsive table-card">
+        <table class="table text-nowrap mb-0 table-centered">
+          <thead class="table-light">
+            <tr>
+              <th>Tasks</th>
+              <th>End Date</th>
+              <th>Status</th>
+              <th>Priority</th>
+              <th>Assignee</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let data of tasks">
+              <td>{{ data.name }}</td>
+              <td>{{ data.end_date | date:'dd MMMM, yyyy'}}</td>
+              <td>
+                <span class="ml-auto badge" [ngClass]="data.status | status">
+                    {{ data.status | uppercase }}
+                </span>
+              <td>
+                <span class="ml-auto badge" [ngClass]="data.priority | priority">
+                    {{ data.priority | uppercase }}
+                </span>
+              </td>
+              <td>
+                <div class="avatar-group">
+                    <!-- Loop through members -->
+                    <ng-container *ngFor="let member of data.members">
+                      <span class="avatar avatar-sm">
+                        <!-- Check if profile image exists -->
+                        <img *ngIf="member.user.image_url" [src]="member.user.image_url" alt="avatar" class="rounded-circle imgtooltip" [attr.data-template]="member.name">
+                        <span [id]="member.user.name" class="d-none">
+                          <small class="mb-0">{{ member.name }}</small>
+                        </span>
+                      </span>
+                    </ng-container>
+                  </div>
+            </td>
+              <td> <span class="dropdown dropstart">
+                  <a class="btn-icon btn btn-ghost btn-sm rounded-circle" href="#!"
+                    data-bs-toggle="dropdown" aria-expanded="false">
+                    <i data-feather="more-vertical" class="icon-xs"></i>
+                  </a>
+                  <span class="dropdown-menu">
+
+                    <a class="dropdown-item d-flex align-items-center" href="#!">Action</a>
+                    <a class="dropdown-item d-flex align-items-center" href="#!">Another
+                      action</a>
+                    <a class="dropdown-item d-flex align-items-center" href="#!">Something
+                      else
+                      here</a>
+                  </span>
+                </span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>

@@ -1,0 +1,246 @@
+<div class="container-fluid ">
+    <div class="row">
+      <div class="col-lg-12 col-md-12 col-12">
+        <!-- Page header -->
+        <div class="mb-5">
+          <h3 class="mb-0 ">Create new project</h3>
+
+        </div>
+      </div>
+    </div>
+    <div>
+      <form #form="ngForm" (ngSubmit)="addProject()">
+        <div class="row">
+          <div class="col-xl-9 col-md-12 col-12">
+            <!-- card -->
+            <div class="card mb-5">
+              <!-- card body -->
+              <div class="card-body">
+                <!-- form -->
+                <div class="row">
+                  <!-- form group -->
+                  <div class="mb-4 col-12">
+                    <label class="form-label">Name <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" name="name" placeholder="Enter project title" required [(ngModel)]="newProject.name">
+                  </div>
+                  <!-- form group -->
+                  <div class="mb-4 col-12">
+                    <label for="textarea-input" class="form-label"
+                      >Description <span class="text-danger">*</span></label
+                    >
+                    <textarea
+                      class="form-control"
+                      id="textarea-input"
+                      rows="5"
+                      name="description"
+                      required [(ngModel)]="newProject.description">Description
+                    </textarea>
+                  </div>
+                  <!-- form group -->
+                  <div class="mb-4 col-md-6 col-12">
+                    <label class="form-label">Start Date <span class="text-danger">*</span></label>
+                    <div class="input-group me-3 flatpickr rounded">
+                      <input class="form-control" name="start_date" type="date" placeholder="Select Date" required
+                      [(ngModel)]="newProject.start_date"
+                        aria-describedby="basic-addon2">
+                    </div>
+                  </div>
+                  <!-- form group -->
+                  <div class="mb-4 col-md-6 col-12">
+                    <label class="form-label">End Date <span class="text-danger">*</span></label>
+                    <div class="input-group me-3 flatpickr rounded">
+                      <input class="form-control" name="end_date" type="date" placeholder="Select Date" required
+                      [(ngModel)]="newProject.end_date"
+                        aria-describedby="basic-addon3">
+                    </div>
+                  </div>
+                  <!-- form group -->
+                  <!-- form group -->
+                  <div class="mb-4 col-md-6 col-12">
+                    <label class="form-label">Priority <span class="text-danger">*</span>
+                    </label>
+                    <select class="form-select" name="priority" required
+                    [(ngModel)]="newProject.priority">
+                      <option value="">Set Priority</option>
+                      <option value="high">High</option>
+                      <option value="medium">Medium</option>
+                      <option value="low">Low</option>
+                    </select>
+                  </div>
+                  <!-- form group -->
+                  <div class="mb-4 col-md-6 col-12">
+                    <label class="form-label">Status <span class="text-danger">*</span></label>
+                    <select class="form-select" name="status" required
+                    [(ngModel)]="newProject.status">
+                      <option value="pending">Pending</option>
+                      <option value="planning">Planning</option>
+                      <option value="completed">Completed</option>
+                    </select>
+                  </div>
+                  <!-- <div class="mb-4 col-12">
+                    <label for="" class="form-label">Project Team Members <span class="text-danger">*</span></label>
+                    <select
+                      class="form-select"
+                      multiple="multiple"
+                      name="member_id"
+                      required required
+                      [(ngModel)]="newProject.member_id">
+                      Please Select Feature
+                      <option value="">Select Feature</option>
+                      <option
+                      *ngFor="let member of members"
+                      [value]="member.id"
+                    >
+                      {{ member.user.name }}
+                    </option>
+                    </select>
+                  </div>  -->
+                  <!-- <div class="mb-4 col-12">
+                    <label for="" class="form-label">Project Team Members <span class="text-danger">*</span></label>
+                    <select
+                      class="form-select"
+                      multiple
+                      name="member_id"
+                      required
+                      [(ngModel)]="newProject.member_id">
+                      <option
+                        *ngFor="let member of members"
+                        [value]="member.id"
+                      >
+                        {{ member.user.name }}
+                      </option>
+                    </select>
+                  </div> -->
+                  <div class="mb-4 col-md-6 col-12">
+                    <h5 class="mb-4">Team Members <span class="text-danger">*</span></h5>
+                    <div class="d-flex align-items-center">
+                      <div class="avatar-group">
+                        <span *ngFor="let member of selectedUsers" class="avatar avatar-sm">
+                          <img [src]="member.user.imageUrl" alt="avatar" class="rounded-circle imgtooltip">
+                        </span>
+                      </div>
+                      <a href="#!" class="btn btn-icon btn-white border border-2 rounded-circle btn-dashed ms-2" data-template="inviteMember" data-bs-toggle="modal" data-bs-target="#inviteMemberModal">
+                        +
+                      </a>
+                    </div>
+                  </div> 
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-xl-3">
+            <div class="card mb-5">
+              <div class="card-header">
+                <h4 class="mb-0">Manager <span class="text-danger">*</span></h4>
+              </div>
+              <div class="card-body">
+                <h5>Team Lead</h5>
+                <select class="form-select" name="admin_id" required
+                [(ngModel)]="newProject.admin_id">
+                  <option selected>Select Team Lead</option>
+                  <option
+                      *ngFor="let admin of admins"
+                      [value]="admin.id"
+                    >
+                      {{ admin.user.name }}| {{ admin.name }}
+                    </option>
+                </select>
+              </div>
+            </div>
+            <div class="card mb-5">
+              <div class="card-header">
+                <h4 class="mb-0">Client <span class="text-danger">*</span></h4>
+              </div>
+              <div class="card-body">
+                <label class="form-label">Client</label>
+                <select class="form-select" name="client_id" required
+                [(ngModel)]="newProject.client_id">
+                  <option selected>Select Client</option>
+                  <option
+                      *ngFor="let client of clients"
+                      [value]="client.id"
+                    >
+                      {{ client.company_name }}
+                    </option>
+                </select>
+              </div>
+            </div>
+            <div class="card">
+              <div class="m-2">
+                <div class="mb-4 d-flex justify-content-center">
+                  <img [src]="selectedImageSrc" alt="example placeholder" style="width: 200px; border-radius: 8px;" />
+                </div>
+                <div class="d-flex justify-content-center">
+                  <div data-mdb-ripple-init class="btn btn-primary btn-rounded btn-sm">
+                    <label class="form-label text-white m-1" for="customFile1">Choose file</label>
+                    <input type="file" class="form-control d-none" id="customFile1" (change)="displaySelectedImage($event)" />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="mt-4 d-flex justify-content-end">
+            <a routerLink="/dashboard/projects" class="btn btn-dark me-2">Back</a>
+            <button type="submit" class="btn btn-primary">Create</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="modal fade" id="inviteMemberModal" tabindex="-1" role="dialog" aria-labelledby="inviteMemberModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header align-items-center">
+          <h4 class="mb-0" id="inviteMemberModalLabel">Invite Member</h4>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3 mt-1">
+            <input type="search" class="form-control"  name="searchKeyword" placeholder="Search Here" [(ngModel)]="searchKeyword" (input)="search()">
+          </div>
+          <div class="d-flex align-items-center mb-3">
+            <div>Members: </div>
+            <div class="ms-2">
+              <div class="avatar-group">
+                <span class="avatar avatar-sm" *ngFor="let member of tempSelectedUsers">
+                  <img [src]="member.user.imageUrl" alt="avatar" class="rounded-circle imgtooltip">
+                </span>
+              </div>
+            </div>
+          </div>
+          <div>
+            <ul class="list-unstyled contacts-list mb-0">
+              <li class="py-2" *ngFor="let member of members">
+                <div class="d-flex justify-content-between align-items-center">
+                  <a href="#!" class="text-link contacts-link">
+                    <div class="d-flex">
+                      <div class="avatar avatar-md">
+                        <img [src]="member.user.imageUrl" alt="Image" class="rounded-circle">
+                      </div>
+                      <div class="ms-2">
+                        <h5 class="mb-0">{{ member.user.name }}</h5>
+                        <p class="mb-0 text-muted fs-6">{{ member.designation.name }}</p>
+                      </div>
+                    </div>
+                  </a>
+                  <div>
+                    <a 
+                      class="btn btn-sm" 
+                      [ngClass]="isUserInTempTeam(member) ? 'btn-primary' : 'btn-secondary'" 
+                      (click)="isUserInTempTeam(member) ? removeUserFromTempTeam(member) : addUserToTempTeam(member)">
+                      {{ isUserInTempTeam(member) ? 'Remove' : 'Add' }}
+                    </a>
+                  </div>
+                </div>
+              </li>
+            </ul>
+            <div class="text-end mt-4 mb-2">
+              <a class="btn btn-primary" data-bs-dismiss="modal" (click)="inviteUsers()">+ Invite</a>
+              <a class="btn btn-light bg-gray-400 ms-2" data-bs-dismiss="modal">Close</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>

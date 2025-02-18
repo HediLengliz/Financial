@@ -1,0 +1,160 @@
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-lg-12 col-md-12 col-12">
+      <!-- Page header -->
+      <div class="mb-5">
+        <h3 class="mb-0">Create new user</h3>
+      </div>
+    </div>
+  </div>
+  <div>
+    <!-- row -->
+    <div class="row">
+      <div class="col-xl-12 col-md-12 col-12">
+        <!-- card -->
+        <div class="card card-info mb-5">
+          <div class="card-header">
+            <h5 class="card-title mb-0">
+              Form Project Information Entry
+              <span class="text-dark font-weight-bold"
+                >(<span class="text-danger font-weight-bold"> * </span> Required
+                field)</span
+              >
+            </h5>
+          </div>
+          <div class="card-body">
+            <form #form="ngForm" (ngSubmit)="addEmployee()">
+                <div class="row">
+                    <div class="mb-4 col-6">
+                      <label class="form-label"
+                        >Name <span class="text-danger">*</span></label
+                      >
+                      <input
+                        type="text"
+                        class="form-control"
+                        name="name"
+                        placeholder="Enter Employee Name"
+                        required
+                        [(ngModel)]="newEmployee.name"
+                        #nameField="ngModel"
+                        [ngClass]="{ 'invalid-input': nameField.invalid && (nameField.dirty || nameField.touched) }"
+                      />
+                      <div *ngIf="nameField.invalid && (nameField.dirty || nameField.touched)" class="error-message">
+                        Name is required
+                      </div>
+                    </div>
+                    <div class="mb-4 col-6">
+                      <label class="form-label"
+                        >Email <span class="text-danger">*</span></label
+                      >
+                      <input
+                        type="email"
+                        class="form-control"
+                        name="email"
+                        placeholder="Enter Employee Email"
+                        required
+                        [(ngModel)]="newEmployee.email"
+                        #emailField="ngModel"
+                        [ngClass]="{ 'invalid-input': emailField.invalid && (emailField.dirty || emailField.touched) }"
+                      />
+                      <div *ngIf="emailField.invalid && (emailField.dirty || emailField.touched)" class="error-message">
+                        Email is required
+                      </div>
+                    </div>
+                    <div class="mb-4 col-6">
+                      <label class="form-label"
+                        >Password <span class="text-danger">*</span></label
+                      >
+                      <input
+                        type="text"
+                        class="form-control"
+                        name="phone"
+                        placeholder="Enter Employee Phone"
+                        required
+                        [(ngModel)]="newEmployee.password"
+                        #phoneField="ngModel"
+                        [ngClass]="{ 'invalid-input': phoneField.invalid && (phoneField.dirty || phoneField.touched) }"
+                      />
+                      <div *ngIf="phoneField.invalid && (phoneField.dirty || phoneField.touched)" class="error-message">
+                        Password is required
+                      </div>
+                    </div>
+                    <div class="mb-4 col-6">
+                      <label class="form-label"
+                        >Password Confirmation <span class="text-danger">*</span></label
+                      >
+                      <input
+                        type="text"
+                        class="form-control"
+                        name="phone"
+                        placeholder="Enter Employee Phone"
+                        required
+                        [(ngModel)]="newEmployee.password_confirmation"
+                        #phoneField="ngModel"
+                        [ngClass]="{ 'invalid-input': phoneField.invalid && (phoneField.dirty || phoneField.touched) }"
+                      />
+                      <div *ngIf="phoneField.invalid && (phoneField.dirty || phoneField.touched)" class="error-message">
+                        Password Confirmation is required
+                      </div>
+                    </div>
+                    <div class="mb-4 col-md-12 col-12">
+                      <label class="form-label">Role</label>
+                      <select class="form-select" name="roles" [(ngModel)]="newEmployee.roles" required
+                      #roleField="ngModel"
+                      [ngClass]="{'invalid-input': roleField.invalid && (roleField.dirty || roleField.touched)}"
+                      >
+                        <option value="">Select Role</option>
+                        <option *ngFor="let role of roles" [value]="role.name">{{ role.name }}</option>
+                      </select>
+
+                      <div
+                        *ngIf="roleField.invalid && (roleField.dirty || roleField.touched)" class="error-message">
+                        Role is required
+                      </div>
+                    </div>
+                </div>
+                <!-- <div class="mb-3 col-md-6 col-6">
+                  <div>
+                      <div class="mb-4 d-flex justify-content-center">
+                        <img [src]="selectedImageSrc" alt="example placeholder" style="width: 200px;" />
+                      </div>
+                      <div class="d-flex justify-content-center">
+                        <div data-mdb-ripple-init class="btn btn-primary btn-rounded">
+                          <label class="form-label text-white m-1" for="customFile1">Choose file</label>
+                          <input type="file" class="form-control d-none" id="customFile1" (change)="displaySelectedImage($event)" />
+                        </div>
+                      </div>
+                    </div>
+                </div> -->
+
+                <div class="mb-4 col-md-6 col-6">
+                  <div>
+                    <div class="d-flex justify-content-center mb-4">
+                        <img [src]="selectedImageSrc" alt="example placeholder"
+                        class="rounded-circle" style="width: 200px; height: 200px; object-fit: cover;" alt="example placeholder" />
+                    </div>
+                    <div class="d-flex justify-content-center">
+                        <div data-mdb-ripple-init class="btn btn-primary btn-rounded">
+                            <label class="form-label text-white m-1" for="customFile2">Choose file</label>
+                            <input type="file" class="form-control d-none" id="customFile2" (change)="displaySelectedImage($event)" />
+                        </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                    <div class="col-6 d-grid gap-2 col-6 mx-auto">
+                      <button class="btn btn-block btn-dark" routerLink="/dashboard/employees">Back</button>
+                    </div>
+                    <div class="col-6 d-grid gap-2 col-6 mx-auto">
+                      <button type="submit" class="btn btn-info btn-block" [disabled]="!form.valid">
+                        Save
+                      </button>
+                    </div>
+                  </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

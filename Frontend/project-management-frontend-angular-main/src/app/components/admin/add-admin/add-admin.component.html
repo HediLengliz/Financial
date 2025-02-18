@@ -1,0 +1,79 @@
+<div class="container-fluid">
+    <div class="row">
+      <div class="col-lg-12 col-md-12 col-12">
+        <!-- Page header -->
+        <div class="mb-5">
+          <h3 class="mb-0">Create new admin group</h3>
+        </div>
+      </div>
+    </div>
+    <div>
+      <!-- row -->
+      <div class="row">
+        <div class="col-xl-12 col-md-12 col-12">
+          <!-- card -->
+          <div class="card card-info mb-5">
+            <div class="card-header">
+              <h5 class="card-title mb-0">
+                Form Admin Group Information Entry
+                <span class="text-dark font-weight-bold"
+                  >(<span class="text-danger font-weight-bold"> * </span> Required
+                  field)</span
+                >
+              </h5>
+            </div>
+            <div class="card-body">
+              <form #form="ngForm" (ngSubmit)="addAdmin()">
+                  <div class="row">
+                      <div class="mb-4 col-md-6 col-12">
+                        <label class="form-label"
+                          >Name <span class="text-danger">*</span></label
+                        >
+                        <input
+                          type="text"
+                          class="form-control"
+                          name="name"
+                          placeholder="Enter Employee Name"
+                          required
+                          [(ngModel)]="newAdmin.name"
+                          #nameField="ngModel"
+                          [ngClass]="{'invalid-input': nameField.invalid && (nameField.dirty || nameField.touched)}"
+                        />
+                        <div
+                          *ngIf="nameField.invalid && (nameField.dirty || nameField.touched)" class="error-message">
+                          Name is required
+                        </div>
+                      </div>
+                      <div class="mb-4 col-md-6 col-12">
+                        <label class="form-label">User</label>
+                        <select class="form-select" name="user_id" [(ngModel)]="newAdmin.user_id" required
+                        #categoryField="ngModel"
+                        [ngClass]="{'invalid-input': categoryField.invalid && (categoryField.dirty || categoryField.touched)}"
+                        >Please Select Category
+                          <option value="">Select Project</option>
+                          <option *ngFor="let user of employees" [value]="user.id">{{ user.name }}</option>
+                        </select>
+                        <div
+                          *ngIf="categoryField.invalid && (categoryField.dirty || categoryField.touched)" class="error-message">
+                          Category is required
+                        </div>
+                      </div>
+                  </div>
+                  <div class="row">
+                      <div class="col-6 d-grid gap-2 col-6 mx-auto">
+                        <button class="btn btn-block btn-dark" routerLink="/dashboard/admin">Back</button>
+                      </div>
+                      <div class="col-6 d-grid gap-2 col-6 mx-auto">
+                        <button type="submit" class="btn btn-info btn-block" [disabled]="!form.valid">
+                          Save
+                        </button>
+                      </div>
+                    </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  

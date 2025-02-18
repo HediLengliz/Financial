@@ -1,0 +1,142 @@
+<div class="container-fluid">
+    <div class="row">
+      <div class="col-lg-12 col-md-12 col-12">
+        <!-- Page header -->
+        <div class="mb-5">
+          <h3 class="mb-0">Admin Group</h3>
+        </div>
+      </div>
+    </div>
+    <div>
+      <!-- row -->
+      <div class="row">
+        <div class="col-12">
+          <!-- card -->
+          <div class="card mb-4">
+            <div class="card-header">
+              <div class="row justify-content-between">
+                <div class="col-md-6 mb-3">
+                  <a
+                    routerLink="/dashboard/add-admin" *ngIf="hasPermission('admin-create')"
+                    class="btn btn-primary me-2"
+                    data-bs-toggle="modal"
+                    data-bs-target="#addCustomerModal"
+                    >+ Add Admin Group</a
+                  >
+                </div>
+                <div class="col-lg-4 col-md-6">
+                  <input type="search" class="form-control me-2" placeholder="Search by designation name" [(ngModel)]="searchKeyword" (input)="search()">
+                </div>
+              </div>
+            </div>
+            <div class="card-body">
+              <div class="table-responsive table-card">
+                <table class="table text-nowrap mb-0 table-centered table-hover">
+                  <thead class="table-light">
+                    <tr>
+                      <th>Name</th>
+                      <th>Employee</th>
+                      <!-- <th>Description</th> -->
+                      <th>Date</th>
+                      <th>Action</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngIf="isLoading">
+                      <td colspan="5" class="text-center">
+                        <app-loading-spinner></app-loading-spinner>
+                      </td>
+                    </tr>
+                    <tr *ngFor="let admin of admins">
+                      <!-- <td>{{ admin.id }}</td> -->
+                      <td>{{ admin.name }}</td>
+                      <td>{{ admin.user.name }}</td>
+                      <!-- <td>{{ designation.description }}</td> -->
+                      <td>{{ admin.created_at | date: 'dd' }}/{{ admin.created_at | date: 'MMMM' }}/{{ admin.created_at | date: 'yyyy' }}</td>
+                      <td>
+                          <button class="me-1 btn btn-sm btn-info" routerLink="/dashboard/show-admin/{{ admin.id }}">Show</button>
+                          <button class="me-1 btn btn-sm btn-primary" *ngIf="hasPermission('admin-edit')" routerLink="/dashboard/edit-admin/{{ admin.id }}">Edit</button>
+                          <button type="button" class="btn btn-sm btn-danger" *ngIf="hasPermission('admin-delete')" data-bs-toggle="modal"
+                          data-bs-target="#exampleModal-2"
+                          (click)="setDesignationToDelete(admin.id, admin.name)">
+                              Delete
+                          </button>
+                        </td>
+                    </tr>
+                    <tr *ngIf="!isLoading && admins.length === 0">
+                      <td colspan="5" class="text-center">No Category Found!!.</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div
+                class="modal fade"
+                id="exampleModal-2"
+                tabindex="-1"
+                role="dialog"
+                aria-labelledby="exampleModalLabel"
+                aria-hidden="true"
+              >
+                <div class="modal-dialog" role="document">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title" id="exampleModalLabel">
+                        Admin Group Data
+                      </h5>
+                      <button
+                        type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal"
+                        aria-label="Close"
+                      ></button>
+                    </div>
+                    <div class="modal-body">
+                      Are you sure you want to delete
+                      <strong>{{ adminToDeleteName }}</strong
+                      >?
+                    </div>
+                    <div class="modal-footer">
+                      <button
+                        type="button"
+                        class="btn btn-secondary"
+                        data-bs-dismiss="modal"
+                      >
+                        Close
+                      </button>
+                      <button
+                        type="button"
+                        class="btn btn-danger" data-bs-dismiss="modal"
+                        (click)="deleteDesignation()"
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="card-footer d-md-flex justify-content-between align-items-center">
+              <!-- <span id="pagination-status">Showing {{ (currentPage - 1) * 5 + 1 }} to {{ (currentPage * 5 > totalItems) ? totalItems : (currentPage * 5) }} of {{ totalItems }} entries</span> -->
+              <span id="pagination-status">
+                Showing {{ calculateFirstItemIndex() }} to {{ calculateLastItemIndex() }} of {{ totalItems }} entries
+              </span>            
+              <nav *ngIf="totalPages > 1">
+                <ul class="pagination">
+                  <li class="page-item" [class.disabled]="currentPage === 1">
+                    <a class="page-link" (click)="prevPage()">Previous</a>
+                  </li>
+                  <li class="page-item" *ngFor="let page of totalPagesArray()" [class.active]="currentPage === page">
+                    <a class="page-link" (click)="currentPage = page; getAdmin()">{{ page }}</a>
+                  </li>
+                  <li class="page-item" [class.disabled]="currentPage === totalPages">
+                    <a class="page-link" (click)="nextPage()">Next</a>
+                  </li>
+                </ul>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  

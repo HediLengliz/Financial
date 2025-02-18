@@ -1,0 +1,119 @@
+<div class="row">
+    <div class="col-xl-6 col-lg-6 col-md-6 col-6 mb-5">
+      <!-- card -->
+      <div class="card h-100">
+        <!-- card body -->
+        <div class="card-header">
+          <h4 class="mb-0">About Me</h4>
+        </div>
+        <div class="card-body">
+          <!-- row -->
+          <div class="row">
+            <div class="col-12 mb-5">
+              <!-- text -->
+              <h5 class="text-uppercase">Position</h5>
+              <p class="mb-0" *ngIf="data?.detail?.name; else noName">{{ data.detail.name }}</p>
+                <ng-template #noName>
+                </ng-template>
+
+                <p class="mb-0" *ngIf="data?.detail?.designation?.name; else noDesignation">{{ data.detail.designation.name }}</p>
+                <ng-template #noDesignation>
+                </ng-template>
+            </div>
+            <div class="col-12">
+                <h5 class="text-uppercase">Email</h5>
+                <p class="mb-0">{{ data.detail.user.email}}</p>
+            </div>
+            <div class="col-6 mt-5">
+              <h5 class="text-uppercase">Name</h5>
+              <p class="mb-0">{{ data.detail.user.name }}</p>
+            </div>
+            <div class="col-6 mt-5">
+              <h5 class="text-uppercase">Role</h5>
+              <p class="mb-0">{{ data.roles }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-xl-6 col-lg-6 col-md-6 col-6 mb-5">
+      <!-- card -->
+      <div class="card">
+        <div class="card-header">
+          <h4 class="mb-0">Projects Contributions</h4>
+        </div>
+        <!-- card body -->
+        <div class="card-body">
+          <!-- card title -->
+
+          <div *ngFor="let pro of project"
+            class="d-md-flex justify-content-between align-items-center mb-4"
+          >
+            <div class="d-flex align-items-center">
+              <div>
+                <div>
+                  <img [src]="pro.image" alt="Post Image" class="img-4by3-xs rounded">
+                </div>
+              </div>
+              <!-- text -->
+              <div class="ms-3">
+                <h5 class="mb-1">
+                  <a class="text-inherit">{{ pro.name }}</a>
+                </h5>
+                <p class="mb-0 fs-5 text-muted">
+                  {{ pro.description }}
+                </p>
+              </div>
+            </div>
+            <div
+              class="d-flex align-items-center ms-10 ms-md-0 mt-3"
+            >
+              <!-- avatar group -->
+              <div class="avatar-group me-2">
+                <!-- Loop through members -->
+                <ng-container *ngFor="let member of pro.members">
+                    <span class="avatar avatar-sm">
+                      <!-- Check if profile image exists -->
+                      <img *ngIf="member.user.image" [src]="member.user.image" alt="avatar" class="rounded-circle imgtooltip" [attr.data-template]="member.name">
+                      <span [id]="member.user.name" class="d-none">
+                        <small class="mb-0">{{ member.user.name }}</small>
+                      </span>
+                    </span>
+                  </ng-container>
+              </div>
+              <div>
+                <!-- dropdown -->
+                <div class="dropdown dropstart">
+                  <a
+                    href="#!"
+                    class="btn btn-ghost btn-icon btn-sm rounded-circle"
+                    id="dropdownprojectOne"
+                    data-bs-toggle="dropdown"
+                    aria-haspopup="true"
+                    aria-expanded="false"
+                  >
+                    <i
+                      data-feather="more-vertical"
+                       class="icon-xs"
+                    ></i>
+                  </a>
+                  <div
+                    class="dropdown-menu"
+                    aria-labelledby="dropdownprojectOne"
+                  >
+                    <a class="dropdown-item d-flex align-items-center" href="#!">Action</a>
+                    <a class="dropdown-item d-flex align-items-center" href="#!"
+                      >Another action</a
+                    >
+                    <a class="dropdown-item d-flex align-items-center" href="#!"
+                      >Something else here</a
+                    >
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>

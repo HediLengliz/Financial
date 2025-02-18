@@ -1,0 +1,66 @@
+<div class="container-fluid">
+    <div class="row">
+      <div class="col-lg-12 col-md-12 col-12">
+        <!-- Page header -->
+        <div class="mb-5">
+          <h3 class="mb-0">Update admin group</h3>
+        </div>
+      </div>
+    </div>
+    <div>
+      <!-- row -->
+      <div class="row">
+        <div class="col-xl-12 col-md-12 col-12">
+          <!-- card -->
+          <div class="card card-info mb-5">
+            <div class="card-header">
+              <h5 class="card-title mb-0">
+                Form admin group Information Entry
+                <span class="text-dark font-weight-bold"
+                  >(<span class="text-danger font-weight-bold"> * </span> Required
+                  field)</span
+                >
+              </h5>
+            </div>
+            <div class="card-body">
+              <form (ngSubmit)="updateAdmin()">
+                  <div class="row">
+                      <div class="mb-4 col-md-6 col-12">
+                        <label class="form-label"
+                          >Name <span class="text-danger">*</span></label
+                        >
+                        <input
+                          type="text"
+                          class="form-control"
+                          name="name"
+                          placeholder="Enter Employee Name"
+                          required
+                          [(ngModel)]="admin.name"
+                        />
+                      </div>
+                      <div class="mb-4 col-md-6 col-12">
+                        <label class="form-label">User</label>
+                        <select class="form-select" name="user_id" [(ngModel)]="admin.user_id" required>Please Select User
+                          <option value="">Select User</option>
+                          <option *ngFor="let user of employees" [value]="user.id">{{ user.name }}</option>
+                        </select>
+                      </div>
+                  </div>
+                  <div class="row">
+                      <div class="col-6 d-grid gap-2 col-6 mx-auto">
+                        <button class="btn btn-block btn-dark" routerLink="/dashboard/admin">Back</button>
+                      </div>
+                      <div class="col-6 d-grid gap-2 col-6 mx-auto">
+                        <button type="submit" class="btn btn-info btn-block">
+                          Save
+                        </button>
+                      </div>
+                    </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  

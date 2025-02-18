@@ -1,0 +1,48 @@
+<div class="col-md-12 mb-5">
+    <!-- card -->
+    <div class="card">
+      <!-- card body -->
+      <div class="card-header">
+        <h4 class="mb-0">Upcoming Deadlines
+        </h4>
+      </div>
+      <!-- table -->
+      <div class="card-body">
+        <div class="table-responsive overflow-y-hidden table-card">
+          <table class="table mb-0 text-nowrap table-centered">
+            <thead class="table-light">
+              <tr>
+                <th>Project</th>
+                <th>Feature</th>
+                <th>Date </th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let data of features">
+                <td>
+                  <div class="d-flex align-items-center">
+                    <div class="avatar avatar-sm">
+                      <img [src]="data.project.imageUrl"  alt="Image"
+                        class="img-4by3-xs rounded"></div>
+                    <div class="ms-2">
+                      <h5 class="mb-0"><a href="#!" class="text-inherit">{{ data.project.name }}</a> </h5>
+                    </div>
+                  </div>
+                </td>
+                <td>
+                  {{ data.name }}
+                </td>
+                <td>
+                  {{ data.created_at | date:'dd MMMM, yyyy' }}
+                </td>
+                <td>
+                  {{ data.status }}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>

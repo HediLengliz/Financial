@@ -1,0 +1,81 @@
+.card-info .card-header {
+    background-color: #17a2b8; /* Set your desired background color */
+    color: #fff; /* Set text color to contrast with the background */
+}
+.custom-select-wrapper {
+    position: relative;
+  }
+  
+  .custom-select {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    cursor: pointer;
+    background-color: #fff;
+  }
+  
+  .custom-select:hover {
+    border-color: #b8babc;
+  }
+  
+  .custom-select:focus {
+    border-color: #495057;
+    outline: none;
+    box-shadow: 0 0 0 0.25rem rgba(0, 123, 255, 0.25);
+  }  
+
+.error-message {
+    color: #dc3545;
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+}
+
+.invalid-input {
+    border-color: #dc3545;
+}
+
+.styled-select {
+  position: relative;
+  width: 100%;
+  max-width: 400px;
+}
+
+.styled-select select {
+  display: inline-block;
+  width: 100%;
+  padding: 10px;
+  font-size: 16px;
+  line-height: 1.25;
+  color: #555;
+  background-color: #fff;
+  background-image: none;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-position: right 10px center;
+  background-repeat: no-repeat;
+  background-size: 12px;
+}
+
+.styled-select::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  right: 15px;
+  width: 0;
+  height: 0;
+  margin-top: -2px;
+  border-width: 5px 5px 0;
+  border-style: solid;
+  border-color: #555 transparent transparent transparent;
+  pointer-events: none;
+}
+
+.styled-select select:focus {
+  border-color: #66afe9;
+  outline: 0;
+  box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(102,175,233,.6);
+}
