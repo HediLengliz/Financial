@@ -1,0 +1,55 @@
+package com.tensai.financial.Controllers;
+
+import com.tensai.financial.DTOS.ExpenseDTO;
+import com.tensai.financial.Entities.Status;
+import com.tensai.financial.Services.ExpenseService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/expenses")
+@RequiredArgsConstructor
+@Tag(name = "Expense Management", description = "managing expenses")
+public class ExpenseController {
+    @Autowired
+    private  ExpenseService expenseService;
+
+    @GetMapping("/all")
+    @Operation(summary = "Get all expenses", description = "Fetches a list of all expenses.")
+    public ResponseEntity<List<ExpenseDTO>> getAllExpenses() {
+        return ResponseEntity.ok(expenseService.getAllExpenses());
+    }
+
+    @PostMapping("/create")
+    @Operation(summary = "Create an expense", description = "Creates a new expense entry.")
+    public ResponseEntity<ExpenseDTO> createExpense(@RequestBody ExpenseDTO expenseDTO) {
+        return ResponseEntity.ok(expenseService.createExpense(expenseDTO));
+    }
+    @DeleteMapping("/delete/{id}")
+    @Operation(summary = "Delete an expense", description = "Deletes an expense entry.")
+    public ResponseEntity<Void> deleteExpense(@PathVariable Long id) {
+        expenseService.deleteExpense(id);
+        return ResponseEntity.ok().build();
+    }
+    @PutMapping("/update/{id}")
+    @Operation(summary = "Update an expense", description = "Updates an expense entry.")
+    public ResponseEntity<ExpenseDTO> updateExpense(@RequestBody ExpenseDTO expenseDTO, @PathVariable Long id) {
+        return ResponseEntity.ok(expenseService.updateExpense(id, expenseDTO));
+    }
+    @GetMapping("/get/{id}")
+    @Operation(summary = "Get an expense", description = "Fetches an expense entry.")
+    public ResponseEntity<ExpenseDTO> getExpense(@PathVariable Long id) {
+        return ResponseEntity.ok(expenseService.getExpenseById(id));
+    }
+    @GetMapping("/getByStatus/{status}")
+    @Operation(summary = "Get an expense by status", description = "Fetches an expense entry by status.")
+    public ResponseEntity<ExpenseDTO> getExpenseByStatus(@PathVariable Status status) {
+        return ResponseEntity.ok(expenseService.getExpenseByStatus(status));
+    }
+}

@@ -1,0 +1,36 @@
+package com.tensai.financial.Entities;
+
+import jakarta.persistence.*;
+import lombok.*;
+import lombok.experimental.FieldDefaults;
+import java.time.LocalDate;
+
+@Entity
+@Table(name = "invoice")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE)
+@Builder
+public class Invoice {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+     Long id;
+
+     String invoiceNumber;
+     Float amount;
+     Float totalAmount;
+     String issued_by;
+     String issued_to;
+     LocalDate issueDate;
+     Float tax;
+     LocalDate dueDate;
+     LocalDate created_at;
+     @Enumerated(EnumType.STRING)
+     Status status;
+     @ManyToOne
+     @JoinColumn(name = "budget_id")
+     Budget budget;
+}

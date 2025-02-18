@@ -1,0 +1,43 @@
+server:
+  port: 8071
+  servlet:
+    context-path: /api
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5435/financialdb  # Use mapped port
+    username: financial_admin
+    password: financial_password
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: true
+    properties:
+      hibernate.format_sql: true
+  # Uncomment when Kafka is needed
+  # kafka:
+  #   producer:
+  #     bootstrap-servers: kafka:9092
+  #     key-serializer: org.apache.kafka.common.serialization.StringSerializer
+  #     value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+
+logging:
+  level:
+    root: INFO
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+    com.example.projectmanagement: DEBUG
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+    tags-sorter: alpha
+    operations-sorter: alpha
+  api-docs:
+    path: /v3/api-docs
+  paths-to-match: /api/**  # Match your API endpoints
+  packages-to-scan: com.tensai.projets
+  paths-to-exclude: /error# Replace with your package
+  default-produces-media-type: application/json
+  default-consumes-media-type: application/json
