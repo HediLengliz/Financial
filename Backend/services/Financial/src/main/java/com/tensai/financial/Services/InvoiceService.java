@@ -5,6 +5,7 @@ import com.tensai.financial.DTOS.ProjectDTO;
 import com.tensai.financial.DTOS.SupplierDTO;
 import com.tensai.financial.Entities.Budget;
 import com.tensai.financial.Entities.Invoice;
+import com.tensai.financial.Entities.Status;
 import com.tensai.financial.FeignClients.ProjectClient;
 import com.tensai.financial.FeignClients.SupplierClient;
 import com.tensai.financial.Repositories.BudgetRepository;
@@ -17,7 +18,7 @@ import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
-public class InvoiceService {
+public class InvoiceService implements IInvoiceService{
     private final InvoiceRepository invoiceRepository;
     private final BudgetRepository budgetRepository;
     private final ProjectClient projectClient;
@@ -133,6 +134,26 @@ public class InvoiceService {
                 .budgetId(invoice.getBudget().getId())
                 .build();
 
+    }
+
+    @Override
+    public InvoiceDTO getInvoiceByStatus(Status status) {
+        Invoice invoice = invoiceRepository.findByStatus(status)
+                .orElseThrow(() -> new RuntimeException("Invoice not found"));
+        return InvoiceDTO.builder()
+                .id(invoice.getId())
+                .invoiceNumber(invoice.getInvoiceNumber())
+                .totalAmount(invoice.getTotalAmount())
+                .issueDate(invoice.getIssueDate())
+                .issued_by(invoice.getIssued_by())
+                .tax(invoice.getTax())
+                .dueDate(invoice.getDueDate())
+                .created_at(invoice.getCreated_at())
+                .issued_to(invoice.getIssued_to())
+                .amount(invoice.getAmount())
+                .status(invoice.getStatus())
+                .budgetId(invoice.getBudget().getId())
+                .build();
     }
 
 }

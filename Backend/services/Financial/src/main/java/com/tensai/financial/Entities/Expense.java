@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 
@@ -23,13 +24,13 @@ public class Expense {
 
      String description;
 
-     Float amount;
+    BigDecimal amount;
 
 
     LocalDate createdAt;
 
     LocalDate updatedAt;
-    Float category;
+    String category;
 
     @ManyToOne
     @JoinColumn(name = "budget_id")

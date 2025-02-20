@@ -6,6 +6,7 @@ import jakarta.validation.constraints.Size;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.math.BigDecimal;
 import java.util.UUID;
 @Getter
 @Setter
@@ -20,6 +21,6 @@ public class ProjectDTO {
      String projectName;
      @NotBlank(message = "Allocated Budget is required")
      @Max(value = 0, message = "Allocated Budget must be greater than 0")
-     Float allocatedBudget;
+     BigDecimal allocatedBudget;
 
 }

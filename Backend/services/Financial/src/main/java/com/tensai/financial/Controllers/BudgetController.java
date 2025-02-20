@@ -1,9 +1,7 @@
 package com.tensai.financial.Controllers;
 
 import com.tensai.financial.DTOS.BudgetDTO;
-import com.tensai.financial.Entities.Approval;
-import com.tensai.financial.Entities.Status;
-import com.tensai.financial.Entities.Transaction;
+import com.tensai.financial.Entities.*;
 import com.tensai.financial.Services.BudgetService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -42,16 +40,17 @@ public class BudgetController{
         return ResponseEntity.ok(budgetService.getAllBudgets());
     }
 
-    @PostMapping("/create/{status}/{transaction}/{approval}")
+    @PostMapping("/create/{status}/{transaction}/{approval}/{budgetStatus}")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Budget details created successfully"),
             @ApiResponse(responseCode = "404", description = "Budget not found")
     })
     @Operation(summary = "Create a budget", description = "Creates a new budget entry.")
-    public ResponseEntity<BudgetDTO> createBudget(@RequestBody BudgetDTO budgetDTO, @PathVariable Status status, @PathVariable Transaction transaction, @PathVariable Approval approval) {
+    public ResponseEntity<BudgetDTO> createBudget(@RequestBody BudgetDTO budgetDTO, @PathVariable Status status, @PathVariable Transaction transaction, @PathVariable Approval approval, @PathVariable BudgetStatus budgetStatus) {
         budgetDTO.setStatus(status);
         budgetDTO.setTransaction(transaction);
         budgetDTO.setApproval(approval);
+        budgetDTO.setBudgetStatus(budgetStatus);
         return ResponseEntity.ok(budgetService.createBudget(budgetDTO));
     }
     @DeleteMapping("/delete/{id}")

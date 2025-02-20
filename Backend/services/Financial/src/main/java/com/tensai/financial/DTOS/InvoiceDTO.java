@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.UUID;
 
@@ -22,7 +23,7 @@ public class InvoiceDTO {
      String invoiceNumber;
     @NotBlank(message = "Total Amount is required")
     @Min(value = 0, message = "Total Amount must be greater than 0")
-     Float totalAmount;
+    BigDecimal  totalAmount;
     @NotBlank(message = "Issue Date is required")
      LocalDate issueDate;
     @NotBlank(message = "Budget Id is required")
@@ -31,7 +32,7 @@ public class InvoiceDTO {
     Status status;
     @NotBlank(message = "Tax is required")
     @Min(value = 0, message = "Tax must be greater than 0")
-     Float tax;
+     BigDecimal tax;
     @NotBlank(message = "Due Date is required")
      LocalDate dueDate;
     @NotBlank(message = "Created at is required")
@@ -42,7 +43,7 @@ public class InvoiceDTO {
         String issued_to;
     @NotBlank(message = "Amount is required")
     @Min(value = 0, message = "Amount must be greater than 0")
-     Float amount;
+    BigDecimal amount;
     @NotBlank(message = "Project ID is required")
     UUID project_id;
     @NotBlank(message = "Supplier ID is required")

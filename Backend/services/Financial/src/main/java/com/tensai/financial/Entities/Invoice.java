@@ -3,6 +3,8 @@ package com.tensai.financial.Entities;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.UUID;
 
@@ -21,12 +23,12 @@ public class Invoice {
      Long id;
 
      String invoiceNumber;
-     Float amount;
-     Float totalAmount;
+ BigDecimal  amount;
+ BigDecimal  totalAmount;
      String issued_by;
      String issued_to;
      LocalDate issueDate;
-     Float tax;
+ BigDecimal tax;
      LocalDate dueDate;
      LocalDate created_at;
       UUID projectId;

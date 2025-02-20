@@ -1,0 +1,42 @@
+//package com.tensai.financial.Services;
+//
+//public interface AdvancedBudget {
+//    //budget fonctionalities
+//    //allocate budget to a project
+//    public Budget allocateBudget(UUID projectId, BudgetDTO amount);
+//   //Get Budget to determine expense via reporting
+//   public BudgetReportDTO getBudgetReport(UUID projectId)
+//       //update Budget allocation dynamically
+//       public Budget updateBudget(Long budgetId, Float totalAmount);
+//   //Auto-Block Expenses if spent ammount > allocated amout blocc Budget
+//   public boolean isExpenseAllowed(Long projectId, Float expenseAmount)}
+////expenses functionalities
+//
+//    //Register New Expense (With Budget Validation)
+//    public Expense registerExpense(UUID projectId, UUID supplierId, Float amount, String category)
+//
+//    //Get Total Expenses by Project
+//    public BigDecimal getTotalExpensesByProject(UUID projectId)
+//
+//    //smart Expense Categorization
+//    public String categorizeExpense(Float amount, String description)
+//
+//    //Detect duplicate Expenses (Fraud Prevention)
+//    public boolean isDuplicateExpense(UUID projectId, UUID supplierId, Float amount, LocalDate date)
+//        //Invoice functionalities
+//            //(Auto-Payment Scheduling)
+//            public Invoice createInvoice(UUID supplierId, BigDecimal amount, LocalDate dueDate)
+//
+//            // Match Invoice with Expenses Reconciliation
+//            public boolean matchInvoiceWithExpenses(UUID invoiceId, UUID projectId);
+//
+//           //Get Overdue Invoices for Payment Prioritization
+//            public List<Invoice> getOverdueInvoices()
+//
+//            //Automated Tax Calculation on Invoice
+//            public BigDecimal calculateTax(Float invoiceAmount, String taxType);
+//
+//            //Approve Invoice Payment After Validation
+//            public Invoice approveInvoice(UUID invoiceId);
+//        }
+//

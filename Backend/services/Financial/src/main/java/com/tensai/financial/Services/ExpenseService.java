@@ -10,12 +10,13 @@ import com.tensai.financial.Repositories.ExpenseRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
-public class ExpenseService {
+public class ExpenseService implements IExpenseService{
     private ExpenseRepository expenseRepository;
     private BudgetRepository budgetRepository;
     private final BudgetService budgetService;
@@ -41,9 +42,11 @@ public class ExpenseService {
     }
 
     public ExpenseDTO createExpense(ExpenseDTO dto) {
-        BudgetDTO budget = budgetService.getBudgetByProject(ExpenseDTO.builder().build().getProject_id());
-
-        if (budget.getRemainingAmount().compareTo(ExpenseDTO.builder().build().getAmount()) < 0) {
+        BudgetDTO budget = budgetService.getBudgetByProject(dto.getProject_id());
+        //checking the remaining and expense amount
+        System.out.println("Budget remaining: " + budget.getRemainingAmount());
+        System.out.println("Expense amount: " + dto.getAmount());
+        if (budget.getRemainingAmount().compareTo(dto.getAmount()) < 0) {
             throw new IllegalStateException("Expense exceeds remaining budget");
         }
         Expense expense = Expense.builder()
@@ -52,11 +55,16 @@ public class ExpenseService {
                 .createdAt(dto.getDate())
                 .updatedAt(dto.getUpdatedAt())
                 .status(dto.getStatus())
-                .budget(Budget .builder().id(dto.getBudgetId()).build())
+                .budget(Budget.builder().id(dto.getBudgetId()).build())
                 .build();
 
         Expense savedExpense = expenseRepository.save(expense);
-        budgetService.updateBudget(ExpenseDTO.builder().build().getProject_id(), BudgetDTO.builder().build());
+        // Subtract the amount from the remaining budget
+        BigDecimal newRemaining = budget.getRemainingAmount().subtract(dto.getAmount());
+        //reassaign the remaining amount (converted amount and related attribs back to bigdeciaml for aithmtic calculs it can perform , . sperators)
+        budget.setRemainingAmount(newRemaining);
+        budgetService.updateBudget(dto.getProject_id(), budget);
+
 
 
         return ExpenseDTO.builder()

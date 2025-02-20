@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.UUID;
 
@@ -25,11 +26,11 @@ public class Budget {
 
      String projectName;
 
-     Float allocatedAmount;
+    BigDecimal allocatedAmount;
 
-     Float spentAmount;
+    BigDecimal  spentAmount;
 
-     Float remainingAmount;
+    BigDecimal  remainingAmount;
 
      LocalDate createdAt;
     String currency;
@@ -44,9 +45,13 @@ public class Budget {
     @Enumerated(EnumType.STRING)
     @NotNull
     Approval approval;
-//    @Enumerated(EnumType.STRING)
-//    @Column(name = "budget_status")
-//    BudgetStatus budgetStatus;
+    @Enumerated(EnumType.STRING)
+    @Column(
+            name = "budget_status",
+            nullable = false,
+            columnDefinition = "varchar(255) default 'Sufficient' check (budget_status in ('Insufficient','Sufficient','Exceeded'))"
+    )
+    BudgetStatus budgetStatus;
 
     @Builder.Default
     UUID projectId = UUID.randomUUID();

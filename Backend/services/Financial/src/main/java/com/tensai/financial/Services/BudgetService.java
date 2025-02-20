@@ -2,6 +2,7 @@ package com.tensai.financial.Services;
 
 import com.tensai.financial.DTOS.BudgetDTO;
 import com.tensai.financial.Entities.Budget;
+import com.tensai.financial.Entities.BudgetStatus;
 import com.tensai.financial.Entities.Status;
 import com.tensai.financial.Repositories.BudgetRepository;
 import lombok.AllArgsConstructor;
@@ -16,7 +17,7 @@ import static java.math.BigDecimal.ZERO;
 
 @Service
 @AllArgsConstructor
-public class BudgetService {
+public class BudgetService implements IBudgetService {
     private final BudgetRepository budgetRepository;
 
     public List<BudgetDTO> getAllBudgets() {
@@ -28,12 +29,13 @@ public class BudgetService {
                         .allocatedAmount(budget.getAllocatedAmount())
                         .spentAmount(budget.getSpentAmount())
                         .createdAt(budget.getCreatedAt())
-                        .remainingAmount(budget.getRemainingAmount())
-                        .transaction(budget.getTransaction())
-                        .updatedAt(budget.getUpdatedAt())
                         .status(budget.getStatus())
-                        .approval(budget.getApproval())
+                        .remainingAmount(budget.getRemainingAmount())
+                        .updatedAt(budget.getUpdatedAt())
                         .currency(budget.getCurrency())
+                        .transaction(budget.getTransaction())
+                        .approval(budget.getApproval())
+                        .budgetStatus(budget.getBudgetStatus())
                         .projectId(budget.getProjectId())
                         .build())
                 .collect(Collectors.toList());
@@ -49,10 +51,10 @@ public class BudgetService {
                 .remainingAmount(dto.getRemainingAmount())
                 .updatedAt(dto.getUpdatedAt())
                 .currency(dto.getCurrency())
-//                .budgetStatus(BudgetStatus.)
                 .transaction(dto.getTransaction())
                 .approval(dto.getApproval())
                 .projectId(dto.getProjectId())
+                .budgetStatus(dto.getBudgetStatus())
                 .build();
         Budget savedBudget = budgetRepository.save(budget);
         return BudgetDTO.builder()
@@ -65,7 +67,7 @@ public class BudgetService {
                 .remainingAmount(savedBudget.getRemainingAmount())
                 .updatedAt(savedBudget.getUpdatedAt())
                 .currency(savedBudget.getCurrency())
-//                .budgetStatus(savedBudget.getBudgetStatus())
+                .budgetStatus(savedBudget.getBudgetStatus())
                 .approval(savedBudget.getApproval())
                 .transaction(savedBudget.getTransaction())
                 .projectId(savedBudget.getProjectId())
@@ -74,17 +76,17 @@ public class BudgetService {
     public BudgetDTO updateBudget(UUID projectId, BudgetDTO dto) {
         Budget budget = budgetRepository.findByProjectId(projectId)
                 .orElseThrow(() -> new RuntimeException("Budget not found"));
-//        if (budget.getRemainingAmount().compareTo(budget.getSpentAmount()) < 0) {
-//            budget.setBudgetStatus(BudgetStatus.INSUFFICIENT);
-//            throw new IllegalStateException("Insufficient budget");
-//        }
-//        if (budget.getRemainingAmount().compareTo(ZERO.floatValue()) == 0) {
-//            budget.setBudgetStatus(BudgetStatus.EXCEEDED);
-//            throw new IllegalStateException("Exceeded budget");
-//        }
-//        if (budget.getAllocatedAmount().compareTo((budget.getRemainingAmount())) > 0) {
-//            budget.setBudgetStatus(BudgetStatus.SUFFICIENT);
-//        }
+        if (budget.getRemainingAmount().compareTo(budget.getSpentAmount()) < 0) {
+            budget.setBudgetStatus(BudgetStatus.Insufficient);
+            throw new IllegalStateException("Insufficient budget");
+        }
+        if (budget.getRemainingAmount().compareTo(ZERO) == 0) {
+            budget.setBudgetStatus(BudgetStatus.Exceeded);
+            throw new IllegalStateException("Exceeded budget");
+        }
+        if (budget.getAllocatedAmount().compareTo((budget.getRemainingAmount())) > 0) {
+            budget.setBudgetStatus(BudgetStatus.Sufficient);
+        }
         budget.setProjectName(dto.getProjectName());
         budget.setAllocatedAmount(dto.getAllocatedAmount());
         budget.setSpentAmount(dto.getSpentAmount());
@@ -95,6 +97,7 @@ public class BudgetService {
         budget.setUpdatedAt(dto.getUpdatedAt());
         budget.setCurrency(dto.getCurrency());
         budget.setApproval(dto.getApproval());
+        budget.setBudgetStatus(dto.getBudgetStatus());
         Budget savedBudget = budgetRepository.save(budget);
         return BudgetDTO.builder()
                 .id(savedBudget.getId())
@@ -108,7 +111,7 @@ public class BudgetService {
                 .updatedAt(savedBudget.getUpdatedAt())
                 .approval(savedBudget.getApproval())
                 .currency(savedBudget.getCurrency())
-//                .budgetStatus(savedBudget.getBudgetStatus())
+                .budgetStatus(savedBudget.getBudgetStatus())
                 .build();
 
     }
@@ -125,15 +128,17 @@ public class BudgetService {
                 .spentAmount(budget.getSpentAmount())
                 .createdAt(budget.getCreatedAt())
                 .status(budget.getStatus())
-                .approval(budget.getApproval())
                 .remainingAmount(budget.getRemainingAmount())
                 .transaction(budget.getTransaction())
                 .updatedAt(budget.getUpdatedAt())
+                .approval(budget.getApproval())
                 .currency(budget.getCurrency())
+                .budgetStatus(budget.getBudgetStatus())
+                .projectId(budget.getProjectId())
                 .build();
     }
     public BudgetDTO getBudgetByStatus(Status status) {
-        Budget budget = (Budget) budgetRepository.findByStatus(status)
+        Budget budget = budgetRepository.findByStatus(status)
                 .orElseThrow(() -> new RuntimeException("Budget not found"));
         return BudgetDTO.builder()
                 .id(budget.getId())
@@ -147,6 +152,7 @@ public class BudgetService {
                 .updatedAt(budget.getUpdatedAt())
                 .approval(budget.getApproval())
                 .currency(budget.getCurrency())
+                .budgetStatus(budget.getBudgetStatus())
                 .build();
     }
     public BudgetDTO getBudgetByProject(UUID projectId) {
@@ -155,5 +161,4 @@ public class BudgetService {
 
         return new BudgetDTO();
     }
-
 }
