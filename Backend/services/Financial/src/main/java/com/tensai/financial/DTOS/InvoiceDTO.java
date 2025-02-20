@@ -7,6 +7,7 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDate;
+import java.util.UUID;
 
 @Getter
 @Setter
@@ -42,6 +43,11 @@ public class InvoiceDTO {
     @NotBlank(message = "Amount is required")
     @Min(value = 0, message = "Amount must be greater than 0")
      Float amount;
+    @NotBlank(message = "Project ID is required")
+    UUID project_id;
+    @NotBlank(message = "Supplier ID is required")
+    UUID supplier_id;
+
 
 
 }

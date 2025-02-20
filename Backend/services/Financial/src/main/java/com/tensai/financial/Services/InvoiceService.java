@@ -1,8 +1,12 @@
 package com.tensai.financial.Services;
 
 import com.tensai.financial.DTOS.InvoiceDTO;
+import com.tensai.financial.DTOS.ProjectDTO;
+import com.tensai.financial.DTOS.SupplierDTO;
 import com.tensai.financial.Entities.Budget;
 import com.tensai.financial.Entities.Invoice;
+import com.tensai.financial.FeignClients.ProjectClient;
+import com.tensai.financial.FeignClients.SupplierClient;
 import com.tensai.financial.Repositories.BudgetRepository;
 import com.tensai.financial.Repositories.InvoiceRepository;
 import lombok.AllArgsConstructor;
@@ -16,6 +20,8 @@ import java.util.stream.Collectors;
 public class InvoiceService {
     private final InvoiceRepository invoiceRepository;
     private final BudgetRepository budgetRepository;
+    private final ProjectClient projectClient;
+    private final SupplierClient supplierClient;
 
     public List<InvoiceDTO> getAllInvoices() {
         return invoiceRepository.findAll()
@@ -77,7 +83,6 @@ public class InvoiceService {
                 .orElseThrow(() -> new RuntimeException("Invoice not found"));
         Budget budget = budgetRepository.findById(dto.getBudgetId())
                 .orElseThrow(() -> new RuntimeException("Budget not found"));
-
         invoice.setInvoiceNumber(dto.getInvoiceNumber());
         invoice.setTotalAmount(dto.getTotalAmount());
         invoice.setIssueDate(dto.getIssueDate());
@@ -111,6 +116,8 @@ public class InvoiceService {
     public InvoiceDTO getInvoiceById(Long id) {
         Invoice invoice = invoiceRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Invoice not found"));
+        ProjectDTO project = projectClient.getProjectById(invoice.getProjectId());
+        SupplierDTO supplier = supplierClient.getSupplierById(invoice.getSupplierId());
         return InvoiceDTO.builder()
                 .id(invoice.getId())
                 .invoiceNumber(invoice.getInvoiceNumber())
@@ -125,6 +132,7 @@ public class InvoiceService {
                 .status(invoice.getStatus())
                 .budgetId(invoice.getBudget().getId())
                 .build();
+
     }
 
 }

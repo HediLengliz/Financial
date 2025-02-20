@@ -29,6 +29,7 @@ public class Expense {
     LocalDate createdAt;
 
     LocalDate updatedAt;
+    Float category;
 
     @ManyToOne
     @JoinColumn(name = "budget_id")

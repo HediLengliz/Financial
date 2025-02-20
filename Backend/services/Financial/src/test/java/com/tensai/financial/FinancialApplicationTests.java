@@ -5,9 +5,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
 class FinancialApplicationTests {
-
+    //test endpoints health
     @Test
     void contextLoads() {
+
     }
 
 }

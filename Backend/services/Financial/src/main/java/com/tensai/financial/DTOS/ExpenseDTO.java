@@ -6,6 +6,7 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDate;
+import java.util.UUID;
 
 @Getter
 @Setter
@@ -29,4 +30,10 @@ public class ExpenseDTO {
      Long budgetId; // To link with Budget
     @NotBlank(message = "Status is required")
      Status status;
+    @NotBlank(message = "Project ID is required")
+    UUID project_id;
+    @NotBlank(message = "Invoice ID is required")
+    UUID supplier_id;
+    @NotBlank(message = "Category is required")
+    Float category;
 }

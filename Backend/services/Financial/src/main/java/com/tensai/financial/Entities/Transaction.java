@@ -1,7 +1,7 @@
 package com.tensai.financial.Entities;
 
 public enum Transaction {
-    Rejected,
-    Approved,
+    Failed,
+    Success,
     Pending
 }

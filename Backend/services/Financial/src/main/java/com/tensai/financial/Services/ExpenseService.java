@@ -1,5 +1,6 @@
 package com.tensai.financial.Services;
 
+import com.tensai.financial.DTOS.BudgetDTO;
 import com.tensai.financial.DTOS.ExpenseDTO;
 import com.tensai.financial.Entities.Budget;
 import com.tensai.financial.Entities.Expense;
@@ -17,6 +18,8 @@ import java.util.stream.Collectors;
 public class ExpenseService {
     private ExpenseRepository expenseRepository;
     private BudgetRepository budgetRepository;
+    private final BudgetService budgetService;
+
     public List<ExpenseDTO> getAllExpenses() {
         try {
             return expenseRepository.findAll()
@@ -38,19 +41,24 @@ public class ExpenseService {
     }
 
     public ExpenseDTO createExpense(ExpenseDTO dto) {
-        Budget budget = budgetRepository.findById(dto.getBudgetId())
-                .orElseThrow(() -> new RuntimeException("Budget not found"));
+        BudgetDTO budget = budgetService.getBudgetByProject(ExpenseDTO.builder().build().getProject_id());
 
+        if (budget.getRemainingAmount().compareTo(ExpenseDTO.builder().build().getAmount()) < 0) {
+            throw new IllegalStateException("Expense exceeds remaining budget");
+        }
         Expense expense = Expense.builder()
                 .description(dto.getDescription())
                 .amount(dto.getAmount())
                 .createdAt(dto.getDate())
                 .updatedAt(dto.getUpdatedAt())
                 .status(dto.getStatus())
-                .budget(budget)
+                .budget(Budget .builder().id(dto.getBudgetId()).build())
                 .build();
 
         Expense savedExpense = expenseRepository.save(expense);
+        budgetService.updateBudget(ExpenseDTO.builder().build().getProject_id(), BudgetDTO.builder().build());
+
+
         return ExpenseDTO.builder()
                 .id(savedExpense.getId())
                 .description(savedExpense.getDescription())

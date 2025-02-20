@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import java.time.LocalDate;
+import java.util.UUID;
 
 @Entity
 @Table(name = "invoice")
@@ -28,6 +29,8 @@ public class Invoice {
      Float tax;
      LocalDate dueDate;
      LocalDate created_at;
+      UUID projectId;
+      UUID supplierId;
      @Enumerated(EnumType.STRING)
      Status status;
      @ManyToOne

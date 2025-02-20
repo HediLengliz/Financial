@@ -1,10 +1,12 @@
 package com.tensai.financial.Entities;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDate;
+import java.util.UUID;
 
 @Entity
 @Table(name = "budget")
@@ -27,13 +29,28 @@ public class Budget {
 
      Float spentAmount;
 
-     LocalDate createdAt;
+     Float remainingAmount;
 
-     LocalDate updatedAt;
+     LocalDate createdAt;
+    String currency;
+
+    LocalDate updatedAt;
     @Enumerated(EnumType.STRING)
+    @NotNull
     Status status;
     @Enumerated(EnumType.STRING)
+    @NotNull
     Transaction transaction;
+    @Enumerated(EnumType.STRING)
+    @NotNull
+    Approval approval;
+//    @Enumerated(EnumType.STRING)
+//    @Column(name = "budget_status")
+//    BudgetStatus budgetStatus;
+
+    @Builder.Default
+    UUID projectId = UUID.randomUUID();
+
 
 
 }
