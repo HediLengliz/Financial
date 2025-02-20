@@ -34,7 +34,7 @@ services:
     environment:
       POSTGRES_USER: financial_admin
       POSTGRES_PASSWORD: financial_password
-      POSTGRES_DB: financialdb
+      POSTGRES_DB: financial_db
     volumes:
       - financial_data:/var/lib/postgresql/data
     ports:
