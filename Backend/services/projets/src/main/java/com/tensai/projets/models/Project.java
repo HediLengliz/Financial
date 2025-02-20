@@ -1,6 +1,8 @@
 package com.tensai.projets.models;
 
 import jakarta.persistence.*;
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -11,49 +13,53 @@ public class Project {
 
     private String name;
     private String description;
-
+    private String status;       // e.g., "pending", "active", "completed"
+    private String priority;     // e.g., "low", "medium", "high"
+    private LocalDate startDate;
+    private LocalDate endDate;
+    private String imagePath;    // Store file path or base64 string
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Workflow> workflows; // Link workflows to the project
-
-    // No-argument constructor (required by Hibernate)
+    private List<Workflow> workflows = new ArrayList<>();
+    // Constructors
     public Project() {}
 
-    // Constructor with parameters
-    public Project(String name, String description) {
+    public Project(String name, String description, String status, String priority,
+                   LocalDate startDate, LocalDate endDate) {
         this.name = name;
         this.description = description;
+        this.status = status;
+        this.priority = priority;
+        this.startDate = startDate;
+        this.endDate = endDate;
     }
 
-    // Getters and setters
-    public Long getId() {
-        return id;
-    }
+    // Getters and Setters
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
 
-    public String getName() {
-        return name;
-    }
+    public String getDescription() { return description; }
+    public void setDescription(String description) { this.description = description; }
 
-    public void setName(String name) {
-        this.name = name;
-    }
+    public String getStatus() { return status; }
+    public void setStatus(String status) { this.status = status; }
 
-    public String getDescription() {
-        return description;
-    }
+    public String getPriority() { return priority; }
+    public void setPriority(String priority) { this.priority = priority; }
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
+    public LocalDate getStartDate() { return startDate; }
+    public void setStartDate(LocalDate startDate) { this.startDate = startDate; }
 
-    public List<Workflow> getWorkflows() {
-        return workflows;
-    }
+    public LocalDate getEndDate() { return endDate; }
+    public void setEndDate(LocalDate endDate) { this.endDate = endDate; }
 
-    public void setWorkflows(List<Workflow> workflows) {
-        this.workflows = workflows;
-    }
+    public String getImagePath() { return imagePath; }
+    public void setImagePath(String imagePath) { this.imagePath = imagePath; }
+
+
+
+    public List<Workflow> getWorkflows() { return workflows; }
+    public void setWorkflows(List<Workflow> workflows) { this.workflows = workflows; }
 }
