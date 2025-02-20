@@ -6,211 +6,115 @@
       <a class="navbar-brand">
         <img
           src="assets/images/brand/logo/try.png"
-          alt="dash ui - bootstrap 5 admin dashboard template" style="width: 50; height: 50px;"
+          alt="dash ui - bootstrap 5 admin dashboard template"
+          style="width: 50px; height: 50px;"
         />
       </a>
       <!-- Navbar nav -->
       <ul class="navbar-nav flex-column" id="sideNavbar">
         <!-- Nav item -->
         <li class="nav-item">
-          <a class="nav-link has-arrow" [routerLink]="'/dashboard'" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" ariaCurrentWhenActive="page">
+          <a class="nav-link has-arrow" [routerLink]="'/dashboard'" routerLinkActive="active"
+             [routerLinkActiveOptions]="{exact: true}" ariaCurrentWhenActive="page">
             <i class="bi bi-house-door nav-icon me-2"></i>
             Dashboard
           </a>
         </li>
 
-        <!-- Nav item -->
+        <!-- Apps Section -->
         <li class="nav-item">
           <div class="navbar-heading">Apps</div>
         </li>
         <li class="nav-item">
-          <a
-            class="nav-link collapsed"
-            href="#!"
-            data-bs-toggle="collapse"
-            data-bs-target="#navProject"
-            aria-expanded="false"
-            aria-controls="navProject"
-          >
+          <a class="nav-link" routerLink="/dashboard/projects" routerLinkActive="active"
+             ariaCurrentWhenActive="page">
             <i class="nav-icon me-2 icon-xxs bi bi-cast"></i>
-            Project
+            Projects
           </a>
-          <div id="navProject" class="collapse" data-bs-parent="#sideNavbar">
-            <ul class="nav flex-column">
-              <li class="nav-item">
-                <a class="nav-link" routerLink="/dashboard/projects" routerLinkActive="active" ariaCurrentWhenActive="page"> Project </a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" routerLink="/dashboard/feature" routerLinkActive="active" ariaCurrentWhenActive="page">
-                  Feature
-                </a>
-              </li>
-              <!-- <li class="nav-item">
-                <a class="nav-link" routerLink="/dashboard/task" routerLinkActive="active" ariaCurrentWhenActive="page">
-                  Task
-                </a>
-              </li> -->
-            </ul>
-          </div>
+        </li>
+
+        <!-- Category Section -->
+        <li class="nav-item">
+          <div class="navbar-heading">Management</div>
         </li>
         <li class="nav-item">
-          <a
-            class="nav-link has-arrow collapsed"
-            href="#!"
-            data-bs-toggle="collapse"
-            data-bs-target="#navClient"
-            aria-expanded="false"
-            aria-controls="navClient"
-          >
+          <a class="nav-link collapsed" href="#!" data-bs-toggle="collapse"
+             data-bs-target="#navClient" aria-expanded="false" aria-controls="navClient">
             <i class="nav-icon me-2 icon-xxs bi bi-box"></i>
             Category
           </a>
-          <div
-            id="navClient"
-            class="collapse"
-            data-bs-parent="#sideNavbar"
-          >
+          <div id="navClient" class="collapse" data-bs-parent="#sideNavbar">
             <ul class="nav flex-column">
               <li class="nav-item">
-                <a class="nav-link" routerLink="/dashboard/category" routerLinkActive="active" ariaCurrentWhenActive="page">
-                  Category
-                </a>
+                <a class="nav-link" routerLink="/dashboard/category" routerLinkActive="active"
+                   ariaCurrentWhenActive="page">Category</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" routerLink="/dashboard/client" routerLinkActive="active" ariaCurrentWhenActive="page">
-                  Client
-                </a>
+                <a class="nav-link" routerLink="/dashboard/client" routerLinkActive="active"
+                   ariaCurrentWhenActive="page">Client</a>
               </li>
             </ul>
           </div>
         </li>
+
+        <!-- Team Management -->
         <li class="nav-item">
-          <a
-            class="nav-link has-arrow collapsed"
-            href="#!"
-            data-bs-toggle="collapse"
-            data-bs-target="#navCategory"
-            aria-expanded="false"
-            aria-controls="navCategory"
-          >
+          <a class="nav-link collapsed" href="#!" data-bs-toggle="collapse"
+             data-bs-target="#navCategory" aria-expanded="false" aria-controls="navCategory">
             <i class="bi bi-person-check nav-icon me-2"></i>
-            Team Member
+            Team
           </a>
-          <div
-            id="navCategory"
-            class="collapse"
-            data-bs-parent="#sideNavbar"
-          >
+          <div id="navCategory" class="collapse" data-bs-parent="#sideNavbar">
             <ul class="nav flex-column">
               <li class="nav-item">
-                <a class="nav-link" routerLink="/dashboard/admin" routerLinkActive="active" ariaCurrentWhenActive="page">
-                  Admin Group
-                </a>
+                <a class="nav-link" routerLink="/dashboard/admin" routerLinkActive="active"
+                   ariaCurrentWhenActive="page">Admin Group</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" routerLink="/dashboard/designation" routerLinkActive="active" ariaCurrentWhenActive="page">
-                  Designation
-                </a>
+                <a class="nav-link" routerLink="/dashboard/designation" routerLinkActive="active"
+                   ariaCurrentWhenActive="page">Designation</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" routerLink="/dashboard/member" routerLinkActive="active" ariaCurrentWhenActive="page">
-                  Team Member
-                </a>
+                <a class="nav-link" routerLink="/dashboard/member" routerLinkActive="active"
+                   ariaCurrentWhenActive="page">Team Members</a>
               </li>
             </ul>
           </div>
         </li>
+
+        <!-- Authentication -->
         <li class="nav-item">
-          <a
-            class="nav-link has-arrow collapsed"
-            href="#!"
-            data-bs-toggle="collapse"
-            data-bs-target="#navAuthentication"
-            aria-expanded="false"
-            aria-controls="navAuthentication"
-          >
+          <a class="nav-link collapsed" href="#!" data-bs-toggle="collapse"
+             data-bs-target="#navAuthentication" aria-expanded="false" aria-controls="navAuthentication">
             <i class="nav-icon me-2 icon-xxs bi bi-gear"></i>
             Authentication
           </a>
-          <div
-            id="navAuthentication"
-            class="collapse"
-            data-bs-parent="#sideNavbar"
-          >
+          <div id="navAuthentication" class="collapse" data-bs-parent="#sideNavbar">
             <ul class="nav flex-column">
               <li class="nav-item">
-                <a class="nav-link" routerLink="/dashboard/roles" routerLinkActive="active" ariaCurrentWhenActive="page">
-                  Role
-                </a>
+                <a class="nav-link" routerLink="/dashboard/roles" routerLinkActive="active"
+                   ariaCurrentWhenActive="page">Roles</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" routerLink="/dashboard/employees" routerLinkActive="active" ariaCurrentWhenActive="page">
-                  User
-                </a>
+                <a class="nav-link" routerLink="/dashboard/employees" routerLinkActive="active"
+                   ariaCurrentWhenActive="page">Users</a>
               </li>
             </ul>
           </div>
         </li>
+
+        <!-- Reports -->
         <li class="nav-item">
-          <a
-            class="nav-link has-arrow collapsed"
-            href="#!"
-            data-bs-toggle="collapse"
-            data-bs-target="#navReport"
-            aria-expanded="false"
-            aria-controls="navReport"
-          >
+          <a class="nav-link collapsed" href="#!" data-bs-toggle="collapse"
+             data-bs-target="#navReport" aria-expanded="false" aria-controls="navReport">
             <i class="nav-icon me-2 icon-xxs bi bi-flag"></i>
-            Report
+            Reports
           </a>
-          <div
-            id="navReport"
-            class="collapse"
-            data-bs-parent="#sideNavbar"
-          >
+          <div id="navReport" class="collapse" data-bs-parent="#sideNavbar">
             <ul class="nav flex-column">
               <li class="nav-item">
-                <a class="nav-link" routerLink="/dashboard/report-project" routerLinkActive="active" ariaCurrentWhenActive="page">
-                  Project
-                </a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" routerLink="/dashboard/report-feature" routerLinkActive="active" ariaCurrentWhenActive="page">
-                  Feature
-                </a>
-              </li>
-            </ul>
-          </div>
-        </li>
-        <li class="nav-item">
-          <a
-            class="nav-link"
-            href="#!"
-            data-bs-toggle="collapse"
-            data-bs-target="#navProjectFeature"
-            aria-expanded="false"
-            aria-controls="navProjectFeature"
-          >
-          <i class="nav-icon me-2 icon-xxs bi bi-list-task"></i>Task List
-          </a>
-          <div
-            id="navProjectFeature"
-            class="collapse"
-            data-bs-parent="#sideNavbar"
-          >
-            <ul class="nav flex-column">
-              <li class="nav-item" *ngFor="let project of projects">
-                <a class="nav-link collapsed" data-bs-toggle="collapse" [attr.data-bs-target]="'#navprojectSingle' + project.id"
-                  aria-expanded="false" [attr.aria-controls]="'#navprojectSingle' + project.id">
-                  {{ project.name.length > 18 ? project.name.substring(0, 18) + '...' : project.name }}
-                  <i class="fas fa-caret-down"></i> </a>
-                <div id="{{ 'navprojectSingle' + project.id }}" class="collapse" data-bs-parent="#navProjectFeature" style="padding-left: 16px;">
-                  <ul class="nav flex-column">
-                    <li class="nav-item" *ngFor="let feature of project.features">
-                      <a class="nav-link" [routerLink]="['/dashboard/feature/todo', feature.id]" (click)="setFeatureName(feature.name)">{{ feature.name }} ({{ feature.tasks_count }})</a>
-                    </li>
-                  </ul>
-                </div>
+                <a class="nav-link" routerLink="/dashboard/report-project" routerLinkActive="active"
+                   ariaCurrentWhenActive="page">Project Reports</a>
               </li>
             </ul>
           </div>

@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { error } from 'console';
 import { ToastrService } from 'ngx-toastr';
 import { ProjectService } from 'src/app/services/project.service';
 import { SidebarService } from 'src/app/services/sidebar.service';
+import { Project } from 'src/app/models/project.interface';
 
 @Component({
   selector: 'app-project',
@@ -10,115 +10,85 @@ import { SidebarService } from 'src/app/services/sidebar.service';
   styleUrls: ['./project.component.css']
 })
 export class ProjectComponent implements OnInit {
-
-  projects: any;
-  // loading: boolean = false;
+  projects: Project[] = [];
   projectToDeleteId!: number;
-  projectToDeleteName!: string;
   searchKeyword: string = '';
   selectedStatus: string = '';
-  confirmationProjectName: string = '';
   isLoading: boolean = false;
   errorMessage: string | undefined;
-  currentPage: number = 1;
-  totalPages!: number;
-  totalItems!: number;
-  perPage: number = 5;
 
-  constructor(private projectService: ProjectService, private toastr: ToastrService, private sidebarService: SidebarService) { }
+  constructor(
+    private projectService: ProjectService,
+    private toastr: ToastrService,
+    private sidebarService: SidebarService
+  ) { }
 
   ngOnInit(): void {
-    this.getProject();
+    this.loadProjects();
   }
 
-  getProject() {
+  loadProjects(): void {
     this.isLoading = true;
-    this.projectService.Project(this.searchKeyword, this.selectedStatus, this.currentPage, 5).subscribe(
-      (res: any) => {
-        this.projects = res.projects.data;
-        this.totalPages = res.projects.last_page;
-        this.totalItems = res.projects.total;
-        this.errorMessage = undefined;
-        this.isLoading = false;
-      },
-      error => {
-        if (error.status === 404) {
-          this.errorMessage = error.error.message;
-          this.projects = []; 
-        } else {
-          this.errorMessage = 'An error occurred while fetching tasks.';
+    this.projectService.getProjects(this.searchKeyword, this.selectedStatus)
+      .subscribe({
+        next: (projects) => {
+          this.projects = projects;
+          this.errorMessage = undefined;
+          this.isLoading = false;
+        },
+        error: (error) => {
+          this.handleError(error);
+          this.isLoading = false;
         }
-        this.isLoading = false;
-      }
-    )
+      });
   }
 
-  search() {
-    this.getProject();
+  private handleError(error: any): void {
+    if (error.status === 404) {
+      this.errorMessage = 'No projects found';
+      this.projects = [];
+    } else {
+      this.errorMessage = 'An error occurred while fetching projects';
+      this.toastr.error('Failed to load projects', 'Error', {
+        timeOut: 4000,
+        progressBar: true
+      });
+    }
   }
 
-  filterByStatus(status: string) {
+  search(): void {
+    this.loadProjects();
+  }
+
+  filterByStatus(status: string): void {
     this.selectedStatus = status;
-    this.getProject();
+    this.loadProjects();
   }
 
-  setProjectToDelete(projectId: number, projectName: string) {
+  // Component method
+  setProjectToDelete(projectId: number | undefined): void {
+    if (projectId === undefined) return;
     this.projectToDeleteId = projectId;
-    this.projectToDeleteName = projectName;
   }
 
-  confirmDeleteProject(){
-    this.projectService.deleteProject(this.projectToDeleteId, this.confirmationProjectName).subscribe(
-      (res) => {
-        if (res.status === 200) {
-          this.toastr.success(res.message, 'Success', {
+  confirmDeleteProject(): void {
+    this.projectService.deleteProject(this.projectToDeleteId)
+      .subscribe({
+        next: () => {
+          this.toastr.success('Project deleted successfully!', 'Success', {
             timeOut: 2000,
             progressBar: true
           });
-          this.getProject();
+          this.loadProjects();
           this.sidebarService.triggerReload();
-          document.getElementById('exampleModal-2')?.click();
-        } else {
-          this.toastr.error(res.message, 'Error', {
+        },
+        error: (error) => {
+          this.toastr.error('Failed to delete project', 'Error', {
             timeOut: 4000,
             progressBar: true
           });
+          console.error('Delete error:', error);
         }
-      },
-      (error) => {
-        console.error('Error:', error);
-          this.toastr.error('An error occurred while deleting the feature.', 'Error', {
-            timeOut: 4000,
-            progressBar: true
-        });
-      }
-    );
-  }
-
-  nextPage() {
-    if (this.currentPage < this.totalPages) {
-      this.currentPage++;
-      this.getProject();
-    }
-  }
-
-  prevPage() {
-    if (this.currentPage > 1) {
-      this.currentPage--;
-      this.getProject();
-    }
-  }
-
-  totalPagesArray(): number[] {
-    return Array.from({ length: this.totalPages }, (_, index) => index + 1);
-  }  
-
-  calculateFirstItemIndex(): number {
-    return (this.currentPage - 1) * this.perPage + 1;
-  }
-  
-  calculateLastItemIndex(): number {
-    const lastItem = this.currentPage * this.perPage;
-    return lastItem > this.totalItems ? this.totalItems : lastItem;
+      });
   }
 }
