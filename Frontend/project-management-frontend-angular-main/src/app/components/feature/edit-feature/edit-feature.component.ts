@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { Feature } from 'src/app/models/feature.interface';
+import { Project } from 'src/app/models/project.interface';
 import { FeatureService } from 'src/app/services/feature.service';
 import { ProjectService } from 'src/app/services/project.service';
 import { SidebarService } from 'src/app/services/sidebar.service';
@@ -12,65 +13,76 @@ import { SidebarService } from 'src/app/services/sidebar.service';
   styleUrls: ['./edit-feature.component.css']
 })
 export class EditFeatureComponent implements OnInit {
+  feature: Feature = {
+    name: '',
+    description: '',
+    status: 'incompleted',
+    project_id: 0
+  };
+  projects: Project[] = [];
+  id!: number;
 
-  id: any;
-  data: any;
-  feature = new Feature();
-  projects: any;
-  constructor(private service: FeatureService, private project:ProjectService, private route:ActivatedRoute, private router:Router, private sidebarService: SidebarService, private toastr: ToastrService) { }
+  constructor(
+    private featureService: FeatureService,
+    private projectService: ProjectService,
+    private route: ActivatedRoute,
+    private router: Router,
+    private sidebarService: SidebarService,
+    private toastr: ToastrService
+  ) { }
 
   ngOnInit(): void {
-    this.id = this.route.snapshot.params['id'];
-    this.getFeatureById();
-    this.getProjectList();
+    this.id = Number(this.route.snapshot.params['id']);
+    this.loadFeature();
+    this.loadProjects();
   }
 
-  getFeatureById(){
-    this.service.getFeatureById(this.id).subscribe(res=>{
-      console.log(res);
-      this.data = res;
-      this.feature = this.data.feature;
-    })
-  }
-
-  getProjectList(): void {
-    this.project.getProject().subscribe((res) => {
-      this.projects = res.projects;
+  private loadFeature(): void {
+    this.featureService.getFeatureById(this.id).subscribe({
+      next: (res) => this.feature = res,
+      error: (err) => this.handleError('Failed to load feature', err)
     });
   }
 
-  updateFeature(){
-    this.service.updateFeature(this.id, this.feature).subscribe({
-      next: (res) => {
-        this.toastr.success('Feature updated successfully!', 'Success', {
-          timeOut: 2000,
-          progressBar: true
-        });
-        console.log(res);
+  private loadProjects(): void {
+    this.projectService.getProjects().subscribe({
+      next: (projects) => this.projects = projects,
+      error: (err) => this.handleError('Failed to load projects', err)
+    });
+  }
+
+  updateFeature(): void {
+    this.featureService.updateFeature(this.id, this.feature).subscribe({
+      next: () => {
+        this.toastr.success('Feature updated successfully!', 'Success');
         this.router.navigate(['/dashboard/feature']);
         this.sidebarService.triggerReload();
       },
-      error: (err) => {
-        if (err.status === 422 && err.error.message) {
-          // Extract and display validation error messages
-          for (const key in err.error.message) {
-            if (err.error.message.hasOwnProperty(key)) {
-              err.error.message[key].forEach((message: string) => {
-                this.toastr.error(message, 'Validation Error', {
-                  timeOut: 4000,
-                  progressBar: true
-                });
-              });
-            }
-          }
-        } else {
-          this.toastr.error('Error updating feature: ' + err.message, 'Error', {
-            timeOut: 4000,
-            progressBar: true
-          });
-        }
-        console.error('Error updating feature:', err);
+      error: (err) => this.handleFeatureError(err)
+    });
+  }
+
+  private handleFeatureError(err: any): void {
+    if (err.status === 422 && err.error?.message) {
+      this.handleValidationErrors(err.error.message);
+    } else {
+      this.toastr.error('Error updating feature: ' + err.message, 'Error');
+    }
+    console.error('Error updating feature:', err);
+  }
+
+  private handleValidationErrors(errors: any): void {
+    for (const key in errors) {
+      if (errors.hasOwnProperty(key)) {
+        errors[key].forEach((message: string) => {
+          this.toastr.error(message, 'Validation Error');
+        });
       }
-    })
+    }
+  }
+
+  private handleError(context: string, error: any): void {
+    console.error(`${context}:`, error);
+    this.toastr.error(`${context}. Please try again.`, 'Error');
   }
 }

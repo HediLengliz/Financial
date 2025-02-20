@@ -1,0 +1,46 @@
+# API Gateway application.yml
+server:
+  port: 8080  # API Gateway port
+  servlet:
+    context-path: /api  # Only if you need a global context path for the gateway
+
+spring:
+  application:
+    name: api-gateway  # Name for Eureka registration
+  cloud:
+    gateway:
+      routes:
+        - id: projects-service
+          uri: lb://projects-service  # Match the corrected service name
+          predicates:
+            - Path=/api/projects/**
+ # Remove "/api" from the path
+      discovery:
+        locator:
+          enabled: true               # Auto-discover services from Eureka
+          lower-case-service-id: true # Use lowercase service names
+      httpclient:
+        connect-timeout: 5000       # 1 second
+        response-timeout: 10s         # 5 seconds
+#    globalcors:
+#        cors:
+#          configurations:
+#          '[/**]':
+#        allowed-origins: "http://localhost:4200"
+#        allowed-methods: "*"
+#        allowed-headers: "*"
+
+# Eureka Client Configuration
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/  # Correct URL format
+    registry-fetch-interval-seconds: 5  # How often to fetch registry updates
+    register-with-eureka: true  # API Gateway should register with Eureka
+    fetch-registry: true        # API Gateway should fetch the registry
+
+# Logging Configuration
+logging:
+  level:
+    org.springframework.cloud.gateway: DEBUG
+    reactor.netty: DEBUG

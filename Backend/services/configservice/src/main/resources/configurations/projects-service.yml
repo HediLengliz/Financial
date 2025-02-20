@@ -2,9 +2,13 @@ server:
   port: 8070
   servlet:
     context-path: /api
+
+# Eureka Client Configuration (Microservice Registration)
 spring:
+  application:
+    name: projects-service  # Unique name for Eureka (e.g., "workflow-service")
   datasource:
-    url: jdbc:postgresql://localhost:5434/projectdb  # Use mapped port
+    url: jdbc:postgresql://localhost:5434/projectdb
     username: project_admin
     password: project_password
     driver-class-name: org.postgresql.Driver
@@ -15,12 +19,25 @@ spring:
     show-sql: true
     properties:
       hibernate.format_sql: true
-  # Uncomment when Kafka is needed
+  # Kafka configuration (uncomment if needed)
   # kafka:
   #   producer:
   #     bootstrap-servers: kafka:9092
   #     key-serializer: org.apache.kafka.common.serialization.StringSerializer
   #     value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+
+# Eureka Client Settings
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka  # Eureka server URL
+    registry-fetch-interval-seconds: 5  # Refresh service list every 5 seconds
+    healthcheck:
+      enabled: true  # Enable health checks
+  instance:
+    prefer-ip-address: true  # Register with IP instead of hostname
+    lease-renewal-interval-in-seconds: 10  # How often to send heartbeats
+    lease-expiration-duration-in-seconds: 30  # Time before marking as down
 
 logging:
   level:
@@ -28,6 +45,7 @@ logging:
     org.hibernate.SQL: DEBUG
     org.hibernate.type.descriptor.sql.BasicBinder: TRACE
     com.example.projectmanagement: DEBUG
+    com.netflix.eureka: DEBUG  # Enable Eureka client logs for debugging
 
 springdoc:
   swagger-ui:
@@ -38,6 +56,6 @@ springdoc:
     path: /v3/api-docs
   paths-to-match: /api/**  # Match your API endpoints
   packages-to-scan: com.tensai.projets
-  paths-to-exclude: /error# Replace with your package
+  paths-to-exclude: /error
   default-produces-media-type: application/json
   default-consumes-media-type: application/json

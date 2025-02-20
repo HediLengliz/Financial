@@ -1,12 +1,8 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { Project } from 'src/app/models/project.interface';
-import { AdminService } from 'src/app/services/admin.service';
-import { ClientService } from 'src/app/services/client.service';
-import { MemberService } from 'src/app/services/member.service';
 import { ProjectService } from 'src/app/services/project.service';
-import { SidebarService } from 'src/app/services/sidebar.service';
 
 @Component({
   selector: 'app-edit-project',
@@ -14,184 +10,119 @@ import { SidebarService } from 'src/app/services/sidebar.service';
   styleUrls: ['./edit-project.component.css']
 })
 export class EditProjectComponent implements OnInit {
-
-  id: any;
-  project = new Project();
+  project: Project = {
+    name: '',
+    description: '',
+    status: 'pending',
+    priority: 'medium',
+    startDate: '',
+    endDate: ''
+  };
   selectedFile: File | null = null;
-  admins: any;
-  clients: any;
-  members: any;
-  data: any;
-  projectToDeleteId!: number;
-  projectToDeleteName!: string;
-  searchKeyword: string = '';
-  projectUsers: any[] = []; // Array to hold project users
-  tempProjectUsers: any[] = []; // Array to hold temporary selected users
+  id: number | null = null;
 
-  constructor(private projectService: ProjectService, private route:ActivatedRoute, private router:Router, private admin: AdminService,
-    private client: ClientService,
-    private member: MemberService,
-    private sidebarService: SidebarService,
-    private cdr: ChangeDetectorRef,
-    private toastr: ToastrService) { }
+  constructor(
+    private projectService: ProjectService,
+    private route: ActivatedRoute,
+    private router: Router,
+    private toastr: ToastrService
+  ) { }
 
   ngOnInit(): void {
-    this.id = this.route.snapshot.params['id'];
-    this.getProjectById();
-    this.getAdmin();
-    this.getClient();
-    this.getMember();
-  }
+    const idParam = this.route.snapshot.paramMap.get('id');
+    this.id = idParam ? Number(idParam) : null;
 
-  getAdmin(){
-    return this.admin.getAdmin().subscribe((res) =>{
-      console.log(res);
-      this.admins = res.admins;
-    })
-  }
-
-  getClient(){
-    return this.client.getClient().subscribe((res) =>{
-      console.log(res);
-      this.clients = res.clients;
-    })
-  }
-
-  getMember(){
-    return this.member.getMembers(this.searchKeyword).subscribe((res: any) => {
-      console.log(res);
-      this.members = res.members;
-    })
-  }
-
-  search() {
-    this.getMember();
-  }
-
-  getProjectById() {
-    this.projectService.getProjectById(this.id).subscribe(res => {
-      console.log(res);
-      this.project = res.project;
-      // Convert the dates to the required format
-      this.project.start_date = this.convertToInputDate(this.project.start_date);
-      this.project.end_date = this.convertToInputDate(this.project.end_date);
-      // Map admin and client names to their IDs
-      this.project.admin_id = res.project.admin_id;
-      this.project.client_id = res.project.client_id;
-      if (this.project.image) {
-        const selectedImage = document.getElementById('selectedImage') as HTMLImageElement;
-        selectedImage.src = this.project.imageUrl;
-      }
-      // Automatically update user_ids based on project users
-      this.project.member_id = this.project.members.map(user => user.id);
-
-      // Populate projectUsers array with project users
-      this.projectUsers = this.project.members;
-      this.tempProjectUsers = [...this.projectUsers];
-    });
-  }
-
-  isUserInProject(user: any): boolean {
-    return this.project.member_id.includes(user.id);
-  }
-
-  addUserToTempTeam(member: any) {
-    if (!this.tempProjectUsers.some(user => user.id === member.id)) {
-      this.tempProjectUsers.push(member);
-      this.cdr.detectChanges();
+    if (this.id) {
+      this.loadProject();
     }
   }
 
-  isUserInTempTeam(member: any): boolean {
-    return this.tempProjectUsers.some(user => user.id === member.id);
-  }
-  
-  removeUserFromTempTeam(member: any) {
-    this.tempProjectUsers = this.tempProjectUsers.filter(user => user.id !== member.id);
-    this.cdr.detectChanges();
-  }
-
-  inviteMembers() {
-    this.projectUsers = [...this.tempProjectUsers];
-    this.project.member_id = this.tempProjectUsers.map(user => user.id);
-    this.cdr.detectChanges();
-  }
-  
-  convertToInputDate(dateString: string): string {
-    const date = new Date(dateString);
-    // Format the date as "yyyy-MM-dd"
-    return date.toISOString().split('T')[0];
+  private loadProject(): void {
+    this.projectService.getProjectById(this.id!).subscribe({
+      next: (project) => {
+        this.project = {
+          ...project,
+          startDate: this.convertToInputDate(project.startDate),
+          endDate: this.convertToInputDate(project.endDate)
+        };
+        this.updateImagePreview(this.project.imagePath || '');
+      },
+      error: (err) => this.handleError('Failed to load project', err)
+    });
   }
 
-  onFileSelected(event: any) {
-    this.selectedFile = event.target.files[0] as File;
-    // Display the selected image
+  updateProject(): void {
+    if (!this.id) return;
+
+    const formData = this.createFormData();
+
+    this.projectService.updateProject(this.id, formData).subscribe({
+      next: () => {
+        this.toastr.success('Project updated successfully!');
+        this.router.navigate(['/dashboard/projects']);
+      },
+      error: (err) => {
+        if (err.status === 422 && err.error.message) {
+          this.handleValidationErrors(err.error.message);
+        } else {
+          this.handleError('Error updating project', err);
+        }
+      }
+    });
+  }
+
+  private createFormData(): FormData {
+    const formData = new FormData();
+    formData.append('name', this.project.name);
+    formData.append('description', this.project.description);
+    formData.append('status', this.project.status);
+    formData.append('priority', this.project.priority);
+    formData.append('startDate', this.project.startDate);
+    formData.append('endDate', this.project.endDate);
+
     if (this.selectedFile) {
+      formData.append('image', this.selectedFile);
+    }
+    return formData;
+  }
+
+  private convertToInputDate(dateString: string): string {
+    return new Date(dateString).toISOString().split('T')[0];
+  }
+
+  onFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files?.length) {
+      this.selectedFile = input.files[0];
       const reader = new FileReader();
-      reader.onload = (e) => {
-        const selectedImage = document.getElementById('selectedImage') as HTMLImageElement;
-        selectedImage.src = e.target!.result as string;
-      };
+      reader.onload = (e) => this.updateImagePreview(reader.result as string);
       reader.readAsDataURL(this.selectedFile);
     }
   }
 
-  updateProject(){
-    const formData = new FormData();
-    formData.append('name', this.project.name);
-    formData.append('status', this.project.status);
-    formData.append('priority', this.project.priority);
-    formData.append('start_date', this.project.start_date);
-    formData.append('end_date', this.project.end_date);
-    formData.append('admin_id', this.project.admin_id);
-    formData.append('client_id', this.project.client_id);
-    formData.append('description', this.project.description);
-    
-    // Append each member_id separately
-    this.project.member_id.forEach(id => {
-      formData.append('member_id[]', id);
-    });
+  private updateImagePreview(src: string): void {
+    const img = document.getElementById('selectedImage') as HTMLImageElement;
+    if (img) img.src = src;
+  }
 
-    if (this.selectedFile) {
-      formData.append('image', this.selectedFile, this.selectedFile.name);
-    }
-
-    this.projectService.updateProject(this.id, formData).subscribe({
-      next: (res) => {
-        this.toastr.success('Project updated successfully!', 'Success', {
-          timeOut: 2000,
-          progressBar: true
-        });
-        this.router.navigate(['/dashboard/projects']);
-        this.sidebarService.triggerReload();
-      },
-      error: (err) => {
-        if (err.status === 422 && err.error.message) {
-          // Extract and display validation error messages
-          for (const key in err.error.message) {
-            if (err.error.message.hasOwnProperty(key)) {
-              err.error.message[key].forEach((message: string) => {
-                this.toastr.error(message, 'Validation Error', {
-                  timeOut: 4000,
-                  progressBar: true
-                });
-              });
-            }
-          }
-        } else {
-          this.toastr.error('Error updating project: ' + err.message, 'Error', {
+  private handleValidationErrors(errors: any): void {
+    for (const key in errors) {
+      if (errors.hasOwnProperty(key)) {
+        errors[key].forEach((message: string) => {
+          this.toastr.error(message, 'Validation Error', {
             timeOut: 4000,
             progressBar: true
           });
-        }
-        console.error('Error updating project:', err);
+        });
       }
+    }
+  }
+
+  private handleError(context: string, error: any): void {
+    console.error(`${context}:`, error);
+    this.toastr.error(`${context}. Please try again.`, 'Error', {
+      timeOut: 4000,
+      progressBar: true
     });
   }
-
-  setProjectToDelete(projectId: number, projectName: string) {
-    this.projectToDeleteId = projectId;
-    this.projectToDeleteName = projectName;
-  }
-
 }

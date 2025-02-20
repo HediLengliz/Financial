@@ -1,9 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { ProjectResponse } from 'src/app/models/project.response';
-import { FeatureService } from 'src/app/services/feature.service';
 import { ProjectService } from 'src/app/services/project.service';
-import { SharedService } from 'src/app/services/shared.service';
 import { SidebarService } from 'src/app/services/sidebar.service';
+import { Project } from 'src/app/models/project.interface';
 
 @Component({
   selector: 'app-sidebar',
@@ -11,33 +9,24 @@ import { SidebarService } from 'src/app/services/sidebar.service';
   styleUrls: ['./sidebar.component.css']
 })
 export class SidebarComponent implements OnInit {
+  projects: Project[] = [];
 
-  projects: any;
-  constructor(private project: ProjectService, private feature: FeatureService, private sidebarService: SidebarService, private sharedService: SharedService) { }
+  constructor(
+    private projectService: ProjectService,
+    private sidebarService: SidebarService
+  ) { }
 
   ngOnInit(): void {
-    this.getProject();
-    this.sidebarService.reloadSidebar$.subscribe(() => {
-      this.getProject();
+    this.loadProjects();
+    this.sidebarService.reloadSidebar$.subscribe(() => this.loadProjects());
+  }
+
+  private loadProjects(): void {
+    this.projectService.getProjects().subscribe({
+      next: (projects) => {
+        this.projects = projects;
+      },
+      error: (err) => console.error('Error loading projects:', err)
     });
   }
-
-  getProject(){
-    this.project.getProject().subscribe((res: ProjectResponse) => {
-      console.log(res);
-      this.projects = res.projects;
-
-      // For each project, fetch features
-      for (let project of this.projects) {
-        this.feature.getFeatureByProject(project.id).subscribe((features: any) => {
-          project.features = features.features;
-        });
-      }
-    });
-  }
-
-  setFeatureName(featureName: string) {
-    this.sharedService.changeFeatureName(featureName);
-  }
-  
 }

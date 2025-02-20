@@ -57,7 +57,7 @@ import { DashboardsResolverService } from './services/dashboards-resolver.servic
 import { AlreadyLoggedInGuard } from './AlreadyLoggedInGuard.guard';
 
 const routes: Routes = [
-  {path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard], children: [
+  {path: 'dashboard', component: DashboardComponent, children: [
     {path: '', component: PageContentComponent,
       resolve: { dashboard: DashboardsResolverService}
     },
@@ -111,7 +111,7 @@ const routes: Routes = [
     {path: 'report-feature', component: FeatureReportComponent},
     {path: 'unauthorizes', component: UnauthorizedComponent}
   ]},
-  {path: 'login', component: LoginComponent, canActivate: [AlreadyLoggedInGuard]},
+  {path: 'login', component: LoginComponent},
   {path: '', redirectTo: '/login', pathMatch: 'full' },
   {path: '**', component: ErrorComponent}
 ];
