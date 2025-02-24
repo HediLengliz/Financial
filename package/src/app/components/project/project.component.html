@@ -1,0 +1,145 @@
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-12">
+      <div class="mb-5">
+        <h1 class="page-title mb-0">Project Management</h1>
+      </div>
+    </div>
+  </div>
+
+  <!-- Search and Filter Section -->
+  <div class="row justify-content-md-between mb-4">
+    <div class="col-xl-3 col-lg-4 col-md-6 col-12">
+      <div class="search-bar mb-2">
+        <input
+          type="search"
+          class="form-control"
+          placeholder="Search projects..."
+          [(ngModel)]="searchKeyword"
+          (input)="search()"
+        />
+      </div>
+    </div>
+    <div class="col-xl-2 col-lg-3 col-md-6 col-12">
+      <div class="status-filter">
+        <select
+          class="form-select"
+          [(ngModel)]="selectedStatus"
+          (change)="filterByStatus(selectedStatus)"
+        >
+          <option value="">All Statuses</option>
+          <option value="pending">Pending</option>
+          <option value="active">Active</option>
+          <option value="completed">Completed</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- Project Table -->
+  <div class="row">
+    <div class="col-12">
+      <div class="card shadow-sm">
+        <div class="table-responsive">
+          <table class="table projects-table table-hover mb-0">
+            <thead class="table-light">
+            <tr>
+              <th>Image</th>
+              <th>Project Name</th>
+              <th>Status</th>
+              <th>Priority</th>
+              <th>Deadline</th>
+              <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            <!-- Loading Indicator -->
+            <tr *ngIf="isLoading">
+              <td colspan="6" class="text-center py-4">
+                <div class="spinner-border text-primary" role="status">
+                  <span class="visually-hidden">Loading...</span>
+                </div>
+              </td>
+            </tr>
+
+            <!-- Project Rows -->
+            <tr *ngFor="let project of projects">
+              <td>
+                <img
+                  [src]="project.imageUrl || 'assets/images/placeholder-project.png'"
+                  alt="{{ project.name }}"
+                  class="project-image rounded"
+                  width="60"
+                  height="60"
+                />
+              </td>
+              <td>{{ project.name }}</td>
+              <td>
+                  <span class="badge" [ngClass]="project.status | status">
+                    {{ project.status | titlecase }}
+                  </span>
+              </td>
+              <td>
+                  <span class="badge" [ngClass]="project.priority | priority">
+                    {{ project.priority | titlecase }}
+                  </span>
+              </td>
+              <td>
+                {{ project.endDate | date:'mediumDate' }}
+              </td>
+              <td>
+                <div class="d-flex gap-2">
+                  <button
+                    class="btn btn-sm btn-outline-info"
+                    [routerLink]="['/projects', project.id]"
+                  >
+                    Details
+                  </button>
+                  <button
+                    class="btn btn-sm btn-outline-primary"
+                    [routerLink]="['/projects/edit', project.id]"
+                  >
+                    Edit
+                  </button>
+                  <button
+                    class="btn btn-sm btn-outline-danger"
+                    data-bs-toggle="modal"
+                    data-bs-target="#deleteModal"
+                    (click)="setProjectToDelete(project.id)"
+                  >
+                    Delete
+                  </button>
+                </div>
+              </td>
+            </tr>
+
+            <!-- No Projects Found -->
+            <tr *ngIf="projects.length === 0 && !isLoading">
+              <td colspan="6" class="text-center py-4 no-projects-message">
+                <i class="bi bi-inbox me-2"></i>
+                No projects found matching your criteria
+              </td>
+            </tr>
+
+            <!-- Add New Project -->
+            <tr class="add-new-project">
+              <td colspan="6">
+                <a
+                  routerLink="/projects/new"
+                  class="d-flex align-items-center text-decoration-none text-primary"
+                >
+                  <i class="bi bi-plus-circle-fill me-2"></i>
+                  Create New Project
+                </a>
+              </td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
+</div>

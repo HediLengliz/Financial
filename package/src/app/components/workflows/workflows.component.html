@@ -1,0 +1,11 @@
+<!-- workflow-list.component.html -->
+<div *ngIf="workflows.length === 0">
+  <p>No workflows found.</p>
+</div>
+
+<div *ngFor="let workflow of workflows">
+  <h3>{{ workflow.name }}</h3>
+  <p>{{ workflow.description }}</p>
+  <button (click)="deleteWorkflow(workflow.id)">Delete</button>
+</div>
+
