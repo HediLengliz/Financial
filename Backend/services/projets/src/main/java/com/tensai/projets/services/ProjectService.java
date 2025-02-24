@@ -5,62 +5,52 @@ import com.tensai.projets.dtos.ProjectResponseDTO;
 import com.tensai.projets.dtos.UpdateProjectRequest;
 import com.tensai.projets.exceptions.GlobalExceptionHandler;
 import com.tensai.projets.models.Project;
-import com.tensai.projets.models.Workflow;
 import com.tensai.projets.repositories.ProjectRepository;
 import com.tensai.projets.repositories.WorkflowRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import java.util.List;
 import java.util.stream.Collectors;
-import com.tensai.projets.services.FileStorageService;
 
 @Service
 @Transactional
 public class ProjectService {
     private final ProjectRepository projectRepository;
     private final WorkflowRepository workflowRepository;
-    private final FileStorageService fileStorageService; // Add this
+    private final FileStorageService fileStorageService;
 
     public ProjectService(
             ProjectRepository projectRepository,
             WorkflowRepository workflowRepository,
-            FileStorageService fileStorageService) { // Add this parameter
+            FileStorageService fileStorageService) {
         this.projectRepository = projectRepository;
         this.workflowRepository = workflowRepository;
-        this.fileStorageService = fileStorageService; // Initialize it
+        this.fileStorageService = fileStorageService;
     }
 
     public ProjectResponseDTO createProject(CreateProjectRequest request) {
-        if (request.endDate().isBefore(request.startDate())) {
-            throw new IllegalArgumentException("End date must be after start date");
-        }
+        // Handle default values if status or priority are null
+        String status = request.status() != null ? request.status() : "PENDING";  // Default to "PENDING" if null
+        String priority = request.priority() != null ? request.priority() : "LOW";  // Default to "LOW" if null
 
-        // Fetch workflows by their IDs
-        List<Workflow> workflows = workflowRepository.findAllById(request.workflowIds());
+        String imagePath = request.imageFile() != null ? fileStorageService.storeFile(request.imageFile()) : null;
 
-        // Store the file and get its path
-        String fileName = fileStorageService.storeFile(request.imageFile());
-
-        // Create the project
         Project project = new Project();
         project.setName(request.name());
         project.setDescription(request.description());
-        project.setStatus(request.status());
-        project.setPriority(request.priority());
+        project.setStatus(status);
+        project.setPriority(priority);
         project.setStartDate(request.startDate());
         project.setEndDate(request.endDate());
-        project.setImagePath(fileName);
-        project.setWorkflows(workflows); // Associate workflows
+        project.setImagePath(imagePath);
 
-        // Save the project
-        Project savedProject = projectRepository.save(project);
-
-        return ProjectResponseDTO.fromEntity(savedProject);
+        return ProjectResponseDTO.fromEntity(projectRepository.save(project));
     }
+
     @Transactional(readOnly = true)
     public ProjectResponseDTO getProjectById(Long id) {
-        Project project = getProjectEntity(id);
-        return ProjectResponseDTO.fromEntity(project);
+        return ProjectResponseDTO.fromEntity(getProjectEntity(id));
     }
 
     @Transactional(readOnly = true)
@@ -71,32 +61,37 @@ public class ProjectService {
     }
 
     public ProjectResponseDTO updateProject(Long id, UpdateProjectRequest request) {
-        Project project = getProjectEntity(id);
+        Project existingProject = getProjectEntity(id);
 
-        if (request.name() != null) project.setName(request.name());
-        if (request.description() != null) project.setDescription(request.description());
-        if (request.status() != null) project.setStatus(request.status());
-        if (request.priority() != null) project.setPriority(request.priority());
-        if (request.startDate() != null) project.setStartDate(request.startDate());
-        if (request.endDate() != null) project.setEndDate(request.endDate());
-
-        // Handle file update
-        if (request.imageFile() != null && !request.imageFile().isEmpty()) {
-            String fileName = fileStorageService.storeFile(request.imageFile());
-            project.setImagePath(fileName);
+        String imagePath = existingProject.getImagePath();
+        if (request.imageUrl() != null && !request.imageUrl().isEmpty()) {
+            imagePath = fileStorageService.storeFile(request.imageUrl());
         }
 
-        return ProjectResponseDTO.fromEntity(projectRepository.save(project));
+        String status = request.status() != null ? request.status() : "PENDING";  // Default to "PENDING" if null
+        String priority = request.priority() != null ? request.priority() : "LOW";  // Default to "LOW" if null
+
+        existingProject.setName(request.name() != null ? request.name() : existingProject.getName());
+        existingProject.setDescription(request.description() != null ? request.description() : existingProject.getDescription());
+        existingProject.setStatus(status);
+        existingProject.setPriority(priority);
+        existingProject.setStartDate(request.startDate() != null ? request.startDate() : existingProject.getStartDate());
+        existingProject.setEndDate(request.endDate() != null ? request.endDate() : existingProject.getEndDate());
+        existingProject.setImagePath(imagePath);
+        existingProject.setWorkflows(existingProject.getWorkflows());
+
+        return ProjectResponseDTO.fromEntity(projectRepository.save(existingProject));
     }
+
     @Transactional(readOnly = true)
     public Project getProjectEntity(Long id) {
         return projectRepository.findById(id)
                 .orElseThrow(() -> new GlobalExceptionHandler.ProjectNotFoundException(id));
     }
+
     public void deleteProject(Long id) {
         Project project = getProjectEntity(id);
 
-        // Delete associated file
         if (project.getImagePath() != null) {
             fileStorageService.deleteFile(project.getImagePath());
         }

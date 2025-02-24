@@ -26,11 +26,11 @@ public class ApiGatewayApplication {
 	@Bean
 	public RouteLocator customRouteLocator(RouteLocatorBuilder builder) {
 		return builder.routes()
-				// ✅ Route to Projects Service
 				.route("projects-service", r -> r
 						.path("/api/projects/**")
-						.filters(f -> f.stripPrefix(1)) // Remove "/api" from the path
-						.uri("lb://projects-service")) // Load-balanced URI
+						.filters(f -> f.stripPrefix(1)) // ✅ Strip 1 segment ("/api")
+						.uri("lb://projects-service")   // ✅ Use lowercase service name
+				)
 				.build();
 	}
 	@Bean

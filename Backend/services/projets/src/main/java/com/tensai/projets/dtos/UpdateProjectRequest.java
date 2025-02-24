@@ -1,7 +1,5 @@
 package com.tensai.projets.dtos;
 
-import com.tensai.projets.models.Workflow;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -15,11 +13,13 @@ public record UpdateProjectRequest(
         @Size(max = 500, message = "Description must be less than 500 characters")
         String description,
 
-        String status,
-        String priority,
+        String status,  // Change from Status to String
+
+        String priority,  // Change from Priority to String
+
         LocalDate startDate,
         LocalDate endDate,
         List<Long> workflowIds,
-        @NotNull MultipartFile imageFile,
+        MultipartFile imageUrl,
         List<Long> workflows
 ) {}
