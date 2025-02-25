@@ -1,13 +1,17 @@
 package com.tensai.projets.dtos;
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import lombok.Builder;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.util.List;
 
+@Builder
 public record CreateProjectRequest(
         @NotBlank(message = "Name is required")
         @Size(max = 100, message = "Name must be less than 100 characters")
@@ -17,20 +21,21 @@ public record CreateProjectRequest(
         String description,
 
         @NotBlank(message = "Status is required")
-        String status,  // e.g., "pending", "active", "completed"
+        String status,  // Change from Status to String
 
         @NotBlank(message = "Priority is required")
-        String priority,  // e.g., "low", "medium", "high"
+        String priority,  // Change from Priority to String
 
         @NotNull(message = "Start date is required")
+        @DateTimeFormat(pattern = "MM/dd/yyyy")
         LocalDate startDate,
 
         @NotNull(message = "End date is required")
+        @DateTimeFormat(pattern = "MM/dd/yyyy")
         LocalDate endDate,
 
-        @NotNull MultipartFile imageFile,
+        @NotNull
+        @Valid
+        MultipartFile imageFile,
         List<Long> workflowIds
-
-
-        //List<Long> memberIds  // IDs of members associated with the project
 ) {}

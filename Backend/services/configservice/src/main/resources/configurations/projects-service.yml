@@ -1,7 +1,7 @@
 server:
   port: 8070
   servlet:
-    context-path: /api
+    context-path: /
 
 # Eureka Client Configuration (Microservice Registration)
 spring:

@@ -2,7 +2,7 @@
 server:
   port: 8080  # API Gateway port
   servlet:
-    context-path: /api  # Only if you need a global context path for the gateway
+    context-path: /api   # Only if you need a global context path for the gateway
 
 spring:
   application:
@@ -11,9 +11,10 @@ spring:
     gateway:
       routes:
         - id: projects-service
-          uri: lb://projects-service  # Match the corrected service name
+          uri: lb://PROJECTS-SERVICE  # Match the corrected service name
           predicates:
             - Path=/api/projects/**
+
  # Remove "/api" from the path
       discovery:
         locator:
