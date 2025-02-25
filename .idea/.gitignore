@@ -6,3 +6,7 @@
 # Datasource local storage ignored files
 /dataSources/
 /dataSources.local.xml
+# Ignore specific IntelliJ IDEA files
+.idea/compiler.xml
+.idea/encodings.xml
+.idea/misc.xml
