@@ -10,9 +10,10 @@ public record UpdateTaskRequest(
         String title,
         String description,
         LocalDate dueDate,
-        Task.TaskPriority priority,
+        String priority,
         Double estimatedHours,
         Long assigneeId,
         Integer orderInWorkflow, // Updated: Added orderInWorkflow field
-        Long workflowId          // Updated: Added workflowId field
+        Long workflowId ,
+        String status// Updated: Added workflowId field
 ) {}

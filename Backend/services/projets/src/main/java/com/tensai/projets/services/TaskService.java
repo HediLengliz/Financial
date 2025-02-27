@@ -7,8 +7,6 @@ import com.tensai.projets.exceptions.GlobalExceptionHandler;
 import com.tensai.projets.models.Task;
 import com.tensai.projets.models.Workflow;
 import com.tensai.projets.repositories.TaskRepository;
-import com.tensai.projets.repositories.WorkflowRepository;
-
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,33 +25,34 @@ public class TaskService {
         this.workflowService = workflowService;
     }
 
-    // CREATE TASK
+    // CREATE TASK (UPDATED WITH STATUS)
     public TaskResponse createTask(CreateTaskRequest request) {
         Workflow workflow = workflowService.getWorkflowEntity(request.workflowId());
+
         Task task = new Task();
         task.setTitle(request.title());
         task.setDescription(request.description());
         task.setDueDate(request.dueDate());
-        task.setPriority(request.priority());
+        task.setStatus(request.status());  // Added status field
+        task.setPriority(request.priority().toUpperCase());
         task.setEstimatedHours(request.estimatedHours());
         task.setAssigneeId(request.assigneeId());
         task.setOrderInWorkflow(request.orderInWorkflow());
         task.setWorkflow(workflow);
 
-        workflow.getTasks().add(task); // Add task to workflow's tasks list
-
+        workflow.getTasks().add(task);
         Task savedTask = taskRepository.save(task);
         return TaskResponse.fromEntity(savedTask);
     }
 
-    // READ SINGLE TASK
+    // READ SINGLE TASK (UNCHANGED)
     @Transactional(readOnly = true)
     public TaskResponse getTaskById(Long id) {
         Task task = getTaskEntity(id);
         return TaskResponse.fromEntity(task);
     }
 
-    // READ ALL TASKS FOR A WORKFLOW
+    // READ ALL TASKS FOR WORKFLOW (UNCHANGED)
     @Transactional(readOnly = true)
     public List<TaskResponse> getTasksByWorkflowId(Long workflowId) {
         Workflow workflow = workflowService.getWorkflowEntity(workflowId);
@@ -62,12 +61,15 @@ public class TaskService {
                 .collect(Collectors.toList());
     }
 
-    // UPDATE TASK
+    // UPDATE TASK (UPDATED WITH STATUS)
     public TaskResponse updateTask(Long id, UpdateTaskRequest request) {
         Task task = getTaskEntity(id);
+
+        // Null-safe updates
         if (request.title() != null) task.setTitle(request.title());
         if (request.description() != null) task.setDescription(request.description());
         if (request.dueDate() != null) task.setDueDate(request.dueDate());
+        if (request.status() != null) task.setStatus(request.status());  // Status update
         if (request.priority() != null) task.setPriority(request.priority());
         if (request.estimatedHours() != null) task.setEstimatedHours(request.estimatedHours());
         if (request.assigneeId() != null) task.setAssigneeId(request.assigneeId());
@@ -77,7 +79,7 @@ public class TaskService {
         return TaskResponse.fromEntity(taskRepository.save(task));
     }
 
-    // DELETE TASK
+    // DELETE TASK (UNCHANGED)
     public void deleteTask(Long id) {
         if (!taskRepository.existsById(id)) {
             throw new GlobalExceptionHandler.TaskNotFoundException(id);
@@ -85,7 +87,7 @@ public class TaskService {
         taskRepository.deleteById(id);
     }
 
-    // INTERNAL METHOD TO FETCH ENTITY
+    // INTERNAL METHOD (UNCHANGED)
     @Transactional(readOnly = true)
     public Task getTaskEntity(Long id) {
         return taskRepository.findById(id)

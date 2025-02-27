@@ -28,8 +28,19 @@ public class ApiGatewayApplication {
 		return builder.routes()
 				.route("projects-service", r -> r
 						.path("/api/projects/**")
-						.filters(f -> f.stripPrefix(1)) // ✅ Strip 1 segment ("/api")
-						.uri("lb://projects-service")   // ✅ Use lowercase service name
+						.filters(f -> f.stripPrefix(1)) // Strip 1 segment ("/api")
+						.uri("lb://projects-service")   // Route to projects-service
+				)
+				.route("projects-service", r -> r
+						.path("/api/workflows/**")
+						.filters(f -> f.stripPrefix(1)) // Strip 1 segment ("/api")
+						.uri("lb://projects-service")   // Route to the same projects-service
+				)
+				.route("projects-service", r -> r
+						.path("/api/tasks/**")
+						.filters(f -> f.stripPrefix(1))
+						// Strip 1 segment ("/api")
+						.uri("lb://projects-service")   // Route to projects-service
 				)
 				.build();
 	}

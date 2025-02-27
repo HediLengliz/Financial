@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/workflows")
+@RequestMapping("/workflows")
 public class WorkflowController {
 
     private final WorkflowService workflowService;
