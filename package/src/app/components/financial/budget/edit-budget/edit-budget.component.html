@@ -1,0 +1,107 @@
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-lg-12 col-md-12 col-12">
+      <div class="mb-5">
+        <h3 class="mb-0">Edit Budget</h3>
+      </div>
+    </div>
+  </div>
+  <div>
+    <form #form="ngForm" (ngSubmit)="updateBudget()">
+      <div class="row">
+        <div class="col-xl-9 col-md-12 col-12">
+          <div class="card mb-5">
+            <div class="card-body">
+              <div class="row">
+                <div class="mb-4 col-12">
+                  <label class="form-label">Project Name <span class="text-danger">*</span></label>
+                  <input type="text" class="form-control" name="projectName"
+                         placeholder="Enter project name" required [(ngModel)]="budget.projectName">
+                </div>
+
+                <div class="mb-4 col-md-6 col-12">
+                  <label class="form-label">Allocated Amount <span class="text-danger">*</span></label>
+                  <input type="text" class="form-control" name="allocatedAmount"
+                         placeholder="Enter allocated amount" required [(ngModel)]="budget.allocatedAmount"
+                         pattern="^\d+(\.\d{1,2})?$" #allocatedAmount="ngModel"
+                         [class.is-invalid]="allocatedAmount.invalid && allocatedAmount.touched">
+                  <div *ngIf="allocatedAmount.invalid && allocatedAmount.touched" class="text-danger">
+                    Please enter a valid positive number (e.g., 123.45).
+                  </div>
+                </div>
+
+                <div class="mb-4 col-md-6 col-12">
+                  <label class="form-label">Spent Amount <span class="text-danger">*</span></label>
+                  <input type="text" class="form-control" name="spentAmount"
+                         placeholder="Enter spent amount" required [(ngModel)]="budget.spentAmount"
+                         pattern="^\d+(\.\d{1,2})?$" #spentAmount="ngModel"
+                         [class.is-invalid]="spentAmount.invalid && spentAmount.touched">
+                  <div *ngIf="spentAmount.invalid && spentAmount.touched" class="text-danger">
+                    Please enter a valid positive number (e.g., 123.45).
+                  </div>
+                </div>
+
+                <div class="mb-4 col-md-6 col-12">
+                  <label class="form-label">Remaining Amount <span class="text-danger">*</span></label>
+                  <input type="text" class="form-control" name="remainingAmount"
+                         placeholder="Enter remaining amount" required [(ngModel)]="budget.remainingAmount"
+                         pattern="^-?\d+(\.\d{1,2})?$" #remainingAmount="ngModel"
+                         [class.is-invalid]="remainingAmount.invalid && remainingAmount.touched">
+                  <div *ngIf="remainingAmount.invalid && remainingAmount.touched" class="text-danger">
+                    Please enter a valid number (e.g., 123.45 or -123.45).
+                  </div>
+                </div>
+
+                <div class="mb-4 col-md-6 col-12">
+                  <label class="form-label">Currency <span class="text-danger">*</span></label>
+                  <input type="text" class="form-control" name="currency"
+                         placeholder="Enter currency" required [(ngModel)]="budget.currency">
+                </div>
+
+                <div class="mb-4 col-md-6 col-12">
+                  <label class="form-label">Status <span class="text-danger">*</span></label>
+                  <select class="form-select" name="status" required [(ngModel)]="budget.status">
+                    <option value="Active">Active</option>
+                    <option value="Closed">Closed</option>
+                    <option value="Adjusted">Adjusted</option>
+                    <option value="Cancelled">Cancelled</option>
+                  </select>
+                </div>
+                <div class="mb-4 col-md-6 col-12">
+                  <label class="form-label">Transaction <span class="text-danger">*</span></label>
+                  <select class="form-select" name="Transaction" required [(ngModel)]="budget.transaction">
+                    <option value="Failed">Failed</option>
+                    <option value="Success">Success</option>
+                    <option value="Pending">Pending</option>
+                  </select>
+                </div>
+                <div class="mb-4 col-md-6 col-12">
+                  <label class="form-label">Approval <span class="text-danger">*</span></label>
+                  <select class="form-select" name="Approval" required [(ngModel)]="budget.approval">
+                    <option value="APPROVED">APPROVED</option>
+                    <option value="PENDING">PENDING</option>
+                    <option value="REJECTED">REJECTED</option>
+                  </select>
+                </div>
+                <div class="mb-4 col-md-6 col-12">
+                  <label class="form-label">BudgetStatus <span class="text-danger">*</span></label>
+                  <select class="form-select" name="BudgetStatus" required [(ngModel)]="budget.budgetStatus">
+                    <option value="Insufficient">Insufficient</option>
+                    <option value="Sufficient">Sufficient</option>
+                    <option value="Exceeded">Exceeded</option>
+                  </select>
+                </div>
+
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-4 d-flex justify-content-end">
+          <a routerLink="/financial/budget" class="btn btn-dark me-2">Back</a>
+          <button type="submit" class="btn btn-primary" [disabled]="form.invalid">Update</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>

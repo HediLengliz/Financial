@@ -1,0 +1,23 @@
+<div class="budget-overview">
+  <h2>Budget Overview</h2>
+  <p>Manage and track your project budgets efficiently</p>
+
+  <div class="budget-details">
+    <h3>Budget Details</h3>
+    <p>Project: <strong>{{ budget.projectName }}</strong></p>
+    <p>Allocated Amount: {{ budget.allocatedAmount | currency: budget.currency }}</p>
+    <p>Spent Amount: {{ budget.spentAmount | currency: budget.currency }}</p>
+    <p>Remaining Amount: {{ budget.remainingAmount | currency: budget.currency }}</p>
+    <p>Status: <span class="badge" [ngClass]="getStatusClass(budget.status)">{{ budget.status }}</span></p>
+    <p>Currency: {{ budget.currency }}</p>
+    <div class="budget-summary">
+      <h4>Budget Summary</h4>
+      <div class="circular-progress">
+        <div class="circle" [ngStyle]="{'clip-path': 'inset(0 ' + (100 - progress) + '% 0 0)'}">
+          <div class="progress-text">{{ progress | number: '1.0-0'}}%</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <button (click)="goBack()">Back to Budget Management</button>
+</div>

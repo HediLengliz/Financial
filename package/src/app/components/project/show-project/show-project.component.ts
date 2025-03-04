@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ProjectService } from 'src/app/services/project.service';
 import { Project } from 'src/app/models/project.interface';
-import { DatePipe, NgClass, TitleCasePipe, UpperCasePipe } from "@angular/common";
+import {DatePipe, NgClass, NgForOf, TitleCasePipe, UpperCasePipe} from "@angular/common";
 import { NgCircleProgressModule } from "ng-circle-progress";
 
 // Import your custom pipes
@@ -20,9 +20,11 @@ import { PriorityPipe } from '../../../pipe/priority.pipe';
     DatePipe,
     NgCircleProgressModule,
     StatusPipe,   // Add this
-    PriorityPipe  // Add this
+    PriorityPipe,
+    NgForOf,
+    // Add this
   ],
-  styleUrls: ['./show-project.component.css']
+  styleUrls: ['./show-project.component.scss']
 })
 export class ShowProjectComponent implements OnInit {
   id!: number;

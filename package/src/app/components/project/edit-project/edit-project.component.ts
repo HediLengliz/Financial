@@ -13,7 +13,7 @@ import {FormsModule} from "@angular/forms";
     FormsModule,
     RouterLink
   ],
-  styleUrls: ['./edit-project.component.css']
+  styleUrls: ['./edit-project.component.scss']
 })
 export class EditProjectComponent implements OnInit {
   project: Project = {

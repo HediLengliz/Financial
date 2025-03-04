@@ -43,15 +43,30 @@ import { MatSortModule } from '@angular/material/sort';
 import { MatTableModule } from '@angular/material/table';
 import { ToastrModule } from 'ngx-toastr';
 import { StatusPipe } from './pipe/status.pipe';
-import { PriorityPipe } from './pipe/priority.pipe';// Import the Toastr module
+import { PriorityPipe } from './pipe/priority.pipe';
+import {FinancialComponent} from "./components/financial/financial.component";
+import {BudgetComponent} from "./components/financial/budget/budget.component";
+import {InvoiceComponent} from "./components/financial/invoice/invoice.component";
+import {ApprovalComponent} from "./components/financial/approval/approval.component";
+import {ExpenseComponent} from "./components/financial/expense/expense.component";
+
+// Import the Toastr module
 
 
 @NgModule({
   imports: [
     ToastrModule.forRoot(),
     StatusPipe,
-    PriorityPipe
+    PriorityPipe,
+    CommonModule,
+    FinancialComponent,
+    BudgetComponent,
+    InvoiceComponent,
+    ApprovalComponent,
+    ExpenseComponent,
+
   ],
+  // declarations: [],
   declarations: [],
   exports: [
     MatAutocompleteModule,

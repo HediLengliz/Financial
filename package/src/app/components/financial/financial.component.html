@@ -1,0 +1,32 @@
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-12">
+    </div>
+  </div>
+  <h1 *ngIf="!isChildRoute()">Financial Management</h1>
+
+  <router-outlet></router-outlet>
+
+  <!-- Dropdown for Selecting a Financial Section -->
+<!--  <div class="row mb-4">-->
+<!--    <div class="col-md-4">-->
+<!--      <select class="form-select" [(ngModel)]="selectedSection">-->
+<!--        <option value="budgets">Budget</option>-->
+<!--        <option value="invoice">Invoice</option>-->
+<!--        <option value="approval">Approval</option>-->
+<!--        <option value="expense">Expense</option>-->
+<!--      </select>-->
+<!--    </div>-->
+<!--  </div>-->
+
+  <!-- Dynamic Component Display -->
+<!--  <div class="row">-->
+<!--    <div class="col-12">-->
+<!--        <app-budget *ngSwitchCase="'budgets'"></app-budget>-->
+<!--        <app-invoice *ngSwitchCase="'invoice'"></app-invoice>-->
+<!--        <app-approval *ngSwitchCase="'approval'"></app-approval>-->
+<!--        <app-expense *ngSwitchCase="'expense'"></app-expense>-->
+<!--    </div>-->
+<!--  </div>-->
+</div>
+

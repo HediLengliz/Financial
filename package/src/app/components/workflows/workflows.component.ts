@@ -1,4 +1,4 @@
-// workflow-list.component.ts
+//workflow-list.component.ts
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { WorkflowService } from '../../services/workflow.service';

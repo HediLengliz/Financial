@@ -5,6 +5,23 @@ import { ProjectComponent } from "./components/project/project.component";
 import { AddProjectComponent } from "./components/project/add-project/add-project.component";
 import { ShowProjectComponent } from "./components/project/show-project/show-project.component";
 import { EditProjectComponent } from "./components/project/edit-project/edit-project.component";
+import {BudgetComponent} from "./components/financial/budget/budget.component";
+import {FinancialComponent} from "./components/financial/financial.component";
+import {ExpenseComponent} from "./components/financial/expense/expense.component";
+import {ApprovalComponent} from "./components/financial/approval/approval.component";
+import {InvoiceComponent} from "./components/financial/invoice/invoice.component";
+import * as path from "node:path";
+import {AddBudgetComponent} from "./components/financial/budget/add-budget/add-budget.component";
+import {ShowBudgetComponent} from "./components/financial/budget/show-budget/show-budget.component";
+import {EditBudgetComponent} from "./components/financial/budget/edit-budget/edit-budget.component";
+import {AddExpenseComponent} from "./components/financial/expense/add-expense/add-expense.component";
+import {ShowExpenseComponent} from "./components/financial/expense/show-expense/show-expense.component";
+import {EditExpenseComponent} from "./components/financial/expense/edit-expense/edit-expense.component";
+import {ListExpenseComponent} from "./components/financial/expense/list-expense/list-expense.component";
+import {AddInvoiceComponent} from "./components/financial/invoice/add-invoice/add-invoice.component";
+import {EditInvoiceComponent} from "./components/financial/invoice/edit-invoice/edit-invoice.component";
+import {ShowInvoiceComponent} from "./components/financial/invoice/show-invoice/show-invoice.component";
+
 
 export const routes: Routes = [
   {
@@ -34,6 +51,43 @@ export const routes: Routes = [
           { path: ':id', component: ShowProjectComponent }, // Show details
           { path: 'edit/:id', component: EditProjectComponent } // Edit project
         ]
+      },
+      // {
+      //   path: 'budgets',
+      //   children: [
+      //     { path :'',component: BudgetComponent}, // List budgets
+      //   ]
+      // },
+      {
+        path : 'financial',
+        component: FinancialComponent,
+        children: [
+          { path : 'budget', component: BudgetComponent,
+            children : [
+              {path : 'new' , component : AddBudgetComponent},
+              {path : ':id', component : ShowBudgetComponent},
+              {path : 'edit/:id', component : EditBudgetComponent},
+
+            ]
+          },
+          { path : 'expense', component: ExpenseComponent,
+            children : [
+              {path : 'new' , component : AddExpenseComponent},
+              {path : ':id', component : ShowExpenseComponent},
+              {path : 'edit/:id', component : EditExpenseComponent},
+              {path : 'list', component : ListExpenseComponent},
+
+            ]
+          },
+          { path : 'invoice', component: InvoiceComponent,
+            children : [
+              {path : 'new' , component : AddInvoiceComponent},
+              {path : ':id', component : ShowInvoiceComponent},
+              {path : 'edit/:id', component : EditInvoiceComponent},
+            ]
+          },
+          { path : 'approval', component: ApprovalComponent},
+           ]
       },
 
       // UI Components

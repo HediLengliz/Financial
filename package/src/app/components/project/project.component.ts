@@ -8,6 +8,7 @@ import { StatusPipe } from '../../pipe/status.pipe';
 import {RouterLink} from "@angular/router";
 import {PriorityPipe} from "../../pipe/priority.pipe";
 
+
 @Component({
   selector: 'app-project',
   templateUrl: './project.component.html',

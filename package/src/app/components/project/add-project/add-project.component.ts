@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import {Router, RouterLink} from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { CreateProjectRequest } from "../../../models/CreateProjectRequest";
 import { ProjectService } from 'src/app/services/project.service';
@@ -11,7 +11,8 @@ import {FormsModule} from "@angular/forms";
   templateUrl: './add-project.component.html',
   standalone: true,
   imports: [
-    FormsModule
+    FormsModule,
+    RouterLink
   ],
   styleUrls: ['./add-project.component.css']
 })

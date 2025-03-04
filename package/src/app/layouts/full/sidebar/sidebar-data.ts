@@ -19,7 +19,51 @@ export const navItems: NavItem[] = [
     chip: true,
     chipClass: 'bg-primary text-white',
   },
-  
+  {
+    displayName: 'Financial', // Added entry for Financial
+    iconName: 'credit-card',
+    route: '', // No direct route for Financial, it's a dropdown
+    bgcolor: 'success',
+    chip: true,
+    chipClass: 'bg-primary text-white',
+    children: [
+      {
+        displayName: 'Budget',
+        iconName: 'price-tag',
+        route: '/financial/budget',  // Adjust this route as needed
+        chip: true,
+        chipClass: 'bg-primary text-white',
+        bgcolor: 'warning',
+
+      },
+      {
+        displayName: 'Invoice',
+        iconName: 'file-invoice',
+        route: '/financial/invoice',  // Adjust this route as needed
+        chip: true,
+        chipClass: 'bg-primary text-white',
+        bgcolor: 'primary',
+      },
+      {
+        displayName: 'Approval',
+        iconName: 'check',
+        route: '/financial/approval',  // Adjust this route as needed
+        chip: true,
+        chipClass: 'bg-primary text-white',
+        bgcolor: 'secondary',
+
+      },
+      {
+        displayName: 'Expense',
+        iconName: 'money',
+        route: '/financial/expense',  // Adjust this route as needed
+        chip: true,
+        chipClass: 'bg-primary text-white',
+        bgcolor: 'alert',
+      },
+    ],
+  },
+
   {
     navCap: 'Apps',
   },
@@ -69,7 +113,7 @@ export const navItems: NavItem[] = [
     external: true,
     chipClass: 'bg-primary text-white',
   },
-  
+
   {
     displayName: 'Employee',
     iconName: 'brand-ctemplar',
@@ -96,7 +140,7 @@ export const navItems: NavItem[] = [
     chip: true,
     external: true,
     chipClass: 'bg-primary text-white',
-  
+
   },
   {
     displayName: 'ToDo',
@@ -218,7 +262,7 @@ export const navItems: NavItem[] = [
     chipClass: 'bg-primary text-white',
     chipContent: 'PRO',
   }, */
-  
+
 
   /*
   {
@@ -314,7 +358,7 @@ export const navItems: NavItem[] = [
   */
 
 
-  
-  
-  
+
+
+
 ];
