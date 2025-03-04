@@ -7,6 +7,7 @@ import lombok.experimental.FieldDefaults;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.UUID;
 
 
 @Entity
@@ -37,5 +38,7 @@ public class Expense {
      Budget budget;
     @Enumerated(EnumType.STRING)
     Status status;
+    UUID projectId;
+    UUID supplierId;
 
 }

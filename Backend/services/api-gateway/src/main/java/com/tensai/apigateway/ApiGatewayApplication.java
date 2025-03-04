@@ -29,7 +29,13 @@ public class ApiGatewayApplication {
 				.route("projects-service", r -> r
 						.path("/api/projects/**")
 						.filters(f -> f.stripPrefix(1)) // ✅ Strip 1 segment ("/api")
-						.uri("lb://projects-service")   // ✅ Use lowercase service name
+						.uri("lb://projects-service")// ✅ Use lowercase service name
+
+				)
+				.route("financial", r -> r
+						.path("/financial/**")  // Your API gateway route for financial services
+//						.filters(f -> f.stripPrefix(1))
+						.uri("lb://financial")
 				)
 				.build();
 	}

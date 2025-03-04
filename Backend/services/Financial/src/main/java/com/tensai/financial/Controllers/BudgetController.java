@@ -8,18 +8,27 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/budgets")
+@RequestMapping("/financial/budgets")
 @RequiredArgsConstructor
 @Tag(name = "Budget Management", description = "managing budgets")
 public class BudgetController{
     private final BudgetService budgetService;
+    @GetMapping("/test")
+    public String test() {
+        return "Budget Controller works!";
+    }
     @Operation(summary = "Get Project Budget", description = "Fetch budget details for a project")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Budget details retrieved successfully"),
@@ -28,6 +37,22 @@ public class BudgetController{
     @GetMapping("/{projectId}")
     public ResponseEntity<BudgetDTO> getBudget(@PathVariable UUID projectId) {
         return ResponseEntity.ok(budgetService.getBudgetByProject(projectId));
+    }
+    @GetMapping("/load-with-filters")
+    @Operation(summary = "Load All Budgets with Filters", description = "Fetches all budgets with optional filtering parameters.")
+    public ResponseEntity<List<BudgetDTO>> loadBudgetsWithFilters(
+            @RequestParam(value = "projectName", required = false) String projectName,
+            @RequestParam(value = "spentAmount", required = false) BigDecimal spentAmount,
+            @RequestParam(value = "remainingAmount", required = false) BigDecimal remainingAmount,
+            @RequestParam(value = "createdAt", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate createdAt,
+            @RequestParam(value = "updatedAt", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate updatedAt,
+            @RequestParam(value = "transaction", required = false) String transactionStr,
+            @RequestParam(value = "approval", required = false) String approvalStr,
+            @RequestParam(value = "budgetStatus", required = false) String budgetStatusStr,
+            @RequestParam(value = "status", required = false) String status) {
+
+        List<BudgetDTO> filteredBudgets = budgetService.loadAllBudgetsWithFilters(projectName,spentAmount,remainingAmount,createdAt,updatedAt, transactionStr, approvalStr, budgetStatusStr, status);
+        return ResponseEntity.ok(filteredBudgets);
     }
 
     @GetMapping("/all")
@@ -40,17 +65,20 @@ public class BudgetController{
         return ResponseEntity.ok(budgetService.getAllBudgets());
     }
 
-    @PostMapping("/create/{status}/{transaction}/{approval}/{budgetStatus}")
+    @PostMapping("/create")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Budget details created successfully"),
             @ApiResponse(responseCode = "404", description = "Budget not found")
     })
     @Operation(summary = "Create a budget", description = "Creates a new budget entry.")
-    public ResponseEntity<BudgetDTO> createBudget(@RequestBody BudgetDTO budgetDTO, @PathVariable Status status, @PathVariable Transaction transaction, @PathVariable Approval approval, @PathVariable BudgetStatus budgetStatus) {
-        budgetDTO.setStatus(status);
-        budgetDTO.setTransaction(transaction);
-        budgetDTO.setApproval(approval);
-        budgetDTO.setBudgetStatus(budgetStatus);
+    public ResponseEntity<BudgetDTO> createBudget(@RequestBody BudgetDTO budgetDTO) {
+        if (budgetDTO.getProjectId() == null) {
+            budgetDTO.setProjectId(UUID.randomUUID()); // Generate a new UUID if not provided
+        }
+        //budgetDTO.setStatus(status);
+        //budgetDTO.setTransaction(transaction);
+        //budgetDTO.setApproval(approval);
+        //budgetDTO.setBudgetStatus(budgetStatus);
         return ResponseEntity.ok(budgetService.createBudget(budgetDTO));
     }
     @DeleteMapping("/delete/{id}")
@@ -70,6 +98,9 @@ public class BudgetController{
     })
     @Operation(summary = "Update a budget", description = "Updates a budget entry.")
     public ResponseEntity<BudgetDTO> updateBudget(@RequestBody BudgetDTO budgetDTO, @PathVariable UUID id) {
+        if (budgetDTO.getProjectId() == null) {
+            budgetDTO.setProjectId(UUID.randomUUID()); // Generate a new UUID if not provided
+        }
         return ResponseEntity.ok(budgetService.updateBudget(id, budgetDTO));
     }
     @GetMapping("/get/{id}")

@@ -38,4 +38,7 @@ public class Invoice {
      @ManyToOne
      @JoinColumn(name = "budget_id")
      Budget budget;
+     @Enumerated(EnumType.STRING)
+     ApprovalStatus approvalStatus;
+    Integer installmentAmount;
 }

@@ -17,45 +17,47 @@ import java.util.UUID;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Builder
-
-
 public class Budget {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-     Long id;
+    Long id;
 
-     String projectName;
+    @Column(nullable = false, length = 100)
+    String projectName;
 
-    BigDecimal allocatedAmount;
+    @Column(nullable = false)
+    BigDecimal   allocatedAmount;
 
-    BigDecimal  spentAmount;
+    @Column(nullable = false)
+    BigDecimal   spentAmount;
 
-    BigDecimal  remainingAmount;
+    @Column(nullable = false)
+    BigDecimal   remainingAmount;
 
-     LocalDate createdAt;
+    @Column(nullable = false)
+    LocalDate createdAt;
+
+    @Column(nullable = false)
+    LocalDate updatedAt;
+
+    @Enumerated(EnumType.STRING)
+    Status status;
+
+    @Enumerated(EnumType.STRING)
+    Transaction transaction;
+
+    @Enumerated(EnumType.STRING)
+    ApprovalStatus approval;
+
+    @Column(nullable = false)
     String currency;
 
-    LocalDate updatedAt;
     @Enumerated(EnumType.STRING)
-    @NotNull
-    Status status;
-    @Enumerated(EnumType.STRING)
-    @NotNull
-    Transaction transaction;
-    @Enumerated(EnumType.STRING)
-    @NotNull
-    Approval approval;
-    @Enumerated(EnumType.STRING)
-    @Column(
-            name = "budget_status",
-            nullable = false,
-            columnDefinition = "varchar(255) default 'Sufficient' check (budget_status in ('Insufficient','Sufficient','Exceeded'))"
-    )
+    @Column(name = "budget_status", nullable = false)
     BudgetStatus budgetStatus;
 
-    @Builder.Default
-    UUID projectId = UUID.randomUUID();
-
+    @Column(nullable = false, unique = true)
+    private UUID projectId;
 
 
 }

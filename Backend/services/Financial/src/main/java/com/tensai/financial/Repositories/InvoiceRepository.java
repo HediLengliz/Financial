@@ -10,5 +10,5 @@ import java.util.Optional;
 @Repository
 public interface InvoiceRepository extends JpaRepository<Invoice, Long> {
 
-    Optional<Object> findByStatus(Status status);
+    Optional<Invoice> findByStatus(Status status);
 }

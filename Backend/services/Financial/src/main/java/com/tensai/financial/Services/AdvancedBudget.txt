@@ -40,3 +40,115 @@
 //            public Invoice approveInvoice(UUID invoiceId);
 //        }
 //
+//----------Prevent overspending by sending alerts if budget depletion is imminent.-------------
+
+
+✅ How It Works?
+Every time an expense is recorded, the system checks the remaining budget.
+If the budget is below 15%, send a Slack/Email/SMS alert to the project manager.
+If expenses exceed the budget, automatically freeze further expenses.
+📌 Implementation Plan
+Monitor budget usage in real-time.
+Send notifications via Slack, email, or SMS.
+Deny expense registration if the budget is exhausted.
+
+
+//public void checkBudgetThreshold(UUID projectId)
+
+//---------------Avoid manual invoice validation and automate approval workflow--------------
+
+
+✅ How It Works?
+When a supplier submits an invoice, the system auto-matches it with recorded expenses.
+If expenses cover the invoice, mark it as "Ready for Payment".
+If there's a discrepancy, flag the invoice for manual review.
+📌 Implementation Plan
+Compare invoice amounts against recorded expenses.
+Auto-approve invoices if they match the corresponding expenses.
+Flag suspicious invoices for manual approval.
+
+
+
+//public void autoApproveInvoice(UUID invoiceId, UUID projectId)
+// **********Helps detect fraud, prevent incorrect categorization, and improve financial reporting.******************
+//public String categorizeExpense(String description, BigDecimal amount) {
+//    if (description.toLowerCase().contains("material")) return "Materials";
+ //   if (description.toLowerCase().contains("transport")) return "Logistics";
+//    if (amount.compareTo(new BigDecimal("5000")) > 0) return "High-Value Purchase";
+//    return "Miscellaneous";
+//}
+
+//public boolean detectDuplicateExpense(UUID projectId, UUID supplierId, BigDecimal amount, LocalDate date) {
+ //   return expenseRepository.existsByProjectIdAndSupplierIdAndAmountAndDate(projectId, supplierId, amount, date);
+//}
+// -------------- Helps prevent overdue invoices and optimize cash flow.---------
+✅ How It Works?
+Use AI-based pattern recognition to auto-categorize expenses.
+Detect suspicious expenses (e.g., duplicate payments, unusually high spending).
+Send alerts for anomalies and block duplicate transactions.
+📌 Implementation Plan
+Use text analysis to categorize expenses.
+Check for duplicate expenses (same project, amount, and supplier).
+Alert project managers for unusually high expenses.
+
+public List<Invoice> getUpcomingPayments() {
+    return invoiceRepository.findUpcomingInvoices(LocalDate.now().plusDays(7));
+}
+
+public void scheduleInvoicePayment(UUID invoiceId, int installmentCount) {
+    Invoice invoice = invoiceRepository.findById(invoiceId)
+            .orElseThrow(() -> new ResourceNotFoundException("Invoice not found"));
+
+    BigDecimal installmentAmount = invoice.getAmount().divide(new BigDecimal(installmentCount), RoundingMode.HALF_UP);
+
+    for (int i = 1; i <= installmentCount; i++) {
+        ScheduledPayment payment = new ScheduledPayment(UUID.randomUUID(), invoiceId, installmentAmount, invoice.getDueDate().plusDays(30 * i));
+        scheduledPaymentRepository.save(payment);
+    }
+}
+--------------Ensures invoices/expenses are approved before payment.--------------------
+✅ How It Works?
+Instead of paying invoices immediately, split payments into installments.
+Prioritize invoices based on due dates to avoid penalties.
+Auto-schedule payments and notify project managers of upcoming due dates.
+📌 Implementation Plan
+Break large invoices into smaller scheduled payments.
+Sort invoices by due dates and prioritize early payments.
+Send payment reminders to the finance team.
+
+public void requestExpenseApproval(UUID expenseId, UUID managerId) {
+    ApprovalRequest approval = new ApprovalRequest(UUID.randomUUID(), expenseId, managerId, "Pending");
+    approvalRequestRepository.save(approval);
+}
+
+public void approveExpense(UUID approvalId, UUID financeTeamId) {
+    ApprovalRequest approval = approvalRequestRepository.findById(approvalId)
+            .orElseThrow(() -> new ResourceNotFoundException("Approval not found"));
+    approval.setStatus("Approved");
+    approval.setApprovedBy(financeTeamId);
+    approvalRequestRepository.save(approval);
+}
+-------------- Helps in planning future construction projects by analyzing past financial data.------------------
+✅ How It Works?
+Before processing an invoice/expense, get multi-level approval:
+Step 1: Project Manager reviews and approves.
+Step 2: Finance Team verifies and approves.
+Step 3: Payment is processed.
+📌 Implementation Plan
+Create an approval workflow with roles.
+Only approved transactions move to payment processing.
+Store approval history in a separate table.
+
+
+public BigDecimal forecastProjectBudget(UUID projectId) {
+    List<Expense> pastExpenses = expenseRepository.findExpensesByProjectId(projectId);
+    BigDecimal averageMonthlyExpense = calculateAverageExpense(pastExpenses);
+    return averageMonthlyExpense.multiply(new BigDecimal("12")); // Estimate for next year
+}
+✅ How It Works?
+Analyzes past expenses, invoices, and budgets to estimate future costs.
+Uses machine learning predictions to give cost forecasts.
+📌 Implementation Plan
+Store historical expense and invoice data.
+Use trend analysis to predict future costs.
+Display insights in the dashboard.

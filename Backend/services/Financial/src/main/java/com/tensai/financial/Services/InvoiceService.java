@@ -3,6 +3,7 @@ package com.tensai.financial.Services;
 import com.tensai.financial.DTOS.InvoiceDTO;
 import com.tensai.financial.DTOS.ProjectDTO;
 import com.tensai.financial.DTOS.SupplierDTO;
+import com.tensai.financial.Entities.ApprovalStatus;
 import com.tensai.financial.Entities.Budget;
 import com.tensai.financial.Entities.Invoice;
 import com.tensai.financial.Entities.Status;
@@ -13,7 +14,9 @@ import com.tensai.financial.Repositories.InvoiceRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -154,6 +157,40 @@ public class InvoiceService implements IInvoiceService{
                 .status(invoice.getStatus())
                 .budgetId(invoice.getBudget().getId())
                 .build();
+    }
+    //wa9telli fournisseur ysubmiti invoice  fonc hedhy taml auto matching tchouf est ce que tcouvri lexpenses wale
+
+    @Override
+    public void autoApproveInvoice(Long id, UUID project_id) {
+        Invoice invoice = invoiceRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Invoice not found"));
+        BigDecimal totalAmount = invoice.getTotalAmount();
+        if (totalAmount.compareTo(invoice.getAmount())>=0) {
+            invoice.setApprovalStatus(ApprovalStatus.APPROVED);
+        }
+        else {
+            invoice.setApprovalStatus(ApprovalStatus.REJECTED);
+        }
+        invoiceRepository.save(invoice);
+    }
+
+    @Override
+    public List<Invoice> getUpcomingPayments() {
+        return List.of();
+    }
+
+    @Override
+    public void scheduleInvoicePayment(Long id, Integer installmentCount) {
+//        Invoice invoice = invoiceRepository.findById(invoiceId)
+//                .orElseThrow(() -> new RuntimeException("Invoice not found"));
+//
+//        BigDecimal installmentAmount = invoice.getAmount().divide(new BigDecimal(installmentCount), RoundingMode.HALF_UP);
+//
+//        for (int i = 1; i <= installmentCount; i++) {
+//            ScheduledPayment payment = new ScheduledPayment(UUID.randomUUID(), id, installmentAmount, invoice.getDueDate().plusDays(30 * i));
+//            scheduledPaymentRepository.save(payment);
+//        }
+
     }
 
 }

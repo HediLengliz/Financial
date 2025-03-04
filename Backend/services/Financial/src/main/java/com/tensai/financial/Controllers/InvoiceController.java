@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/invoices")
+@RequestMapping("/api/financial/invoices")
 @RequiredArgsConstructor
 @Tag(name = "Invoice Management", description = "APIs for managing invoices")
 public class InvoiceController {

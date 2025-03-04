@@ -1,5 +1,6 @@
 package com.tensai.financial.DTOS;
-import com.tensai.financial.Entities.Approval;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.tensai.financial.Entities.ApprovalStatus;
 import com.tensai.financial.Entities.BudgetStatus;
 import com.tensai.financial.Entities.Status;
 import com.tensai.financial.Entities.Transaction;
@@ -20,8 +21,7 @@ import java.util.UUID;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Builder
 public class BudgetDTO {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+
     Long id;
     @NotBlank(message = "Project Name is required")
     @Size(max = 100, message = "Name must be less than 100 characters")
@@ -36,8 +36,10 @@ public class BudgetDTO {
     @Min(value = 0, message = "Remaining Amount must be greater than 0")
     BigDecimal remainingAmount;
     @NotBlank(message = "Date is required")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "MM/dd/yyyy")
     LocalDate createdAt;
     @NotBlank(message = "Date is required")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "MM/dd/yyyy")
     LocalDate updatedAt;
     @NotBlank(message = "Status is required")
     @NotNull
@@ -47,7 +49,7 @@ public class BudgetDTO {
     Transaction transaction;
     @NotBlank(message = "Approval is required")
     @NotNull
-    Approval approval;
+    ApprovalStatus approval;
     @NotBlank(message = "Currency is required")
     String currency;
     @Column(
@@ -56,8 +58,7 @@ public class BudgetDTO {
             columnDefinition = "varchar(255) default 'Sufficient' check (budget_status in ('Insufficient','Sufficient','Exceeded'))"
     )
     BudgetStatus budgetStatus;
-    @NotBlank(message = "Project ID is required")
-    @Builder.Default
-    UUID projectId = UUID.randomUUID();
+    UUID projectId;
+
 
 }

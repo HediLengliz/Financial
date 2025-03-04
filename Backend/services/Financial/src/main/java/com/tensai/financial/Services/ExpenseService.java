@@ -11,7 +11,9 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -128,7 +130,37 @@ public class ExpenseService implements IExpenseService{
                 .build();
     }
 
+    @Override
+    public String categorizeExpense(String description, BigDecimal amount) {
+        if (description.toLowerCase().contains("material")) return "Materials";
+        if (description.toLowerCase().contains("transport")) return "Logistics";
+        if (amount.compareTo(new BigDecimal("5000")) > 0) return "High-Value Purchase";
+        return "Miscellaneous";
 
+    }
+    //Check for duplicate expenses
+    @Override
+    public boolean detectDuplicateExpense(UUID projectId, UUID supplierId, BigDecimal amount, LocalDate createdAt) {
+        return expenseRepository.existsByProjectIdAndSupplierIdAndAmountAndCreatedAt(projectId, supplierId, amount, createdAt);
+    }
+//yaml estimation predictipn lel budget ta next year (predicts the next year outcome)
+    @Override
+    public BigDecimal forecastProjectBudget(UUID projectId) {
+        List<Expense> pastExpenses = expenseRepository.findExpensesByProjectId(projectId);
+        BigDecimal averageMonthlyExpense = calculateAverageExpense(pastExpenses);
+        //lezm month!=0 bech matjish 0 lhesba
+        assert averageMonthlyExpense != null;
+        return averageMonthlyExpense.multiply(new BigDecimal("12"));
+    }
+
+    private BigDecimal calculateAverageExpense(List<Expense> pastExpenses) {
+        if (pastExpenses.isEmpty()) return null;
+        BigDecimal total = BigDecimal.ZERO;
+        for (Expense expense : pastExpenses) {
+            total = total.add(expense.getAmount());
+        }
+        return total.divide(new BigDecimal(pastExpenses.size()));
+    }
 
 
 }

@@ -1,5 +1,6 @@
 package com.tensai.financial.DTOS;
 
+import com.tensai.financial.Entities.ApprovalStatus;
 import com.tensai.financial.Entities.Status;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
@@ -45,10 +46,12 @@ public class InvoiceDTO {
     @Min(value = 0, message = "Amount must be greater than 0")
     BigDecimal amount;
     @NotBlank(message = "Project ID is required")
-    UUID project_id;
+    String project_id;
     @NotBlank(message = "Supplier ID is required")
     UUID supplier_id;
-
+    @NotBlank(message = "Approval Status is required")
+    ApprovalStatus approvalStatus;
+    Integer installmentAmount;
 
 
 }
