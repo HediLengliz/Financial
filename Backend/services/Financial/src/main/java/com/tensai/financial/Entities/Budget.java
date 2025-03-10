@@ -57,7 +57,7 @@ public class Budget {
     BudgetStatus budgetStatus;
 
     @Column(nullable = false, unique = true)
-    private UUID projectId;
+    UUID projectId;
 
 
 }

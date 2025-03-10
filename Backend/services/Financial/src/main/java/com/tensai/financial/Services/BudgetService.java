@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
@@ -78,12 +79,16 @@ public class BudgetService implements IBudgetService {
                 .build();
     }
 
-    public BudgetDTO updateBudget(UUID projectId, BudgetDTO dto) {
-        Budget budget = budgetRepository.findByProjectId(projectId)
+    public BudgetDTO updateBudget(Long id, BudgetDTO dto) {
+        Budget budget = budgetRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Budget not found"));
         if (budget.getRemainingAmount().compareTo(budget.getSpentAmount()) < 0) {
             budget.setBudgetStatus(BudgetStatus.Insufficient);
-            throw new IllegalStateException("Insufficient budget");
+            System.out.println("Budget is about to be exceeded");
+        }
+        if(budget.getRemainingAmount().compareTo(budget.getSpentAmount()) == 0){
+            budget.setBudgetStatus(BudgetStatus.Exceeded);
+            throw new IllegalStateException("Budget exceeded");
         }
         if (budget.getRemainingAmount().compareTo(ZERO) < 0) {
             budget.setBudgetStatus(BudgetStatus.Exceeded);
@@ -91,6 +96,7 @@ public class BudgetService implements IBudgetService {
         }
         if (budget.getAllocatedAmount().compareTo((budget.getRemainingAmount())) > 0) {
             budget.setBudgetStatus(BudgetStatus.Sufficient);
+            System.out.println("Budget is sufficient");
         }
         budget.setProjectName(dto.getProjectName());
         budget.setAllocatedAmount(dto.getAllocatedAmount());
@@ -153,10 +159,13 @@ public class BudgetService implements IBudgetService {
     }
 
     public BudgetDTO getBudgetByProject(UUID projectId) {
-        Budget budget = budgetRepository.findByProjectId(projectId)
-                .orElseThrow(() -> new RuntimeException("Budget not found for project"));
-
-        return new BudgetDTO();
+        return budgetRepository.findByProjectId(projectId)
+                .map(budget -> BudgetDTO.builder()
+                        .id(budget.getId())
+                        .remainingAmount(budget.getRemainingAmount())
+                        .projectId(budget.getProjectId())
+                        .build())
+                .orElseThrow(() -> new RuntimeException("Budget not found for project ID: " + projectId));
     }
 
     //ken pm bech yfout el allocated budget tab3thlou notif talertih
@@ -220,6 +229,25 @@ public class BudgetService implements IBudgetService {
     }
     //filter function for budgets ps: i havent tried without the toDTO expression it will remain for testing
 
-
+    private BigDecimal calculateAverageExpense(List<Expense> expenses) {
+        if (expenses == null || expenses.isEmpty()) {
+            return null; // No expenses available to calculate an average
+        }
+        BigDecimal total = BigDecimal.ZERO;
+        for (Expense expense : expenses) {
+            total = total.add(expense.getAmount());
+        }
+        return total.divide(new BigDecimal(expenses.size()), 2, RoundingMode.HALF_UP);
+    }
+    //yaml estimation predictipn lel budget ta next year (predicts the next year outcome)
+    @Override
+    public BigDecimal forecastProjectBudget(Long id) {
+        List<Expense> expenses = expenseRepository.findExpenseByBudgetId(id);
+        BigDecimal averageMonthlyExpense = calculateAverageExpense(expenses);
+        if (averageMonthlyExpense == null) {
+            return null; // No expenses found, return null (or throw an exception if preferred)
+        }
+        return averageMonthlyExpense.multiply(new BigDecimal("12"));
+    }
 
 }

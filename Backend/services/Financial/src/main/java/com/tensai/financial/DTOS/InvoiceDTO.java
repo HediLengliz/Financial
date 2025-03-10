@@ -1,9 +1,15 @@
 package com.tensai.financial.DTOS;
 
 import com.tensai.financial.Entities.ApprovalStatus;
+import com.tensai.financial.Entities.Budget;
 import com.tensai.financial.Entities.Status;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -19,39 +25,25 @@ import java.util.UUID;
 @Builder
 public class InvoiceDTO {
     Long id;
-    @NotBlank(message = "Invoice Number is required")
-    @Min(value = 0, message = "Invoice Number must be greater than 0")
-     String invoiceNumber;
-    @NotBlank(message = "Total Amount is required")
-    @Min(value = 0, message = "Total Amount must be greater than 0")
+    String invoiceNumber;
+    BigDecimal  amount;
     BigDecimal  totalAmount;
-    @NotBlank(message = "Issue Date is required")
-     LocalDate issueDate;
-    @NotBlank(message = "Budget Id is required")
-     Long budgetId; // To link with Budget
-    @NotBlank(message = "Status is required")
+    String issued_by;
+    String issued_to;
+    LocalDate issueDate;
+    BigDecimal tax;
+    LocalDate dueDate;
+    LocalDate created_at;
+    UUID projectId;
+    @Enumerated(EnumType.STRING)
     Status status;
-    @NotBlank(message = "Tax is required")
-    @Min(value = 0, message = "Tax must be greater than 0")
-     BigDecimal tax;
-    @NotBlank(message = "Due Date is required")
-     LocalDate dueDate;
-    @NotBlank(message = "Created at is required")
-        LocalDate created_at;
-    @NotBlank(message = "Issued by is required")
-        String issued_by;
-    @NotBlank(message = "Issued to is required")
-        String issued_to;
-    @NotBlank(message = "Amount is required")
-    @Min(value = 0, message = "Amount must be greater than 0")
-    BigDecimal amount;
-    @NotBlank(message = "Project ID is required")
-    String project_id;
-    @NotBlank(message = "Supplier ID is required")
-    UUID supplier_id;
-    @NotBlank(message = "Approval Status is required")
+    @ManyToOne
+    @JoinColumn(name = "budget_id")
+    @NotNull(message = "Budget ID is required") // Changed to @NotNull for Long
+    Long budgetId; // To link with Budget
+    @Enumerated(EnumType.STRING)
     ApprovalStatus approvalStatus;
-    Integer installmentAmount;
+
 
 
 }

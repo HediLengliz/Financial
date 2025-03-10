@@ -36,10 +36,10 @@ public class BudgetDTO {
     @Min(value = 0, message = "Remaining Amount must be greater than 0")
     BigDecimal remainingAmount;
     @NotBlank(message = "Date is required")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "MM/dd/yyyy")
+//    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy/MM/dd")
     LocalDate createdAt;
     @NotBlank(message = "Date is required")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "MM/dd/yyyy")
+//    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy/MM/dd")
     LocalDate updatedAt;
     @NotBlank(message = "Status is required")
     @NotNull
@@ -58,6 +58,7 @@ public class BudgetDTO {
             columnDefinition = "varchar(255) default 'Sufficient' check (budget_status in ('Insufficient','Sufficient','Exceeded'))"
     )
     BudgetStatus budgetStatus;
+    @Column(nullable = false, unique = true)
     UUID projectId;
 
 

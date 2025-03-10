@@ -11,6 +11,8 @@ import com.tensai.projets.repositories.WorkflowRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -29,9 +31,15 @@ public class WorkflowService {
     // CREATE WORKFLOW
     public WorkflowResponse createWorkflow(CreateWorkflowRequest request) {
         Project project = projectService.getProjectEntity(request.projectId());
+        if (project == null) {
+            throw new RuntimeException("Project not found"); // Handle missing project
+        }
+
         Workflow workflow = new Workflow();
         workflow.setName(request.name());
         workflow.setDescription(request.description());
+        workflow.setStatus(request.status());
+        workflow.setCreatedAt(LocalDate.now());// Initialize status
         workflow.setProject(project);
 
         project.getWorkflows().add(workflow); // Add workflow to project's workflows list

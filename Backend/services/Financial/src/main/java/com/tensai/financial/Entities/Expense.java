@@ -1,6 +1,7 @@
 package com.tensai.financial.Entities;
 
 
+import com.tensai.financial.DTOS.BudgetDTO;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -38,7 +39,10 @@ public class Expense {
      Budget budget;
     @Enumerated(EnumType.STRING)
     Status status;
+    @Column(nullable = false, unique = true)
     UUID projectId;
-    UUID supplierId;
+//    UUID supplierId;
+
+    BigDecimal averageMonthlyExpense;
 
 }

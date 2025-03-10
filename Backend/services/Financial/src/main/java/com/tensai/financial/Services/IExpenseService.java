@@ -1,5 +1,6 @@
 package com.tensai.financial.Services;
 
+import com.tensai.financial.DTOS.BudgetDTO;
 import com.tensai.financial.DTOS.ExpenseDTO;
 import com.tensai.financial.Entities.Status;
 
@@ -14,8 +15,17 @@ public interface IExpenseService {
     ExpenseDTO updateExpense(Long id, ExpenseDTO dto);
     void deleteExpense(Long id);
     ExpenseDTO getExpenseById(Long id);
-    ExpenseDTO getExpenseByStatus(Status status);
+    List<ExpenseDTO> getExpenseByStatus(Status status);
     public String categorizeExpense(String description, BigDecimal amount);
-    public boolean detectDuplicateExpense(UUID projectId, UUID supplierId, BigDecimal amount, LocalDate createdAt);
-    public BigDecimal forecastProjectBudget(UUID projectId);
+//    public boolean detectDuplicateExpense(UUID projectId, BigDecimal amount, LocalDate createdAt);
+
+    List<ExpenseDTO> loadAllExpensesWithFilters(
+            String description,
+            BigDecimal amount,
+            LocalDate createdAt,
+            LocalDate updatedAt,
+            String category,
+            String status,
+            UUID projectId);
+
 }

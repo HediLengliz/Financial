@@ -11,12 +11,13 @@ import java.util.UUID;
 public interface IBudgetService {
     List<BudgetDTO> getAllBudgets();
     BudgetDTO createBudget(BudgetDTO dto);
-    BudgetDTO updateBudget(UUID projectId, BudgetDTO dto);
+    BudgetDTO updateBudget(Long id, BudgetDTO dto);
     void deleteBudget(Long id);
     BudgetDTO getBudgetById(Long id);
     BudgetDTO getBudgetByStatus(Status status);
     BudgetDTO getBudgetByProject(UUID projectId);
     public void checkBudgetThreshold(UUID projectId);
+    public BigDecimal forecastProjectBudget(Long id);
     public List<BudgetDTO> loadAllBudgetsWithFilters(
             String projectName,
             BigDecimal spentAmount,

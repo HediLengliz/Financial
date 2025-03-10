@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
-public class ExpenseService implements IExpenseService{
+public class ExpenseService implements IExpenseService {
     private ExpenseRepository expenseRepository;
     private BudgetRepository budgetRepository;
     private final BudgetService budgetService;
@@ -33,7 +33,8 @@ public class ExpenseService implements IExpenseService{
                             .updatedAt(expense.getUpdatedAt())
                             .status(expense.getStatus())
                             .amount(expense.getAmount())
-                            .date(expense.getCreatedAt())
+                            .createdAt(expense.getCreatedAt())
+                            .category(expense.getCategory())
                             .budgetId(expense.getBudget() != null ? expense.getBudget().getId() : null)
                             .build())
                     .collect(Collectors.toList());
@@ -44,42 +45,53 @@ public class ExpenseService implements IExpenseService{
     }
 
     public ExpenseDTO createExpense(ExpenseDTO dto) {
-        BudgetDTO budget = budgetService.getBudgetByProject(dto.getProject_id());
-        //checking the remaining and expense amount
-        System.out.println("Budget remaining: " + budget.getRemainingAmount());
+        // Retrieve the budget using the provided budgetId
+        Budget budgetEntity = budgetRepository.findById(dto.getBudgetId())
+                .orElseThrow(() -> new RuntimeException("Budget not found with id: " + dto.getBudgetId()));
+
+        // Log the remaining budget and expense amount for debugging
+        System.out.println("Budget remaining: " + budgetEntity.getRemainingAmount());
         System.out.println("Expense amount: " + dto.getAmount());
-        if (budget.getRemainingAmount().compareTo(dto.getAmount()) < 0) {
+
+        // Check if the expense exceeds the remaining budget
+        if (budgetEntity.getRemainingAmount().compareTo(dto.getAmount()) < 0) {
             throw new IllegalStateException("Expense exceeds remaining budget");
         }
+
+        // Create a new Expense entity from the DTO, auto-setting projectId from the budget
         Expense expense = Expense.builder()
                 .description(dto.getDescription())
                 .amount(dto.getAmount())
-                .createdAt(dto.getDate())
+                .createdAt(dto.getCreatedAt())
                 .updatedAt(dto.getUpdatedAt())
                 .status(dto.getStatus())
-                .budget(Budget.builder().id(dto.getBudgetId()).build())
+                .budget(budgetEntity) // Link the full budget entity
+                .projectId(budgetEntity.getProjectId()) // Automatically set from budget
+                .category(dto.getCategory())
                 .build();
 
+        // Save the new expense to the repository
         Expense savedExpense = expenseRepository.save(expense);
-        // Subtract the amount from the remaining budget
-        BigDecimal newRemaining = budget.getRemainingAmount().subtract(dto.getAmount());
-        //reassaign the remaining amount (converted amount and related attribs back to bigdeciaml for aithmtic calculs it can perform , . sperators)
-        budget.setRemainingAmount(newRemaining);
-        budgetService.updateBudget(dto.getProject_id(), budget);
 
+        // Update the remaining budget
+        BigDecimal newRemaining = budgetEntity.getRemainingAmount().subtract(dto.getAmount());
+        budgetEntity.setRemainingAmount(newRemaining);
+        budgetRepository.save(budgetEntity);
 
-
+        // Return the ExpenseDTO with auto-affected project_id
         return ExpenseDTO.builder()
                 .id(savedExpense.getId())
                 .description(savedExpense.getDescription())
                 .amount(savedExpense.getAmount())
                 .updatedAt(savedExpense.getUpdatedAt())
                 .status(savedExpense.getStatus())
-                .date(savedExpense.getCreatedAt())
+                .createdAt(savedExpense.getCreatedAt())
                 .budgetId(savedExpense.getBudget().getId())
+                .project_id(savedExpense.getProjectId()) // Included in response
+                .category(savedExpense.getCategory())
                 .build();
-
     }
+
     public ExpenseDTO updateExpense(Long id, ExpenseDTO dto) {
         Expense expense = expenseRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Expense not found"));
@@ -88,7 +100,7 @@ public class ExpenseService implements IExpenseService{
 
         expense.setDescription(dto.getDescription());
         expense.setAmount(dto.getAmount());
-        expense.setCreatedAt(dto.getDate());
+        expense.setCreatedAt(dto.getCreatedAt());
         expense.setBudget(budget);
         Expense savedExpense = expenseRepository.save(expense);
         return ExpenseDTO.builder()
@@ -96,13 +108,15 @@ public class ExpenseService implements IExpenseService{
                 .description(savedExpense.getDescription())
                 .amount(savedExpense.getAmount())
                 .updatedAt(savedExpense.getUpdatedAt())
-                .date(savedExpense.getCreatedAt())
+                .createdAt(savedExpense.getCreatedAt())
                 .budgetId(savedExpense.getBudget().getId())
                 .build();
     }
+
     public void deleteExpense(Long id) {
         expenseRepository.deleteById(id);
     }
+
     public ExpenseDTO getExpenseById(Long id) {
         Expense expense = expenseRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Expense not found"));
@@ -111,24 +125,27 @@ public class ExpenseService implements IExpenseService{
                 .description(expense.getDescription())
                 .amount(expense.getAmount())
                 .updatedAt(expense.getUpdatedAt())
-                .date(expense.getCreatedAt())
+                .createdAt(expense.getCreatedAt())
                 .budgetId(expense.getBudget().getId())
                 .build();
+    }
+
+    @Override
+    public List<ExpenseDTO> getExpenseByStatus(Status status) {
+        List<Expense> expenses = expenseRepository.findByStatus(status);
+        return expenses.stream()
+                .map(expense -> ExpenseDTO.builder()
+                        .id(expense.getId())
+                        .description(expense.getDescription())
+                        .amount(expense.getAmount())
+                        .status(expense.getStatus())
+                        .createdAt(expense.getCreatedAt())
+                        .budgetId(expense.getBudget() != null ? expense.getBudget().getId() : null)
+                        .build())
+                .collect(Collectors.toList());
     }
     //get expense by status
-    public ExpenseDTO getExpenseByStatus(Status status) {
-        Expense expense = expenseRepository.findByStatus(status)
-                .orElseThrow(() -> new RuntimeException("Expense not found"));
-        return ExpenseDTO.builder()
-                .id(expense.getId())
-                .description(expense.getDescription())
-                .amount(expense.getAmount())
-                .updatedAt(expense.getUpdatedAt())
-                .status(expense.getStatus())
-                .date(expense.getCreatedAt())
-                .budgetId(expense.getBudget().getId())
-                .build();
-    }
+
 
     @Override
     public String categorizeExpense(String description, BigDecimal amount) {
@@ -138,29 +155,52 @@ public class ExpenseService implements IExpenseService{
         return "Miscellaneous";
 
     }
+
     //Check for duplicate expenses
-    @Override
-    public boolean detectDuplicateExpense(UUID projectId, UUID supplierId, BigDecimal amount, LocalDate createdAt) {
-        return expenseRepository.existsByProjectIdAndSupplierIdAndAmountAndCreatedAt(projectId, supplierId, amount, createdAt);
-    }
-//yaml estimation predictipn lel budget ta next year (predicts the next year outcome)
-    @Override
-    public BigDecimal forecastProjectBudget(UUID projectId) {
-        List<Expense> pastExpenses = expenseRepository.findExpensesByProjectId(projectId);
-        BigDecimal averageMonthlyExpense = calculateAverageExpense(pastExpenses);
-        //lezm month!=0 bech matjish 0 lhesba
-        assert averageMonthlyExpense != null;
-        return averageMonthlyExpense.multiply(new BigDecimal("12"));
-    }
+//    @Override
+//    public boolean detectDuplicateExpense(UUID projectId, BigDecimal amount, LocalDate createdAt) {
+//        return expenseRepository.existsByProjectIdAndSupplierIdAndAmountAndCreatedAt(projectId, amount, createdAt);
+//    }
 
-    private BigDecimal calculateAverageExpense(List<Expense> pastExpenses) {
-        if (pastExpenses.isEmpty()) return null;
-        BigDecimal total = BigDecimal.ZERO;
-        for (Expense expense : pastExpenses) {
-            total = total.add(expense.getAmount());
+
+    @Override
+    public List<ExpenseDTO> loadAllExpensesWithFilters(String description, BigDecimal amount, LocalDate createdAt, LocalDate updatedAt, String category, String status, UUID projectId) {
+        try {
+            List<Expense> filteredExpenses = expenseRepository.findAllByFilters(
+                    description, amount, createdAt, updatedAt, category,
+                    status != null ? Status.valueOf(status) : null, projectId);
+
+            return filteredExpenses.stream()
+                    .map(expense -> ExpenseDTO.builder()
+                            .id(expense.getId())
+                            .description(expense.getDescription())
+                            .amount(expense.getAmount())
+                            .createdAt(expense.getCreatedAt())
+                            .updatedAt(expense.getUpdatedAt())
+                            .status(expense.getStatus())
+                            .category(expense.getCategory())
+                            .budgetId(expense.getBudget() != null ? expense.getBudget().getId() : null)
+                            .project_id(expense.getProjectId())
+                            .build())
+                    .collect(Collectors.toList());
+        } catch (Exception e) {
+            throw new RuntimeException("Error fetching expenses with filters: " + e.getMessage(), e);
         }
-        return total.divide(new BigDecimal(pastExpenses.size()));
     }
 
 
+
+
+    private ExpenseDTO mapToDTO(Expense expense) {
+        return ExpenseDTO.builder()
+                .id(expense.getId())
+                .description(expense.getDescription())
+                .amount(expense.getAmount())
+                .status(expense.getStatus())
+                .createdAt(expense.getCreatedAt())
+                .updatedAt(expense.getUpdatedAt())
+                .category(expense.getCategory())
+                .budgetId(expense.getBudget().getId())
+                .build();
+    }
 }

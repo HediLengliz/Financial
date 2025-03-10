@@ -2,6 +2,7 @@ package com.tensai.financial.Controllers;
 
 import com.tensai.financial.DTOS.BudgetDTO;
 import com.tensai.financial.Entities.*;
+import com.tensai.financial.Repositories.BudgetRepository;
 import com.tensai.financial.Services.BudgetService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -16,7 +17,9 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @RestController
@@ -25,6 +28,8 @@ import java.util.UUID;
 @Tag(name = "Budget Management", description = "managing budgets")
 public class BudgetController{
     private final BudgetService budgetService;
+    private final BudgetRepository budgetRepository;
+
     @GetMapping("/test")
     public String test() {
         return "Budget Controller works!";
@@ -72,13 +77,14 @@ public class BudgetController{
     })
     @Operation(summary = "Create a budget", description = "Creates a new budget entry.")
     public ResponseEntity<BudgetDTO> createBudget(@RequestBody BudgetDTO budgetDTO) {
-        if (budgetDTO.getProjectId() == null) {
-            budgetDTO.setProjectId(UUID.randomUUID()); // Generate a new UUID if not provided
+        // Always generate a new UUID for projectId
+        budgetDTO.setProjectId(UUID.randomUUID());
+
+        // Check if a budget already exists for the new projectId (should never happen due to new UUID)
+        if (budgetRepository.findByProjectId(budgetDTO.getProjectId()).isPresent()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Unexpected error: Duplicate project ID generated");
         }
-        //budgetDTO.setStatus(status);
-        //budgetDTO.setTransaction(transaction);
-        //budgetDTO.setApproval(approval);
-        //budgetDTO.setBudgetStatus(budgetStatus);
+
         return ResponseEntity.ok(budgetService.createBudget(budgetDTO));
     }
     @DeleteMapping("/delete/{id}")
@@ -97,7 +103,7 @@ public class BudgetController{
             @ApiResponse(responseCode = "404", description = "Budget not found")
     })
     @Operation(summary = "Update a budget", description = "Updates a budget entry.")
-    public ResponseEntity<BudgetDTO> updateBudget(@RequestBody BudgetDTO budgetDTO, @PathVariable UUID id) {
+    public ResponseEntity<BudgetDTO> updateBudget(@RequestBody BudgetDTO budgetDTO, @PathVariable Long id) {
         if (budgetDTO.getProjectId() == null) {
             budgetDTO.setProjectId(UUID.randomUUID()); // Generate a new UUID if not provided
         }
@@ -120,6 +126,24 @@ public class BudgetController{
     @Operation(summary = "Get a budget by status", description = "Fetches a budget entry by status.")
     public ResponseEntity<BudgetDTO> getBudgetByStatus(@PathVariable Status status) {
         return ResponseEntity.ok(budgetService.getBudgetByStatus(status));
+    }
+    @GetMapping("/forecast/{id}")
+    @Operation(summary = "Forecast Project Budget", description = "Calculates the forecasted budget for a project based on past expenses.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Forecast calculated successfully"),
+            @ApiResponse(responseCode = "404", description = "Project not found or no expenses available")
+    })
+    public ResponseEntity<Map<String, Object>> forecastProjectBudget(@PathVariable Long id) {
+        BigDecimal forecast = budgetService.forecastProjectBudget(id);
+        Map<String, Object> response = new HashMap<>();
+
+        if (forecast != null) {
+            response.put("forecast", forecast);
+            return ResponseEntity.ok(response);
+        } else {
+            response.put("message", "No past expenses available to forecast the budget.");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+        }
     }
 
 }
