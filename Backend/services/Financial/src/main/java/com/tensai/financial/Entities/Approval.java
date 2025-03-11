@@ -1,10 +1,12 @@
 package com.tensai.financial.Entities;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 import lombok.experimental.*;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -27,11 +29,12 @@ public class Approval {
     @ManyToOne
     @JoinColumn(name = "invoice_id")
     Invoice invoice;
-
-    UUID requestedBy;
-    UUID approvedBy;
-
+    @Column(nullable = false, unique = true)
+    UUID projectId;
+    String managerApprovalBy;
+    String financeApprovalBy;
     LocalDate requestedAt;
     LocalDate approvedAt;
-    
+    @OneToMany(mappedBy = "approval", cascade = CascadeType.ALL, orphanRemoval = true)
+    List<ApprovalHistory> approvalHistories;
 }

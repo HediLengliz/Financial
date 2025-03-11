@@ -138,6 +138,19 @@ Step 3: Payment is processed.
 Create an approval workflow with roles.
 Only approved transactions move to payment processing.
 Store approval history in a separate table.
+usage:
+//////# Request approval
+      POST /approvals/request?expenseId=1&projectId=uuid&managerId="manager123"
+
+      # Manager approves
+      PUT /approvals/1/manager-approve?managerId="manager123"
+
+      # Finance approves
+      PUT /approvals/1/finance-approve?financeTeamId="finance456"
+
+      # Check status
+      GET /approvals/1/status
+      //////////////////////
 
 
 public BigDecimal forecastProjectBudget(UUID projectId) {

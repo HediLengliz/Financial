@@ -1,13 +1,15 @@
 package com.tensai.financial.Repositories;
 
 import com.tensai.financial.Entities.Approval;
-import com.tensai.financial.Entities.ApprovalStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+
 @Repository
 public interface ApprovalRepository extends JpaRepository<Approval, Long> {
-    List<Approval> findByStatus(ApprovalStatus status);
-
+    Optional<Approval> findByExpenseId(Long expenseId);
+    Optional<Approval> findByInvoiceId(Long invoiceId);
+    Optional<Approval> findByProjectId(UUID projectId);
 }
