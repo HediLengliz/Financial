@@ -3,5 +3,7 @@ package com.tensai.financial.Entities;
 public enum ApprovalStatus {
     APPROVED,
     PENDING,
-    REJECTED
+    REJECTED,
+    MANAGER_APPROVED,
+    FULLY_APPROVED
 }

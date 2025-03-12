@@ -1,9 +1,12 @@
 package com.tensai.financial.Controllers;
 
 import com.tensai.financial.Entities.Approval;
+import com.tensai.financial.Entities.ApprovalStatus;
 import com.tensai.financial.Services.ApprovalService;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.slf4j.Logger;
@@ -21,9 +24,9 @@ public class ApprovalController {
     private final ApprovalService approvalService;
     @PostMapping("/request")
     public ResponseEntity<Approval> requestApproval(
-            @RequestParam Long expenseId,
-            @RequestParam Long invoiceId,
-            @RequestParam UUID projectId,
+            @RequestParam (required = false) Long expenseId,
+            @RequestParam (required = false)Long invoiceId,
+            @RequestParam (required = false) UUID projectId,
             @RequestParam String managerId) {
         if (projectId == null) {
             projectId = UUID.randomUUID();
@@ -32,12 +35,16 @@ public class ApprovalController {
         Approval approval = approvalService.requestApproval(expenseId, invoiceId, projectId, managerId);
         return ResponseEntity.ok(approval);
     }
-    @PutMapping("/{approvalId}/manager-approve")
-    public ResponseEntity<Approval> approveByManager(
-            @PathVariable Long approvalId,
-            @RequestParam String managerId) {
-        Approval approval = approvalService.approveByManager(approvalId, managerId);
-        return ResponseEntity.ok(approval);
+    @PutMapping("/{id}/manager-approve")
+    public ResponseEntity<?> approveByManager(@PathVariable Long id, @RequestParam String managerId) {
+        try {
+            approvalService.approveByManager(id, managerId);
+            return ResponseEntity.ok().build();
+        } catch (IllegalStateException | IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
     }
     @PutMapping("/{approvalId}/finance-approve")
     public ResponseEntity<Approval> approveByFinance(
@@ -61,5 +68,11 @@ public class ApprovalController {
         List<Approval> approvals = approvalService.getAllApprovals();
         return ResponseEntity.ok(approvals);
     }
+    @PutMapping("/{id}/status")
+    public ResponseEntity<Approval> updateStatus(@PathVariable Long id,@RequestParam ApprovalStatus approvalStatus) {
+        Approval updatedApproval = approvalService.updateStatus(id, approvalStatus);
+        return ResponseEntity.ok(updatedApproval);
+    }
+
 
 }

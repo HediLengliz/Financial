@@ -5,6 +5,7 @@ import com.tensai.financial.Repositories.ApprovalRepository;
 
 import com.tensai.financial.Repositories.ExpenseRepository;
 import com.tensai.financial.Repositories.InvoiceRepository;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 
@@ -47,22 +48,24 @@ public class ApprovalService implements  IApprovalService {
 
     @Override
     @Transactional
-    public Approval approveByManager(Long approvalId, String managerId) {
-        Approval approval = getApprovalById(approvalId);
+    public void approveByManager(Long approvalId, String managerId) {
+        // Check if approval exists
+        Approval approval = approvalRepository.findById(approvalId)
+                .orElseThrow(() -> new RuntimeException("Approval not found with ID: " + approvalId));
 
-        if (approval.getStatus() != ApprovalStatus.PENDING) {
-            throw new IllegalStateException("Approval is not pending manager review");
+        // Validate managerId
+        if (managerId == null || managerId.trim().isEmpty() || managerId.equals("undefined")) {
+            throw new IllegalArgumentException("Manager ID is required and must be valid");
         }
-        if (!managerId.equals(approval.getManagerApprovalBy())) {
+
+        // Check if the manager is authorized
+        if (!approval.getManagerApprovalBy().equals(managerId)) {
             throw new IllegalStateException("Only the assigned manager can approve");
         }
 
-        approval.setStatus(ApprovalStatus.PENDING); // Still pending until finance approves
-        approval.setManagerApprovalBy(managerId);
-        approval.setApprovedAt(LocalDate.now());
-        approval = approvalRepository.save(approval);
-        approvalHistoryService.logHistory(approvalId, "Manager Approved", managerId);
-        return approval;
+        // Update approval status
+        approval.setStatus(ApprovalStatus.APPROVED);
+        approvalRepository.save(approval);
     }
 
     @Override
@@ -98,6 +101,12 @@ public class ApprovalService implements  IApprovalService {
     public List<Approval> getAllApprovals() {
         return approvalRepository.findAll();
 
+    }
+    public Approval updateStatus(Long id, ApprovalStatus approvalStatus) {
+        Approval approval = approvalRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Approval not found with ID: " + id));
+        approval.setStatus(ApprovalStatus.valueOf(String.valueOf(approvalStatus))); // Assuming ApprovalStatus is an enum
+        return approvalRepository.save(approval);
     }
 }
 
