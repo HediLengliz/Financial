@@ -10,6 +10,7 @@
     <p>Remaining Amount: {{ budget.remainingAmount | currency: budget.currency }}</p>
     <p>Status: <span class="badge" [ngClass]="getStatusClass(budget.status)">{{ budget.status }}</span></p>
     <p>Currency: {{ budget.currency }}</p>
+
     <div class="budget-summary">
       <h4>Budget Summary</h4>
       <div class="circular-progress">
@@ -17,7 +18,11 @@
           <div class="progress-text">{{ progress | number: '1.0-0'}}%</div>
         </div>
       </div>
+      <div class="chart-container">
+        <canvas id="budgetChart"></canvas>
+      </div>
     </div>
   </div>
+
   <button (click)="goBack()">Back to Budget Management</button>
 </div>

@@ -1,0 +1,17 @@
+<div class="form-container">
+  <h2>Finance Team Approval</h2>
+  <form (ngSubmit)="submitForm()">
+    <div class="form-group">
+      <label for="financeTeamId">Finance Team ID</label>
+      <input
+        id="financeTeamId"
+        [(ngModel)]="financeTeamId"
+        name="financeTeamId"
+        type="text"
+        placeholder="Enter Finance Team ID"
+        required
+      />
+    </div>
+    <button type="submit" class="submit-btn">Proceed to Finance Approval</button>
+  </form>
+</div>

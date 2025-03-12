@@ -1,0 +1,123 @@
+.status-update {
+  margin-top: 30px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  background: rgba(255, 255, 255, 0.15); /* Slightly more transparent for depth */
+  padding: 15px;
+  border-radius: 12px; /* Slightly larger radius for modernity */
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15); /* Deeper shadow for contrast */
+  transition: transform 0.3s ease, box-shadow 0.3s ease; /* Smooth transitions */
+
+  &:hover {
+    transform: translateY(-2px); /* Lift effect on hover */
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2); /* Enhanced shadow on hover */
+  }
+
+  label {
+    font-weight: bold;
+    font-size: 16px;
+    color: #2c3e50; /* High contrast for readability */
+    text-transform: uppercase; /* Modern typography */
+    letter-spacing: 1px;
+    transition: color 0.3s ease; /* Smooth color transition */
+
+    &:hover {
+      color: #00d4ff; /* Color change on hover for interactivity */
+    }
+  }
+
+  select {
+    padding: 12px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 8px; /* More rounded corners */
+    background: linear-gradient(135deg, #fff, #e9ecef); /* Subtle gradient */
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* Depth */
+    transition: border-color 0.3s ease, box-shadow 0.3s ease; /* Smooth interaction */
+    min-width: 150px;
+    cursor: pointer;
+
+    &:focus {
+      outline: none;
+      border-color: #00d4ff; /* Vibrant blue */
+      box-shadow: 0 0 10px rgba(0, 212, 255, 0.5); /* Glowing effect */
+    }
+
+    &:hover {
+      border-color: #00b4d8; /* Interactive hover state */
+    }
+  }
+
+  .update-btn {
+    padding: 12px 24px;
+    background: linear-gradient(135deg, #007bff, #00d4ff); /* Futuristic gradient */
+    color: white;
+    border: none;
+    border-radius: 8px; /* More rounded corners */
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 600; /* Bolder text for emphasis */
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3); /* Soft glow */
+    transition: background 0.3s ease, transform 0.3s ease; /* Smooth animation */
+
+    &:hover {
+      background: linear-gradient(135deg, #0056b3, #00b4d8); /* Darker gradient */
+      box-shadow: 0 6px 20px rgba(0, 123, 255, 0.5); /* Enhanced glow */
+      transform: translateY(-2px); /* Lift effect */
+    }
+
+    &:active {
+      transform: scale(0.95); /* Press feedback */
+      box-shadow: 0 2px 5px rgba(0, 123, 255, 0.3); /* Reduced shadow */
+    }
+
+    &:focus {
+      outline: 2px solid #00d4ff; /* Accessible focus state */
+      outline-offset: 2px;
+    }
+  }
+}
+
+.close-btn {
+  margin-top: 30px;
+  padding: 12px 24px;
+  background: linear-gradient(135deg, #6c757d, #adb5bd); /* Modern gradient */
+  color: white;
+  border: none;
+  border-radius: 8px; /* More rounded corners */
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 600; /* Bolder text for emphasis */
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Depth */
+  transition: background 0.3s ease, transform 0.3s ease; /* Smooth interaction */
+
+  &:hover {
+    background: linear-gradient(135deg, #5a6268, #9098a1); /* Darker hover */
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3); /* Enhanced shadow */
+    transform: translateY(-2px); /* Lift effect */
+  }
+
+  &:active {
+    transform: scale(0.95); /* Press feedback */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Reduced shadow */
+  }
+
+  &:focus {
+    outline: 2px solid #adb5bd; /* Accessible focus state */
+    outline-offset: 2px;
+  }
+}
+
+.modal-content {
+  animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}

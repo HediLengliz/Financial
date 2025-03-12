@@ -49,6 +49,7 @@ import {BudgetComponent} from "./components/financial/budget/budget.component";
 import {InvoiceComponent} from "./components/financial/invoice/invoice.component";
 import {ApprovalComponent} from "./components/financial/approval/approval.component";
 import {ExpenseComponent} from "./components/financial/expense/expense.component";
+import {ApprovalRequestComponent} from "./components/financial/approval/approval-request/approval-request.component";
 
 // Import the Toastr module
 
@@ -67,7 +68,10 @@ import {ExpenseComponent} from "./components/financial/expense/expense.component
 
   ],
   // declarations: [],
-  declarations: [],
+  declarations: [
+
+
+  ],
   exports: [
     MatAutocompleteModule,
     MatCheckboxModule,
@@ -105,7 +109,7 @@ import {ExpenseComponent} from "./components/financial/expense/expense.component
     MatSortModule,
     MatTableModule,
     StatusPipe,
-    PriorityPipe
+    PriorityPipe,
 
   ],
 })

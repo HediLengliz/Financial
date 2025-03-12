@@ -1,1 +1,74 @@
-<p>aaaa</p>
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-lg-12 col-md-12 col-12">
+      <div class="mb-5">
+        <h3 class="mb-0">Create New Expense</h3>
+      </div>
+    </div>
+  </div>
+  <div>
+    <form #form="ngForm" (ngSubmit)="addExpense()">
+      <div class="row">
+        <div class="col-xl-9 col-md-12 col-12">
+          <div class="card mb-5">
+            <div class="card-body">
+              <div>
+                <div class="mb-4 col-12">
+                  <label class="form-label">Description <span class="text-danger">*</span></label>
+                  <input type="text" class="form-control" name="description"
+                         placeholder="Enter description" required [(ngModel)]="newExpense.description">
+                </div>
+              <div>
+                <div class="mb-4 col-12">
+                  <label class="form-label">Amount <span class="text-danger">*</span></label>
+                  <input type="number" class="form-control" name="amount"
+                         placeholder="Enter amount" required [(ngModel)]="newExpense.amount">
+              </div>
+              <div class="row">
+                <div class="mb-4 col-12">
+                  <label class="form-label
+                  ">Category <span class="text-danger">*</span></label>
+                  <input type="text" class="form-control" name="category"
+                         placeholder="Enter category" required [(ngModel)]="newExpense.category">
+                </div>
+                <div class="mb-4 col-md-6 col-12">
+                  <label class="form-label">Status <span class="text-danger">*</span></label>
+                  <select class="form-select" name="status" required [(ngModel)]="newExpense.status">
+                    <option value="Active">Active</option>
+                    <option value="Adjusted">Adjusted</option>
+                    <option value="Closed">Closed</option>
+                    <option value="Cancelled">Cancelled</option>
+                  </select>
+                </div>
+
+                <div class="mb-4 col-md-6 col-12">
+                  <label class="form-label">Created At</label>
+                  <input class="form-control" name="createdAt" type="date"
+                         required [(ngModel)]="newExpense.createdAt">
+                </div>
+                <div class="mb-4 col-md-6 col-12">
+                  <label class="form-label">Updated At</label>
+                  <input class="form-control" name="updatedAt" type="date"
+                         required [(ngModel)]="newExpense.updatedAt">
+                </div>
+                <div class="mb-4 col-md-6 col-12">
+                  <label class="form-label
+                  ">Budget Id<span class="text-danger">*</span></label>
+                  <input class="form-control" name="bugdetId" type="text"
+                         required [(ngModel)]="newExpense.budgetId">
+              </div>
+              </div>
+            </div>
+          </div>
+          <div class="mt-4 d-flex justify-content-end">
+            <button type="submit" class="btn btn-primary" [disabled]="form.invalid">
+              Create Expense
+            </button>
+          </div>
+        </div>
+      </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>

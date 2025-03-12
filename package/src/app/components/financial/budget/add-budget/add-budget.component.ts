@@ -64,6 +64,9 @@ export class AddBudgetComponent implements OnInit{
           progressBar: true
         });
         this.router.navigate(['/financial/budget/new']);
+        this.budgetService.notifyBudgetUpdated(); // Notify the creation
+        this.router.navigate(['/financial/budget']); // Navigate to budget list
+
       },
       error: (err) => {
         if (err.status === 422 && err.error.message) {
@@ -78,6 +81,7 @@ export class AddBudgetComponent implements OnInit{
       }
     });
   }
+
 
   private handleValidationErrors(errors: any): void {
     for (const key in errors) {
@@ -94,9 +98,10 @@ export class AddBudgetComponent implements OnInit{
 
   private formatDate(dateString: string): string {
     const date = new Date(dateString);
-    const month = date.getMonth() + 1;
-    const day = date.getDate();
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const day = date.getDate().toString().padStart(2, '0');
     const year = date.getFullYear();
-    return `${month < 10 ? '0' + month : month}/${day < 10 ? '0' + day : day}/${year}`;
+    return `${year}-${month}-${day}`; // Format as yyyy-MM-dd
+
   }
 }

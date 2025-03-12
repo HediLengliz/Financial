@@ -45,6 +45,10 @@ export class BudgetComponent implements OnInit {
   ngOnInit(): void {
     this.setupSearchDebounce();
     this.loadBudgets();
+    // Subscribe to budget updates
+    this.budgetService.budgetUpdated$.subscribe(() => {
+      this.loadBudgets(); // Reload budgets when notified
+    });
   }
   clearSearch(): void {
     this.searchKeyword = '';

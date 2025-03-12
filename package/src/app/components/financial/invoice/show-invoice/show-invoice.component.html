@@ -1,1 +1,30 @@
-<p>show-invoice works!</p>
+<div class="invoice-overview">
+  <h2>Invoice Overview</h2>
+  <p>Manage and track your project Invoices efficiently</p>
+
+  <div class="invoice-details" *ngIf="invoice">
+    <h3>Invoice Details</h3>
+    <p>Invoice Number: <strong>{{ invoice.invoiceNumber }}</strong></p>
+    <p>Created At: {{ invoice.created_at | date: 'medium' }}</p>
+    <p>Issued By: {{ invoice.issued_by }}</p>
+    <p>Due Date: {{ invoice.dueDate | date: 'medium' }}</p>
+    <p>Total Amount: <strong>{{ invoice.totalAmount | currency: 'USD' }}</strong></p>
+    <p>Status: <strong>{{ invoice.status }}</strong></p>
+    <div class="expense-summary">
+      <h4>Invoice Summary</h4>
+      <div class="circular-progress">
+        <div class="circle" [ngStyle]="{'clip-path': 'inset(0 ' + (100 - progress) + '% 0 0)'}">
+          <div class="progress-text">{{ progress | number: '1.0-0' }}%</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="button-group">
+    <button class="btn btn-primary" (click)="exportToPDF()">Export as PDF</button>
+    <button class="btn btn-success" (click)="exportToExcel()">Export as Excel</button>
+    <button class="btn btn-info" (click)="exportToWord()">Export as Word</button>
+  </div>
+  <button (click)="goBack()">Back to Invoice Management</button>
+</div>
+

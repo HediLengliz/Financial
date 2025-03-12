@@ -1,11 +1,12 @@
 export interface Expense {
+  id?: number;
   description: string;
   amount: number;
   updatedAt: string;
-  date : string;
+  createdAt : string;
   bugdetId: number;
   category: string;
   projectId: string;
-  supplierId: number;
+  // supplierId: string;
   status: 'Active'| ' Closed'| 'Adjusted'| 'Cancelled';
 }

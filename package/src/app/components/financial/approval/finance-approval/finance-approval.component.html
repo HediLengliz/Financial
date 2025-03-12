@@ -1,0 +1,16 @@
+<div class="finance-approve-container">
+  <h2>Finance Approval Details</h2>
+  <p><strong>Approval ID:</strong> {{ approvalId }}</p>
+  <p><strong>Finance Team ID:</strong> {{ financeTeamId }}</p>
+  <div class="form-group">
+    <label for="additionalInput">Additional Information (Optional)</label>
+    <input
+      id="additionalInput"
+      [(ngModel)]="additionalInput"
+      name="additionalInput"
+      type="text"
+      placeholder="Enter additional details if needed"
+    />
+  </div>
+  <button (click)="approve()" class="approve-btn">Confirm Finance Approval</button>
+</div>

@@ -1,1 +1,23 @@
-<p>show-expense works!</p>
+<div class="expense-overview">
+  <h2>Expense Overview</h2>
+  <p>Manage and track your project expenses efficiently</p>
+
+  <div class="expense-details">
+    <h3>Expense Details</h3>
+    <p>Description: <strong>{{ expense.description }}</strong></p>
+    <p>Created At: {{ expense.createdAt | date: 'medium' }}</p>
+    <p>Updated At: {{ expense.updatedAt | date: 'medium' }}</p>
+    <p>Amount: {{ expense.amount | currency: 'USD' }}</p>
+    <p>Category: {{ expense.category }}</p>
+    <p>Status: <span class="badge" [ngClass]="getStatusClass(expense.status)">{{ expense.status | titlecase }}</span></p>
+    <div class="expense-summary">
+      <h4>Expense Summary</h4>
+      <div class="circular-progress">
+        <div class="circle" [ngStyle]="{'clip-path': 'inset(0 ' + (100 - progress) + '% 0 0)'}">
+          <div class="progress-text">{{ progress | number: '1.0-0' }}%</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <button (click)="goBack()">Back to Expense Management</button>
+</div>

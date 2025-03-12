@@ -1,0 +1,194 @@
+/* Container Styles */
+.container-fluid {
+  max-width: 1200px;
+  margin: 30px auto;
+  padding: 20px;
+  background: #ffffff;
+  border-radius: 15px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+/* Header Styles */
+h3 {
+  font-size: 32px;
+  color: #333;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+/* Filter Section Styles */
+.form-control, .form-select {
+  border: 1px solid #ced4da;
+  border-radius: 5px;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.form-control:focus, .form-select:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+/* Buttons */
+.btn {
+  border-radius: 5px;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.btn-outline-info {
+  border-color: #17a2b8;
+  color: #17a2b8;
+}
+
+.btn-outline-info:hover {
+  background-color: #17a2b8;
+  color: white;
+}
+
+.btn-outline-primary {
+  border-color: #007bff;
+  color: #007bff;
+}
+
+.btn-outline-primary:hover {
+  background-color: #007bff;
+  color: #08525e;
+}
+
+.btn-outline-danger {
+  border-color: #dc3545;
+  color: #dc3545;
+}
+
+.btn-outline-danger:hover {
+  background-color: #dc3545;
+  color: white;
+}
+/* Button Styles */
+.btn {
+  border-radius: 5px;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.btn-outline-secondary {
+  color: #007bff;
+  border-color: #007bff;
+}
+
+.btn-outline-secondary:hover {
+  background-color: #007bff;
+  color: #fff;
+  transform: translateY(-2px);
+}
+
+/* Table Styles */
+.card {
+  border: none;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #f0f4f8, #e1e9ef);
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table-light {
+  background-color: #f8f9fa;
+}
+
+.table th {
+  background-color: #007bff;
+  color: white;
+  text-align: left;
+  padding: 12px;
+  border-bottom: 2px solid #0056b3;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.table th:hover {
+  background-color: #0056b3;
+}
+
+.table td {
+  padding: 12px;
+  border-bottom: 1px solid #eaeaea;
+  transition: background-color 0.3s ease;
+}
+
+.table tr:hover {
+  background-color: rgba(0, 123, 255, 0.1);
+}
+
+/* Badge Styles */
+.badge {
+  border-radius: 5px;
+  padding: 5px 10px;
+  font-size: 0.9rem;
+}
+
+.badge-active {
+  background-color: #28a745;
+  color: white;
+}
+
+.badge-closed {
+  background-color: #dc3545;
+  color: white;
+}
+
+.badge-adjusted {
+  background-color: #ffc107;
+  color: black;
+}
+
+.badge-cancelled {
+  background-color: #6c757d;
+  color: white;
+}
+
+/* Spinner Styles */
+.spinner-border {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+/* Empty State Styles */
+.text-center {
+  font-size: 1.2rem;
+  color: #666;
+}
+
+/* Add New Expense Button Styles */
+.add-new-expense {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.primary-button {
+  display: inline-block;
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: white;
+  border-radius: 5px;
+  text-decoration: none;
+  transition: background-color 0.3s ease;
+}
+
+.primary-button:hover {
+  background-color: #0056b3;
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+  .container-fluid {
+    padding: 15px;
+  }
+
+  h3 {
+    font-size: 24px;
+  }
+
+  .table th, .table td {
+    padding: 8px;
+  }
+}

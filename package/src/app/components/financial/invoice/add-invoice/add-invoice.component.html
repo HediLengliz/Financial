@@ -1,1 +1,72 @@
-<p>add-invoice works!</p>
+<div class="add-invoice-container">
+  <h2>Add Invoice</h2>
+  <form [formGroup]="invoiceForm" (ngSubmit)="onSubmit()">
+    <div class="form-group">
+      <label for="invoiceNumber">Invoice Number</label>
+      <input id="invoiceNumber" formControlName="invoiceNumber" type="text" placeholder="Enter invoice number" />
+    </div>
+
+    <div class="form-group">
+      <label for="totalAmount">Total Amount</label>
+      <input id="totalAmount" formControlName="totalAmount" type="number" placeholder="Enter total amount" />
+    </div>
+
+    <div class="form-group">
+      <label for="issueDate">Issue Date</label>
+      <input id="issueDate" formControlName="issueDate" type="date" />
+    </div>
+
+    <div class="form-group">
+      <label for="budgetId">Budget ID</label>
+      <input id="budgetId" formControlName="budgetId" type="number" placeholder="Enter budget ID" />
+    </div>
+
+    <div class="form-group">
+      <label for="status">Status</label>
+      <select id="status" formControlName="status">
+        <option value="Active">Active</option>
+        <option value="Closed">Closed</option>
+        <option value="Adjusted">Adjusted</option>
+        <option value="Cancelled">Cancelled</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="tax">Tax</label>
+      <input id="tax" formControlName="tax" type="number" placeholder="Enter tax amount" />
+    </div>
+
+    <div class="form-group">
+      <label for="dueDate">Due Date</label>
+      <input id="dueDate" formControlName="dueDate" type="date" />
+    </div>
+
+    <div class="form-group">
+      <label for="issued_by">Issued By</label>
+      <input id="issued_by" formControlName="issued_by" type="text" placeholder="Enter issuer name" />
+    </div>
+
+    <div class="form-group">
+      <label for="issued_to">Issued To</label>
+      <input id="issued_to" formControlName="issued_to" type="text" placeholder="Enter recipient name" />
+    </div>
+
+    <div class="form-group">
+      <label for="amount">Amount</label>
+      <input id="amount" formControlName="amount" type="number" placeholder="Enter amount" />
+    </div>
+
+    <div class="form-group">
+      <label for="approvalStatus">Approval Status</label>
+      <select id="approvalStatus" formControlName="approvalStatus">
+        <option value="PENDING">Pending</option>
+        <option value="APPROVED">Approved</option>
+        <option value="REJECTED">Rejected</option>
+      </select>
+    </div>
+
+
+    <button type="submit" [disabled]="loading">Create Invoice</button>
+  </form>
+  <button (click)="goBack()">Back to Invoice Management</button>
+</div>

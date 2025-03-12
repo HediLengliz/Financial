@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { AbstractService } from './abstract-service';
 import {HttpClient, HttpParams} from '@angular/common/http';
-import { Observable } from 'rxjs';
+import {Observable, Subject} from 'rxjs';
 import {Budget} from "../models/budget";
 @Injectable({
   providedIn: 'root'
@@ -10,6 +10,12 @@ export class BudgetService extends AbstractService{
   private apiGatewayUrl = 'http://localhost:8080/financial/budgets';
   constructor(protected override http: HttpClient) {
     super(http);
+  }
+  private budgetUpdatedSource = new Subject<void>();
+  budgetUpdated$ = this.budgetUpdatedSource.asObservable();
+
+  notifyBudgetUpdated() {
+    this.budgetUpdatedSource.next();
   }
   getBudgets(
     projectName?: string,

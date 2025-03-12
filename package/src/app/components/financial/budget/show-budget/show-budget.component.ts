@@ -5,6 +5,8 @@ import { CommonModule } from "@angular/common";
 import { NgCircleProgressModule } from "ng-circle-progress";
 import { BudgetService } from "../../../../services/budget.service";
 import { Budget } from "../../../../models/budget";
+import { Chart } from 'chart.js';
+import ChartDataLabels from 'chartjs-plugin-datalabels';
 
 @Component({
   selector: 'app-show-budget',
@@ -17,15 +19,13 @@ import { Budget } from "../../../../models/budget";
     RouterOutlet,
   ],
   templateUrl: './show-budget.component.html',
-  styleUrls: ['./show-budget.component.scss'] // Fixed typo (styleUrl to styleUrls)
+  styleUrls: ['./show-budget.component.scss']
 })
 export class ShowBudgetComponent implements OnInit {
   showtable: boolean = true;
-  budget!: Budget; // No need for @Input() here
+  public chart: any;
+  budget!: Budget;
   pieChartData: any[] = [];
-  colorScheme = {
-    domain: ['#78C000', '#C7E596']
-  };
   progress: number = 0;
 
   constructor(
@@ -33,15 +33,11 @@ export class ShowBudgetComponent implements OnInit {
     private route: ActivatedRoute,
     private budgetService: BudgetService
   ) {}
-  viewBudget(budgetId: string) {
-    this.showtable = false; // Hide the budget table
-    // this.router.navigate(['/show-budget', budgetId]); // Navigate to Show Budget component
-  }
+
   ngOnInit(): void {
-    // Retrieve the budget ID from the route parameters
     const budgetId = this.route.snapshot.paramMap.get('id');
     if (budgetId) {
-      this.loadBudget(budgetId); // Call loadBudget with the ID
+      this.loadBudget(budgetId);
     }
   }
 
@@ -49,7 +45,8 @@ export class ShowBudgetComponent implements OnInit {
     this.budgetService.getBudgetById(id).subscribe(
       (data) => {
         this.budget = data;
-        this.calculateProgress(); // Call calculateProgress after loading the budget
+        this.calculateProgress();
+        this.loadChart(); // Load the chart after fetching the budget
       },
       (error) => {
         console.error('Error fetching budget:', error);
@@ -60,15 +57,47 @@ export class ShowBudgetComponent implements OnInit {
   calculateProgress(): void {
     const spent = this.budget.spentAmount;
     const allocated = this.budget.allocatedAmount;
-    const remaining = allocated - spent;
-
-    this.pieChartData = [
-      { name: 'Spent', value: spent },
-      { name: 'Remaining', value: remaining }
-    ];
-
-    // Calculate the progress percentage
     this.progress = allocated > 0 ? (spent / allocated) * 100 : 0;
+  }
+
+  loadChart(): void {
+    const spent = this.budget.spentAmount;
+    const remaining = this.budget.allocatedAmount - spent;
+
+    this.chart = new Chart('budgetChart', {
+      type: 'pie',
+      data: {
+        labels: ['Spent', 'Remaining'],
+        datasets: [{
+          data: [spent, remaining],
+          backgroundColor: ['#78C000', '#C7E596'],
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: {
+            position: 'top',
+          },
+          tooltip: {
+            callbacks: {
+              label: (tooltipItem) => {
+                return `${tooltipItem.label}: ${tooltipItem.raw}`;
+              }
+            }
+          },
+          datalabels: {
+            formatter: (value, context) => {
+              // @ts-ignore
+              const total = context.chart.data.datasets[context.datasetIndex].data.reduce((a, b) => a + b, 0);
+              // @ts-ignore
+              return `${value} (${Math.round((value / total) * 100)}%)`;
+            },
+            color: '#fff',
+          }
+        }
+      }
+    });
   }
 
   getStatusClass(status: string): string {
@@ -81,6 +110,6 @@ export class ShowBudgetComponent implements OnInit {
   }
 
   goBack() {
-    this.router.navigate(['/budget-management']); // Adjust the route as necessary
+    this.router.navigate(['/financial/budget']);
   }
 }

@@ -43,6 +43,9 @@ export class EditBudgetComponent {
       this.loadBudget();
     }
   }
+  goBack() {
+    this.router.navigate(['/financial/budget']); // Adjust the route as necessary
+  }
 
   private loadBudget(): void {
     this.budgetService.getBudgetById(this.id!).subscribe({
@@ -61,7 +64,8 @@ export class EditBudgetComponent {
     this.budgetService.updateBudget(this.id, this.budget).subscribe({
       next: () => {
         this.toastr.success('Budget updated successfully!');
-        this.router.navigate(['/financial/budget/list']);
+        this.budgetService.notifyBudgetUpdated(); // Notify the update
+        this.router.navigate(['/financial/budget']);
       },
       error: (err) => {
         if (err.status === 422 && err.error.message) {

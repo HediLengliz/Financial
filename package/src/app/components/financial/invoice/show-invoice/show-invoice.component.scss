@@ -1,0 +1,85 @@
+.invoice-overview {
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+
+  h2 {
+    margin-bottom: 10px;
+    color: #333;
+  }
+
+  h3 {
+    margin-top: 20px;
+    margin-bottom: 15px;
+    color: #555;
+  }
+
+  p {
+    margin: 5px 0;
+    color: #666;
+  }
+
+  .expense-summary {
+    margin-top: 20px;
+    h4 {
+      margin-bottom: 10px;
+      color: #444;
+    }
+
+    .circular-progress {
+      position: relative;
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      background-color: #e0e0e0;
+
+      .circle {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        background-color: #78C000;
+        transition: clip-path 0.5s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        .progress-text {
+          font-size: 1.2em;
+          color: #fff;
+        }
+      }
+    }
+  }
+
+  .button-group {
+    margin-top: 20px;
+
+    button {
+      margin-right: 10px;
+    }
+  }
+
+  .btn {
+    &.btn-primary {
+      background-color: #007bff;
+      border-color: #007bff;
+    }
+
+    &.btn-success {
+      background-color: #28a745;
+      border-color: #28a745;
+    }
+
+    &.btn-info {
+      background-color: #17a2b8;
+      border-color: #17a2b8;
+    }
+
+    &.btn-outline-secondary {
+      border-color: #6c757d;
+      color: #6c757d;
+    }
+  }
+}

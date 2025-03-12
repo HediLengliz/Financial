@@ -29,7 +29,7 @@ export const navItems: NavItem[] = [
     children: [
       {
         displayName: 'Budget',
-        iconName: 'price-tag',
+        iconName: 'notebook',
         route: '/financial/budget',  // Adjust this route as needed
         chip: true,
         chipClass: 'bg-primary text-white',
@@ -47,15 +47,14 @@ export const navItems: NavItem[] = [
       {
         displayName: 'Approval',
         iconName: 'check',
-        route: '/financial/approval',  // Adjust this route as needed
+        route: '/financial/approval',  // Direct to dashboard
         chip: true,
         chipClass: 'bg-primary text-white',
-        bgcolor: 'secondary',
-
+        bgcolor: 'secondary'
       },
       {
         displayName: 'Expense',
-        iconName: 'money',
+        iconName: 'credit-card',
         route: '/financial/expense',  // Adjust this route as needed
         chip: true,
         chipClass: 'bg-primary text-white',

@@ -1,1 +1,146 @@
-<p>edit-expense works!</p>
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-lg-12 col-md-12 col-12">
+      <div class="mb-5">
+        <h3 class="mb-0">Edit Expense</h3>
+      </div>
+    </div>
+  </div>
+
+  <div>
+    <form #form="ngForm" (ngSubmit)="updateExpense()">
+      <div class="row">
+        <div class="col-xl-9 col-md-12 col-12">
+          <div class="card mb-5">
+            <div class="card-body">
+              <div class="row">
+                <!-- Description -->
+                <div class="mb-4 col-12">
+                  <label class="form-label" for="description">Description <span class="text-danger">*</span></label>
+                  <input
+                    type="text"
+                    id="description"
+                    class="form-control"
+                    name="description"
+                    placeholder="Enter description"
+                    required
+                    [(ngModel)]="expense.description"
+                    #description="ngModel"
+                    [class.is-invalid]="description.invalid && description.touched"
+                  >
+                  <div *ngIf="description.invalid && description.touched" class="invalid-feedback">
+                    Description is required.
+                  </div>
+                </div>
+
+                <!-- Created At -->
+                <div class="mb-4 col-md-6 col-12">
+                  <label class="form-label" for="createdAt">Created At <span class="text-danger">*</span></label>
+                  <input
+                    type="date"
+                    id="createdAt"
+                    class="form-control"
+                    name="createdAt"
+                    required
+                    [(ngModel)]="expense.createdAt"
+                    #createdAt="ngModel"
+                    [class.is-invalid]="createdAt.invalid && createdAt.touched"
+                  >
+                  <div *ngIf="createdAt.invalid && createdAt.touched" class="invalid-feedback">
+                    Please select a valid creation date.
+                  </div>
+                </div>
+
+                <!-- Updated At -->
+                <div class="mb-4 col-md-6 col-12">
+                  <label class="form-label" for="updatedAt">Updated At <span class="text-danger">*</span></label>
+                  <input
+                    type="date"
+                    id="updatedAt"
+                    class="form-control"
+                    name="updatedAt"
+                    required
+                    [(ngModel)]="expense.updatedAt"
+                    #updatedAt="ngModel"
+                    [class.is-invalid]="updatedAt.invalid && updatedAt.touched"
+                  >
+                  <div *ngIf="updatedAt.invalid && updatedAt.touched" class="invalid-feedback">
+                    Please select a valid update date.
+                  </div>
+                </div>
+
+                <!-- Category -->
+                <div class="mb-4 col-md-6 col-12">
+                  <label class="form-label" for="category">Category <span class="text-danger">*</span></label>
+                  <input
+                    type="text"
+                    id="category"
+                    class="form-control"
+                    name="category"
+                    placeholder="Enter category"
+                    required
+                    [(ngModel)]="expense.category"
+                    #category="ngModel"
+                    [class.is-invalid]="category.invalid && category.touched"
+                  >
+                  <div *ngIf="category.invalid && category.touched" class="invalid-feedback">
+                    Category is required.
+                  </div>
+                </div>
+
+                <!-- Amount -->
+                <div class="mb-4 col-md-6 col-12">
+                  <label class="form-label" for="amount">Amount <span class="text-danger">*</span></label>
+                  <input
+                    type="number"
+                    id="amount"
+                    class="form-control"
+                    name="amount"
+                    placeholder="Enter amount"
+                    required
+                    min="0"
+                    step="0.01"
+                    [(ngModel)]="expense.amount"
+                    #amount="ngModel"
+                    [class.is-invalid]="amount.invalid && amount.touched"
+                  >
+                  <div *ngIf="amount.invalid && amount.touched" class="invalid-feedback">
+                    <div *ngIf="amount.errors?.['required']">Amount is required.</div>
+                    <div *ngIf="amount.errors?.['min']">Amount must be greater than or equal to 0.</div>
+                  </div>
+                </div>
+
+                <!-- Status -->
+                <div class="mb-4 col-md-6 col-12">
+                  <label class="form-label" for="status">Status <span class="text-danger">*</span></label>
+                  <select
+                    id="status"
+                    class="form-select"
+                    name="status"
+                    required
+                    [(ngModel)]="expense.status"
+                    #status="ngModel"
+                    [class.is-invalid]="status.invalid && status.touched"
+                  >
+                    <option value="Active">Active</option>
+                    <option value="Closed">Closed</option>
+                    <option value="Adjusted">Adjusted</option>
+                    <option value="Cancelled">Cancelled</option>
+                  </select>
+                  <div *ngIf="status.invalid && status.touched" class="invalid-feedback">
+                    Please select a status.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-4 d-flex justify-content-end">
+          <button type="button" class="btn btn-dark me-2" (click)="goBack()">Back</button>
+          <button type="submit" class="btn btn-primary" [disabled]="form.invalid">Update</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>

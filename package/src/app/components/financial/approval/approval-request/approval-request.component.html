@@ -1,0 +1,30 @@
+<div class="request-container">
+  <h2>Request New Approval</h2>
+  <form (ngSubmit)="onSubmit()">
+    <input
+      type="number"
+      placeholder="Expense ID (optional)"
+      [(ngModel)]="expenseId"
+      name="expenseId"
+    />
+    <input
+      type="number"
+      placeholder="Invoice ID (optional)"
+      [(ngModel)]="invoiceId"
+      name="invoiceId"
+    />
+    <input
+      type="text"
+      placeholder="Manager ID"
+      [(ngModel)]="managerId"
+      name="managerId"
+      required
+    />
+
+
+    <button type="submit" class="submit-btn">Submit Request</button>
+  </form>
+  <div>
+    <button (click)="cancelRequest()" class="cancel-btn">Cancel</button>
+  </div>
+</div>

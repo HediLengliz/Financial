@@ -1,1 +1,82 @@
-<p>approval works!</p>
+<div class="container">
+  <!-- Header -->
+  <h1>Approval Dashboard</h1>
+
+  <!-- Error Message -->
+  <div class="error-message" *ngIf="errorMessage">
+    <p>{{ errorMessage }}</p>
+  </div>
+
+  <!-- Request New Approval Button -->
+  <div class="request-button">
+    <button class="request-btn" (click)="requestNewApproval()">
+      <i class="fas fa-plus"></i> Request New Approval
+    </button>
+    <button class="refresh-btn" (click)="refreshApprovals()">
+      <i class="fas fa-sync"></i> Refresh
+    </button>
+  </div>
+
+  <!-- Statistics Section -->
+  <div class="stats" *ngIf="!loading">
+    <div class="stat-card">
+      <i class="fas fa-hourglass-half"></i>
+      <h3>Pending</h3>
+      <p>{{ pendingCount }}</p>
+    </div>
+    <div class="stat-card">
+      <i class="fas fa-check-double"></i>
+      <h3>Fully Approved</h3>
+      <p>{{ fullyApprovedCount }}</p>
+    </div>
+  </div>
+
+  <!-- Search Bar -->
+  <div class="search-bar">
+    <input
+      type="text"
+      [(ngModel)]="searchTerm"
+      placeholder="Search by ID or Status"
+    />
+    <i class="fas fa-search"></i>
+  </div>
+
+  <!-- Loading State -->
+  <div class="loading" *ngIf="loading">
+    <i class="fas fa-spinner fa-spin"></i> Loading approvals...
+  </div>
+
+  <!-- Approval List -->
+  <div class="approval-list" *ngIf="!loading">
+    <div class="card"
+         *ngFor="let approval of filteredApprovals"
+         [ngClass]="{
+         'pending': approval.status === 'PENDING',
+         'approved': approval.status === 'APPROVED',
+         'rejected': approval.status === 'REJECTED'
+       }"
+         [@fadeIn]>
+      <div class="card-content">
+        <p><strong>ID:</strong> {{ approval.id }}</p>
+        <p><strong>Status:</strong> {{ approval.status }}</p>
+        <div class="actions">
+          <button *ngIf="approval.status === 'PENDING'"
+                  (click)="approve(approval.id)"
+                  class="action-btn">
+            <i class="fas fa-check"></i> Manager Approve
+          </button>
+          <button *ngIf="approval.status === 'MANAGER_APPROVED'"
+                  (click)="navigateToFinanceForm(approval.id)"
+                  class="action-btn">
+            <i class="fas fa-check-double"></i> Finance Team Approve
+          </button>
+          <button (click)="openDetails(approval)" class="details-btn">
+            <i class="fas fa-info-circle"></i> View Details
+          </button>
+        </div>
+      </div>
+    </div>
+    <p *ngIf="filteredApprovals.length === 0" class="no-data">No approvals found.</p>
+  </div>
+  <router-outlet></router-outlet>
+</div>
