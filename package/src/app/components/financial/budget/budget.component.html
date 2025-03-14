@@ -221,7 +221,9 @@
               <td>{{ budget.budgetStatus }}</td>
               <td>
                 <div class="d-flex gap-2">
-                  <button class="btn btn-sm btn-outline-info" [routerLink]="['/financial/budget/', budget.id]">
+                  <button
+                    class="btn btn-sm btn-outline-info"
+                    (click)="viewDetailsAndForecast(budget.id)">
                     Details
                   </button>
                   <button class="btn btn-sm btn-outline-primary" [routerLink]="['/financial/budget/edit', budget.id]">

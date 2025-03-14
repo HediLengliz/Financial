@@ -3,108 +3,115 @@
   max-width: 800px;
   margin: 30px auto;
   padding: 20px;
-  background: #ffffff;
-  border-radius: 10px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  background: #ffffff; /* White background */
+  border-radius: 15px; /* Rounded corners */
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1); /* Soft shadow for depth */
+  transition: transform 0.3s ease; /* Smooth transition on hover */
+
+  &:hover {
+    transform: scale(1.02); /* Slight scale effect on hover */
+  }
 }
 
 /* Header Styles */
 h3 {
-  font-size: 28px;
-  color: #333;
-  margin-bottom: 20px;
-  text-align: center;
+  font-size: 28px; /* Larger font for header */
+  color: #333; /* Dark color for text */
+  margin-bottom: 20px; /* Space below */
+  text-align: center; /* Center align */
 }
 
 /* Card Styles */
 .card {
-  border: none;
-  border-radius: 10px;
-  background: linear-gradient(135deg, #f0f4f8, #e1e9ef);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  border: none; /* Remove default border */
+  border-radius: 10px; /* Rounded corners */
+  background: linear-gradient(135deg, #f0f4f8, #e1e9ef); /* Gradient background */
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); /* Shadow for depth */
 }
 
 /* Form Styles */
 .form-label {
-  font-weight: bold;
-  color: #555;
+  font-weight: bold; /* Bold labels */
+  color: #555; /* Darker color for labels */
+  margin-bottom: 5px; /* Space below labels */
 }
 
 .form-control, .form-select {
-  padding: 12px;
-  border: 1px solid #ced4da;
-  border-radius: 5px;
-  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  padding: 12px; /* Comfortable padding */
+  border: 1px solid #ced4da; /* Light border */
+  border-radius: 8px; /* More rounded corners */
+  transition: border-color 0.3s ease, box-shadow 0.3s ease; /* Smooth transition */
+  font-size: 16px; /* Increased font size for readability */
 }
 
 .form-control:focus, .form-select:focus {
-  border-color: #007bff;
-  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+  border-color: #007bff; /* Blue border on focus */
+  box-shadow: 0 0 8px rgba(0, 123, 255, 0.5); /* Glowing effect */
 }
 
 /* Invalid Input Styles */
 .is-invalid {
-  border-color: #dc3545;
+  border-color: #dc3545; /* Red border for invalid input */
 }
 
 .text-danger {
-  font-size: 0.875em;
+  font-size: 0.875em; /* Smaller font for error messages */
 }
 
 /* Button Styles */
 .btn {
-  border-radius: 5px;
-  transition: background-color 0.3s ease, transform 0.2s ease;
+  border-radius: 8px; /* Rounded buttons */
+  transition: background-color 0.3s ease, transform 0.2s ease; /* Smooth button transitions */
 }
 
 .btn-primary {
-  background-color: #007bff;
-  border: none;
-  color: white;
+  background-color: #007bff; /* Primary button color */
+  border: none; /* No border */
+  color: white; /* White text */
 }
 
 .btn-primary:hover {
-  background-color: #0056b3;
-  transform: translateY(-2px);
+  background-color: #0056b3; /* Darker blue on hover */
+  transform: translateY(-2px); /* Lift effect */
 }
 
 .btn-dark {
-  background-color: #343a40;
-  color: white;
+  background-color: #343a40; /* Dark button color */
+  color: white; /* White text */
 }
 
 .btn-dark:hover {
-  background-color: #23272b;
-  transform: translateY(-2px);
+  background-color: #23272b; /* Darker on hover */
+  transform: translateY(-2px); /* Lift effect */
 }
 
 /* Flex Styles for Button Container */
 .d-flex {
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
+  display: flex; /* Flex display */
+  justify-content: flex-end; /* Align buttons to the end */
+  align-items: center; /* Center vertically */
 }
 
 /* Back Button Styles */
 button[type="button"] {
-  background: transparent;
-  border: none;
-  color: #007bff;
-  cursor: pointer;
-  text-decoration: underline;
+  background: transparent; /* Transparent background */
+  border: none; /* No border */
+  color: #007bff; /* Blue text */
+  cursor: pointer; /* Pointer cursor */
+  text-decoration: underline; /* Underline */
 }
 
 button[type="button"]:hover {
-  color: #0056b3;
+  color: #0056b3; /* Darker blue on hover */
 }
 
 /* Responsive Styles */
 @media (max-width: 768px) {
   .container-fluid {
-    padding: 15px;
+    padding: 15px; /* Less padding on smaller screens */
   }
 
   h3 {
-    font-size: 24px;
+    font-size: 24px; /* Smaller header font */
   }
 }

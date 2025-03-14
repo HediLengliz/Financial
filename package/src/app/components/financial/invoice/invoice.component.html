@@ -10,11 +10,23 @@
     <div class="col-12 col-md-4 mb-2">
       <input type="text" class="form-control" [(ngModel)]="searchKeyword" (input)="search()" placeholder="Search by invoice number..." />
     </div>
+    <input
+      type="number"
+      class="form-control"
+      [(ngModel)]="totalAmountSearch"
+      (ngModelChange)="onTotalAmountChange($event)"
+      placeholder="Total Amount"
+    />
+
+    <!-- Filter by Due Date -->
     <div class="col-12 col-md-2 mb-2">
-      <input type="number" class="form-control" [(ngModel)]="amountSearch" (input)="search()" placeholder="Amount" />
-    </div>
-    <div class="col-12 col-md-2 mb-2">
-      <input type="date" class="form-control" [(ngModel)]="createdAt" (change)="loadInvoices()" placeholder="Created At" />
+      <label for="dueDate">Filter by Due Date:</label>
+      <input
+        type="date"
+        id="dueDate"
+        [(ngModel)]="dueDate"
+        (ngModelChange)="onDueDateChange($event)"
+      >
     </div>
     <div class="col-12 col-md-2 mb-2">
       <select class="form-select" [(ngModel)]="selectedStatus" (change)="loadInvoices()">
@@ -100,7 +112,7 @@
               <td>{{ invoice.issueDate | date: 'medium' }}</td>
               <td>{{ invoice.status }}</td>
               <td>
-                <button class="btn btn-sm btn-outline-info" [routerLink]="['/financial/invoice/', invoice.id]">
+                <button class="btn btn-sm btn-outline-info" (click)="viewDetails(invoice.id)">
                   Details
                 </button>
                 <button class="btn btn-outline-secondary" [routerLink]="['/financial/invoice/edit', invoice.id]">Edit</button>

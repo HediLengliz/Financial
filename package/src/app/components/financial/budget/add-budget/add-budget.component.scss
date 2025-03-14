@@ -2,16 +2,22 @@
   max-width: 600px;
   margin: 30px auto;
   padding: 20px;
-  background: #ffffff;
-  border-radius: 10px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  background: #ffffff; /* White background */
+  border-radius: 15px; /* Increased border radius for a softer look */
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1); /* Deeper shadow for depth */
+  transition: transform 0.3s ease; /* Smooth transition on hover */
+
+  &:hover {
+    transform: scale(1.02); /* Slight scale effect on hover */
+  }
 }
 
 .form-title {
   text-align: center;
-  font-size: 24px;
+  font-size: 28px; /* Larger title size */
   margin-bottom: 20px;
   color: #333;
+  font-weight: bold; /* Bold title */
 }
 
 .budget-form {
@@ -20,36 +26,56 @@
 }
 
 .form-group {
-  margin-bottom: 15px;
+  margin-bottom: 15px; /* Margins for spacing */
+  display: flex;
+  flex-direction: column;
 }
 
 .form-group label {
   font-weight: bold;
   color: #555;
+  margin-bottom: 5px; /* Space below the label */
 }
 
-.form-control {
-  padding: 10px;
-  border-radius: 5px;
+.form-control, .form-select {
+  padding: 12px; /* Increased padding for comfort */
+  border-radius: 8px; /* More rounded corners */
   border: 1px solid #ddd;
-  transition: border-color 0.3s ease;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease; /* Smooth transition */
+  font-size: 16px; /* Increased font size for readability */
 }
 
-.form-control:focus {
-  border-color: #007bff;
-  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+.form-control:focus, .form-select:focus {
+  border-color: #007bff; /* Blue border on focus */
+  box-shadow: 0 0 8px rgba(0, 123, 255, 0.5); /* Glowing effect on focus */
+  outline: none; /* Remove default outline */
 }
 
 .btn-submit {
-  padding: 10px;
-  background-color: #28a745;
+  padding: 12px 20px; /* Increased padding */
+  background-color: #28a745; /* Green background */
   color: white;
   border: none;
-  border-radius: 5px;
+  border-radius: 8px; /* More rounded corners */
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: background-color 0.3s ease, transform 0.3s ease; /* Smooth transition */
+
+  &:hover {
+    background-color: #218838; /* Darker green on hover */
+    transform: translateY(-2px); /* Lift effect on hover */
+  }
+
+  &:active {
+    transform: scale(0.95); /* Slightly smaller on click */
+  }
 }
 
-.btn-submit:hover {
-  background-color: #218838;
+.error-message {
+  color: #ff4d4d; /* Red color for error messages */
+  text-align: center;
+  margin: 10px 0; /* Space above and below */
+}
+
+.text-danger {
+  color: #ff4d4d; /* Red color for required asterisks */
 }

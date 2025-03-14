@@ -5,9 +5,8 @@ import { CommonModule } from "@angular/common";
 import { NgCircleProgressModule } from "ng-circle-progress";
 import { BudgetService } from "../../../../services/budget.service";
 import { Budget } from "../../../../models/budget";
-import { Chart } from 'chart.js';
+import { Chart } from 'chart.js/auto';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
-
 @Component({
   selector: 'app-show-budget',
   standalone: true,
@@ -23,9 +22,10 @@ import ChartDataLabels from 'chartjs-plugin-datalabels';
 })
 export class ShowBudgetComponent implements OnInit {
   showtable: boolean = true;
-  public chart: any;
-  budget!: Budget;
+  public chart: Chart | undefined;
+  budget: Budget | null = null;
   pieChartData: any[] = [];
+  forecast: number | null = null;
   progress: number = 0;
 
   constructor(
@@ -37,69 +37,112 @@ export class ShowBudgetComponent implements OnInit {
   ngOnInit(): void {
     const budgetId = this.route.snapshot.paramMap.get('id');
     if (budgetId) {
-      this.loadBudget(budgetId);
+      const idNumber = parseInt(budgetId, 10); // Convert string to number
+      if (isNaN(idNumber)) {
+        console.error('Invalid budget ID:', budgetId);
+        return; // Exit if conversion fails
+      }
+      this.loadBudget(idNumber);
+      this.loadForecast(idNumber);
+    } else {
+      console.error('Budget ID not found in route parameters');
     }
   }
 
-  loadBudget(id: string): void {
-    this.budgetService.getBudgetById(id).subscribe(
-      (data) => {
+  /** Loads budget data from the service */
+  loadBudget(id: number): void {
+    this.budgetService.getbudgetById(id).subscribe({
+      next: (data) => {
         this.budget = data;
         this.calculateProgress();
-        this.loadChart(); // Load the chart after fetching the budget
+        if (this.forecast !== null) {
+          this.loadChart();
+        }
       },
-      (error) => {
+      error: (error) => {
         console.error('Error fetching budget:', error);
+        this.budget = null;
       }
-    );
+    });
   }
 
+  /** Loads forecast data from the service */
+  loadForecast(id: number): void {
+    this.budgetService.fetchForecast(id).subscribe({
+      next: (data) => {
+        this.forecast = data.forecast;
+        if (this.budget) {
+          this.loadChart();
+        }
+      },
+      error: (error) => {
+        console.error('Error fetching forecast:', error);
+        this.forecast = null;
+      }
+    });
+  }
+
+  /** Calculates the progress percentage based on budget data */
   calculateProgress(): void {
-    const spent = this.budget.spentAmount;
-    const allocated = this.budget.allocatedAmount;
-    this.progress = allocated > 0 ? (spent / allocated) * 100 : 0;
+    if (this.budget) {
+      const spent = this.budget.spentAmount;
+      const allocated = this.budget.allocatedAmount;
+      this.progress = allocated > 0 ? (spent / allocated) * 100 : 0;
+    }
   }
 
+  /** Loads the chart with budget and forecast data */
   loadChart(): void {
+    if (!this.budget || this.forecast === null) {
+      console.warn('Cannot load chart: budget or forecast data is missing');
+      return;
+    }
+
     const spent = this.budget.spentAmount;
     const remaining = this.budget.allocatedAmount - spent;
+    const ctx = document.getElementById('budgetChart') as HTMLCanvasElement;
 
-    this.chart = new Chart('budgetChart', {
-      type: 'pie',
-      data: {
-        labels: ['Spent', 'Remaining'],
-        datasets: [{
-          data: [spent, remaining],
-          backgroundColor: ['#78C000', '#C7E596'],
-        }]
-      },
+    if (!ctx) {
+      console.error('Canvas element "budgetChart" not found in the template');
+      return;
+    }
+
+    const chartData = {
+      labels: ['Allocated', 'Spent', 'Remaining', 'Forecast'],
+      datasets: [{
+        label: 'Budget Overview',
+        data: [this.budget.allocatedAmount, spent, remaining, this.forecast],
+        backgroundColor: ['#007bff', '#dc3545', '#28a745', '#ffc107'],
+        borderColor: ['#007bff', '#dc3545', '#28a745', '#ffc107'],
+        borderWidth: 1
+      }]
+    };
+
+    // Destroy existing chart if it exists to prevent overlap
+    if (this.chart) {
+      this.chart.destroy();
+    }
+
+    this.chart = new Chart(ctx, {
+      type: 'bar',
+      data: chartData,
       options: {
         responsive: true,
-        plugins: {
-          legend: {
-            position: 'top',
-          },
-          tooltip: {
-            callbacks: {
-              label: (tooltipItem) => {
-                return `${tooltipItem.label}: ${tooltipItem.raw}`;
-              }
-            }
-          },
-          datalabels: {
-            formatter: (value, context) => {
-              // @ts-ignore
-              const total = context.chart.data.datasets[context.datasetIndex].data.reduce((a, b) => a + b, 0);
-              // @ts-ignore
-              return `${value} (${Math.round((value / total) * 100)}%)`;
-            },
-            color: '#fff',
+        scales: {
+          y: {
+            beginAtZero: true,
+            title: { display: true, text: `Amount (${this.budget.currency})` }
           }
+        },
+        plugins: {
+          legend: { display: true },
+          title: { display: true, text: 'Budget Summary with Forecast' }
         }
       }
     });
   }
 
+  /** Returns CSS class based on budget status */
   getStatusClass(status: string): string {
     switch (status.toLowerCase()) {
       case 'approved': return 'badge bg-success';
@@ -109,7 +152,8 @@ export class ShowBudgetComponent implements OnInit {
     }
   }
 
-  goBack() {
+  /** Navigates back to the budget list */
+  goBack(): void {
     this.router.navigate(['/financial/budget']);
   }
 }

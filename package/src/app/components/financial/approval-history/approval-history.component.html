@@ -1,0 +1,34 @@
+<h2>Approval History</h2>
+<table>
+  <thead>
+  <tr>
+    <th>ID</th>
+    <th>Approval ID</th>
+    <th>Action</th>
+    <th>Performed By</th>
+    <th>Timestamp</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr *ngFor="let history of histories">
+    <td>{{ history.id }}</td>
+    <td>{{ history.approvalId }}</td>
+    <td>{{ history.action }}</td>
+    <td>{{ history.performedBy }}</td>
+    <td>{{ history.timestamp }}</td>
+  </tr>
+  </tbody>
+</table>
+
+<h3>Restore Deleted Approval</h3>
+<div>
+  <label for="approvalId">Approval ID:</label>
+  <input id="approvalId" [(ngModel)]="approvalIdToRestore" type="number" placeholder="Enter Approval ID" />
+</div>
+<div>
+  <label for="performedBy">Performed By:</label>
+  <input id="performedBy" [(ngModel)]="performedBy" placeholder="Enter your name" />
+</div>
+
+<button (click)="restoreApproval()">Restore</button>
+<button (click)="goBack()">Back to Approval Management</button>

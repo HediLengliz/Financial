@@ -4,12 +4,12 @@
 
   <div class="budget-details">
     <h3>Budget Details</h3>
-    <p>Project: <strong>{{ budget.projectName }}</strong></p>
-    <p>Allocated Amount: {{ budget.allocatedAmount | currency: budget.currency }}</p>
-    <p>Spent Amount: {{ budget.spentAmount | currency: budget.currency }}</p>
-    <p>Remaining Amount: {{ budget.remainingAmount | currency: budget.currency }}</p>
-    <p>Status: <span class="badge" [ngClass]="getStatusClass(budget.status)">{{ budget.status }}</span></p>
-    <p>Currency: {{ budget.currency }}</p>
+    <p>Project: <strong>{{ budget?.projectName }}</strong></p>
+    <p>Allocated Amount: {{ budget?.allocatedAmount | currency: budget!.currency }}</p>
+    <p>Spent Amount: {{ budget?.spentAmount | currency: budget!.currency }}</p>
+    <p>Remaining Amount: {{ budget?.remainingAmount | currency: budget!.currency }}</p>
+    <p>Status: <span class="badge" [ngClass]="getStatusClass(budget?.status)">{{ budget?.status }}</span></p>
+    <p>Currency: {{ budget?.currency }}</p>
 
     <div class="budget-summary">
       <h4>Budget Summary</h4>
@@ -18,8 +18,9 @@
           <div class="progress-text">{{ progress | number: '1.0-0'}}%</div>
         </div>
       </div>
-      <div class="chart-container">
-        <canvas id="budgetChart"></canvas>
+      <div class="chart-container" style="width: 100%; height: 400px;">
+        <h4>Forecasting Chart</h4>
+        <canvas id="budgetChart" style="width: 100%; height: 100%;"></canvas>
       </div>
     </div>
   </div>

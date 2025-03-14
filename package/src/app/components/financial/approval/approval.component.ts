@@ -29,8 +29,9 @@ export class ApprovalComponent implements OnInit{
   approvals: Approval[] = [];
   searchTerm = '';
   fullyApprovedCount = 0;
+  DeletedCount = 0;
   pendingCount = 0;
-  filteredApprovals: any[] = [];
+  filteredApprovals: Approval[] = [];
   isApproving = false;
 
   approvalId: number;
@@ -48,6 +49,9 @@ export class ApprovalComponent implements OnInit{
   ngOnInit(): void {
     this.fetchApprovals();
     this.refreshApprovals();
+    this.approvalService.approvals$.subscribe(approvals => {
+      this.approvals = approvals;
+    });
   }
 
   fetchApprovals(): void {
@@ -56,7 +60,9 @@ export class ApprovalComponent implements OnInit{
     this.approvalService.getAllApprovals().subscribe({
       next: (data) => {
         this.approvals = data;
+        this.filteredApprovals = data; // Initialize filtered approvals
         this.loading = false;
+        this.updateCounts(); // Update counts after fetching
       },
       error: (err) => {
         console.error('Error fetching approvals:', err);
@@ -64,6 +70,18 @@ export class ApprovalComponent implements OnInit{
         this.loading = false;
       }
     });
+  }
+  filterApprovals() {
+    const term = this.searchTerm.toLowerCase();
+    this.filteredApprovals = this.approvals.filter(approval =>
+      approval.id.toString().includes(term) ||
+      approval.status.toLowerCase().includes(term)
+    );
+    this.updateCounts(); // Update counts based on filtered approvals
+  }
+  updateCounts() {
+    this.pendingCount = this.filteredApprovals.filter(a => a.status === 'PENDING').length;
+    this.fullyApprovedCount = this.filteredApprovals.filter(a => a.status === 'APPROVED').length;
   }
 
 
@@ -87,6 +105,7 @@ export class ApprovalComponent implements OnInit{
         this.filteredApprovals = approvals;
         this.pendingCount = approvals.filter(a => a.status === 'PENDING').length;
         this.fullyApprovedCount = approvals.filter(a => a.status === 'APPROVED').length; // Adjust if 'FULLY_APPROVED' is used
+        this.DeletedCount = approvals.filter(a => a.status === 'DELETED').length;
         this.loading = false;
       },
       error: (error) => {
@@ -156,8 +175,12 @@ export class ApprovalComponent implements OnInit{
   navigateToFinanceForm(approvalId: number): void {
     this.router.navigate(['/finance-approval-form', approvalId]);
   }
+  goToHistory() {
+    this.router.navigate(['/financial/approval/history']);
+  }
 
   requestNewApproval() {
     this.router.navigate(['request'], { relativeTo: this.route });
   }
+
 }

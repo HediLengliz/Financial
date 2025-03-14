@@ -3,8 +3,6 @@ import {HttpClient, HttpParams} from "@angular/common/http";
 import {Observable, Subject} from "rxjs";
 import {AbstractService} from "./abstract-service";
 import {Invoice} from "../models/invoice";
-import {Expense} from "../models/expense";
-import {Budget} from "../models/budget";
 
 @Injectable({
   providedIn: 'root'
@@ -23,7 +21,7 @@ export class InvoiceService extends AbstractService{
 
   getInvoicesWithFilters(
     invoiceNumber?: string,
-    totalAmount?: number | undefined,
+    totalAmount?: number,
     issueDate?: string | undefined,
     budgetId?: undefined,
     status?: "Active" | "Closed" | "Adjusted" | "Cancelled" | undefined,
@@ -40,7 +38,7 @@ export class InvoiceService extends AbstractService{
 
     // Add filters to query parameters if provided
     if (invoiceNumber) params = params.set('invoiceNumber', invoiceNumber);
-    if (totalAmount !== undefined) params = params.set('totalAmount', totalAmount.toString());
+    if (totalAmount !== undefined && totalAmount !== null) params = params.set('totalAmount', totalAmount.toString());
     if (issueDate) params = params.set('issueDate', issueDate);
     if (budgetId !== undefined) params = params.set('budgetId', budgetId);
     if (status) params = params.set('status', status);
@@ -58,11 +56,18 @@ export class InvoiceService extends AbstractService{
   deleteInvoice(id: number): Observable<any> {
     return this.http.delete(`${this.apiGatewayUrl}/delete/${id}`);
   }
-  getInvoiceById(id: string | null): Observable<Invoice> {
+
+  getInvoiceById(id: number): Observable<Invoice> {
     return this.http.get<Invoice>(`${this.apiGatewayUrl}/get/${id}`);
   }
   createInvoice(invoiceData: any): Observable<Invoice> {
     return this.http.post<Invoice>(`${this.apiGatewayUrl}/create`, invoiceData);
+  }
+  updateInvoice(id: number, invoiceData: any): Observable<Invoice> {
+    if (!id) {
+      throw new Error('Invoice ID must not be null');
+    }
+    return this.http.put<Invoice>(`${this.apiGatewayUrl}/update/${id}`, invoiceData);
   }
   exportAsPdf(id: string): Observable<Blob> {
     return this.http.get(`${this.apiGatewayUrl}/export/pdf/${id}`, { responseType: 'blob' });

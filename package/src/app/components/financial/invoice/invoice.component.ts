@@ -14,6 +14,7 @@ import { MatTableModule } from '@angular/material/table';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
+import {debounceTime, Subject} from "rxjs";
 @Component({
   selector: 'app-invoice',
   imports: [
@@ -31,8 +32,8 @@ import { MatMenuModule } from '@angular/material/menu';
   styleUrl: './invoice.component.scss'
 })
 export class InvoiceComponent implements OnInit {
-  invoices: Invoice[] = [];
   filteredInvoices: Invoice[] = [];
+  private invoices: Invoice[] = [];
   isLoading: boolean = false;
   errorMessage: string | null = null;
   sortColumn: SortableColumn = 'invoiceNumber';
@@ -40,32 +41,57 @@ export class InvoiceComponent implements OnInit {
 
   // Filter Variables
   searchKeyword: string = '';
-  amountSearch?: number;
+  totalAmountSearch: number | undefined | null;
   createdAt?: string;
-  dueDate?: string;
+  totalAmount?: number;
+  private filterSubject = new Subject<void>();
+  dueDate: string | undefined;
+  dueDateFilter: string | undefined;
   selectedStatus?: 'Active' | 'Closed' | 'Adjusted' | 'Cancelled';
   private invoiceToDeleteId: number | undefined;
   private toastr: any;
 
-  constructor(private invoiceService: InvoiceService,private route: Router) {}
+  constructor(private invoiceService: InvoiceService, private route: Router) {}
 
   ngOnInit(): void {
-    this.loadInvoices();
-    this.invoiceService.invoiceUpdateSource$.subscribe(() => {
-      this.loadInvoices(); // Refresh invoices when notified
+    // Set up debounce for other filters (e.g., dueDateFilter, selectedStatus) if needed
+    this.filterSubject.pipe(debounceTime(50)).subscribe(() => {
+      this.loadInvoices();
     });
+    this.loadInvoices(); // Initial load with no filter
+  }
+
+  onTotalAmountChange(value: number | undefined | null): void {
+    this.totalAmountSearch = value ?? undefined; // Convert null to undefined
+    console.log('Total Amount Changed to:', this.totalAmountSearch); // Debugging
+    this.loadInvoices();
+  }
+
+  onDueDateChange(value: string): void {
+    this.dueDate = value || undefined;
+    if (this.dueDate && !/^\d{4}-\d{2}-\d{2}$/.test(this.dueDate)) {
+      console.warn('Invalid dueDate format:', this.dueDate);
+      this.dueDate = undefined;
+    }
+    this.loadInvoices();
   }
 
   loadInvoices(): void {
     this.isLoading = true;
+    const filters = {
+      invoiceNumber: this.searchKeyword || undefined,
+      totalAmount: this.totalAmountSearch ?? undefined,
+      dueDate: this.dueDate,
+      status: this.selectedStatus,
+    };
     this.invoiceService.getInvoicesWithFilters(
-      this.searchKeyword,
-      this.amountSearch,
-      this.createdAt,
+      filters.invoiceNumber,
+      filters.totalAmount,
+      undefined, // issueDate
       undefined, // budgetId
-      this.selectedStatus,
+      filters.status,
       undefined, // tax
-      this.dueDate,
+      filters.dueDate,
       undefined, // createdAt
       undefined, // issuedBy
       undefined, // issuedTo
@@ -75,13 +101,13 @@ export class InvoiceComponent implements OnInit {
     ).subscribe({
       next: (data) => {
         this.invoices = data;
-        this.filteredInvoices = data; // Initialize filtered invoices
+        this.filteredInvoices = data; // Update the displayed list
         this.isLoading = false;
       },
       error: (err) => {
         this.errorMessage = 'Failed to load invoices';
         this.isLoading = false;
-        this.toastr.error('Failed to load invoices', 'Error');
+        console.error('Error loading invoices:', err);
       }
     });
   }
@@ -94,30 +120,13 @@ export class InvoiceComponent implements OnInit {
 
   clearSearch(): void {
     this.searchKeyword = '';
-    this.amountSearch = undefined;
-    this.loadInvoices(); // Reload all invoices
+    this.totalAmountSearch = undefined;
+    this.dueDateFilter = undefined;
+    this.selectedStatus = undefined;
+    this.loadInvoices();
   }
 
-  setInvoiceToDelete(id: number | undefined): void {
-    this.invoiceToDeleteId = id; // Store the ID of the invoice to be deleted
-  }
-
-  confirmDeleteInvoice(): void {
-    if (this.invoiceToDeleteId === undefined) return;
-
-    this.invoiceService.deleteInvoice(this.invoiceToDeleteId).subscribe({
-      next: () => {
-        this.toastr.success('Invoice deleted successfully!', 'Success', { timeOut: 2000, progressBar: true });
-        this.invoiceToDeleteId = undefined;
-        this.loadInvoices();
-      },
-      error: (error) => {
-        this.toastr.error('Failed to delete invoice', 'Error', { timeOut: 4000, progressBar: true });
-        console.error('Delete error:', error);
-      },
-    });
-  }
-  sort(column: SortableColumn): void { // Use SortableColumn type
+  sort(column: SortableColumn): void {
     if (this.sortColumn === column) {
       this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
     } else {
@@ -139,13 +148,8 @@ export class InvoiceComponent implements OnInit {
     });
   }
 
-  gotoShowInvoice(id: number | undefined): void {
-    this.route.navigate(['/financial/invoice', id]);
-
-  }
-
-  deleteInvoice(invoiceId: number | any) {
-    console.log('Attempting to delete invoice with ID:', invoiceId); // Log the ID
+  deleteInvoice(invoiceId: number | any): void {
+    console.log('Attempting to delete invoice with ID:', invoiceId);
     if (invoiceId) {
       this.invoiceService.deleteInvoice(invoiceId).subscribe({
         next: () => {
@@ -154,11 +158,24 @@ export class InvoiceComponent implements OnInit {
         },
         error: (error) => {
           this.toastr.error('Failed to delete invoice', 'Error', { timeOut: 4000 });
-          console.error('Error deleting invoice:', error); // Ensure you log the error
+          console.error('Error deleting invoice:', error);
         },
       });
     } else {
       console.error('Invoice ID is null or undefined');
     }
+  }
+
+  viewDetails(id: number): void {
+    this.route.navigate(['/financial/invoice', id]).then(success => {
+      if (success) {
+        this.loadInvoices();
+        console.log('Navigation to invoice details succeeded');
+      } else {
+        console.log('Navigation to invoice details failed');
+      }
+    }).catch(error => {
+      console.error('Error during navigation to invoice details:', error);
+    });
   }
 }

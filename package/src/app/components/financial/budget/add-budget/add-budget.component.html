@@ -1,110 +1,93 @@
-<div class="container-fluid">
-  <div class="row">
-    <div class="col-lg-12 col-md-12 col-12">
-      <div class="mb-5">
-        <h3 class="mb-0">Create New Budget</h3>
-      </div>
+<div class="add-budget-container">
+  <h3 class="form-title">Create New Budget</h3>
+
+  <form #form="ngForm" (ngSubmit)="addBudget()" class="budget-form">
+    <div class="form-group">
+      <label for="projectName">Project Name <span class="text-danger">*</span></label>
+      <input type="text" id="projectName" class="form-control" name="projectName"
+             placeholder="Enter project name" required [(ngModel)]="newBudget.projectName">
     </div>
-  </div>
-  <div>
-    <form #form="ngForm" (ngSubmit)="addBudget()">
-      <div class="row">
-        <div class="col-xl-9 col-md-12 col-12">
-          <div class="card mb-5">
-            <div class="card-body">
-              <div class="row">
-                <div class="mb-4 col-12">
-                  <label class="form-label">Project Name <span class="text-danger">*</span></label>
-                  <input type="text" class="form-control" name="projectName"
-                         placeholder="Enter project name" required [(ngModel)]="newBudget.projectName">
-                </div>
 
-                <div class="mb-4 col-md-6 col-12">
-                  <label class="form-label">Allocated Amount <span class="text-danger">*</span></label>
-                  <input type="number" class="form-control" name="allocatedAmount"
-                         placeholder="Enter allocated amount" required [(ngModel)]="newBudget.allocatedAmount">
-                </div>
+    <div class="form-group">
+      <label for="allocatedAmount">Allocated Amount <span class="text-danger">*</span></label>
+      <input type="number" id="allocatedAmount" class="form-control" name="allocatedAmount"
+             placeholder="Enter allocated amount" required [(ngModel)]="newBudget.allocatedAmount">
+    </div>
 
-                <div class="mb-4 col-md-6 col-12">
-                  <label class="form-label">Spent Amount <span class="text-danger">*</span></label>
-                  <input type="number" class="form-control" name="spentAmount"
-                         placeholder="Enter spent amount" required [(ngModel)]="newBudget.spentAmount">
-                </div>
+    <div class="form-group">
+      <label for="spentAmount">Spent Amount <span class="text-danger">*</span></label>
+      <input type="number" id="spentAmount" class="form-control" name="spentAmount"
+             placeholder="Enter spent amount" required [(ngModel)]="newBudget.spentAmount">
+    </div>
 
-                <div class="mb-4 col-md-6 col-12">
-                  <label class="form-label">Remaining Amount <span class="text-danger">*</span></label>
-                  <input type="number" class="form-control" name="remainingAmount"
-                         placeholder="Enter remaining amount" required [(ngModel)]="newBudget.remainingAmount">
-                </div>
+    <div class="form-group">
+      <label for="remainingAmount">Remaining Amount <span class="text-danger">*</span></label>
+      <input type="number" id="remainingAmount" class="form-control" name="remainingAmount"
+             placeholder="Enter remaining amount" required [(ngModel)]="newBudget.remainingAmount">
+    </div>
 
-                <div class="mb-4 col-md-6 col-12">
-                  <label class="form-label">Currency <span class="text-danger">*</span></label>
-                  <select class="form-select" name="currency" required [(ngModel)]="newBudget.currency">
-                    <option value="">Select Currency</option>
-                    <option value="USD">USD</option>
-                    <option value="EUR">EUR</option>
-                    <option value="GBP">GBP</option>
-                    <option value="JPY">JPY</option>
-                  </select>
-                </div>
+    <div class="form-group">
+      <label for="currency">Currency <span class="text-danger">*</span></label>
+      <select id="currency" class="form-select" name="currency" required [(ngModel)]="newBudget.currency">
+        <option value="">Select Currency</option>
+        <option value="USD">USD</option>
+        <option value="EUR">EUR</option>
+        <option value="GBP">GBP</option>
+        <option value="JPY">JPY</option>
+      </select>
+    </div>
 
-                <div class="mb-4 col-md-6 col-12">
-                  <label class="form-label">Status <span class="text-danger">*</span></label>
-                  <select class="form-select" name="status" required [(ngModel)]="newBudget.status">
-                    <option value="Active">Active</option>
-                    <option value="Adjusted">Adjusted</option>
-                    <option value="Closed">Closed</option>
-                    <option value="Cancelled">Cancelled</option>
-                  </select>
-                </div>
+    <div class="form-group">
+      <label for="status">Status <span class="text-danger">*</span></label>
+      <select id="status" class="form-select" name="status" required [(ngModel)]="newBudget.status">
+        <option value="Active">Active</option>
+        <option value="Adjusted">Adjusted</option>
+        <option value="Closed">Closed</option>
+        <option value="Cancelled">Cancelled</option>
+      </select>
+    </div>
 
-                <div class="mb-4 col-md-6 col-12">
-                  <label class="form-label">Created At</label>
-                  <input class="form-control" name="createdAt" type="date"
-                         required [(ngModel)]="newBudget.createdAt">
-                </div>
+    <div class="form-group">
+      <label for="createdAt">Created At</label>
+      <input id="createdAt" class="form-control" name="createdAt" type="date" required [(ngModel)]="newBudget.createdAt">
+    </div>
 
-                <div class="mb-4 col-md-6 col-12">
-                  <label class="form-label">Updated At</label>
-                  <input class="form-control" name="updatedAt" type="date"
-                         required [(ngModel)]="newBudget.updatedAt">
-                </div>
+    <div class="form-group">
+      <label for="updatedAt">Updated At</label>
+      <input id="updatedAt" class="form-control" name="updatedAt" type="date" required [(ngModel)]="newBudget.updatedAt">
+    </div>
 
-                <div class="mb-4 col-md-6 col-12">
-                  <label class="form-label">Transaction <span class="text-danger">*</span></label>
-                  <select class="form-select" name="Transaction" required [(ngModel)]="newBudget.transaction">
-                    <option value="Pending">Pending</option>
-                    <option value="Failed">Failed</option>
-                    <option value="Success">Success</option>
-                  </select>
-                </div>
+    <div class="form-group">
+      <label for="transaction">Transaction <span class="text-danger">*</span></label>
+      <select id="transaction" class="form-select" name="transaction" required [(ngModel)]="newBudget.transaction">
+        <option value="Pending">Pending</option>
+        <option value="Failed">Failed</option>
+        <option value="Success">Success</option>
+      </select>
+    </div>
 
-                <div class="mb-4 col-md-6 col-12">
-                  <label class="form-label">Budget Status<span class="text-danger">*</span></label>
-                  <select class="form-select" name="Budget Status" required [(ngModel)]="newBudget.budgetStatus">
-                    <option value="Insufficient">Insufficient</option>
-                    <option value="Sufficient">Sufficient</option>
-                    <option value="Exceeded">Exceeded</option>
-                  </select>
-              </div>
-                <div class="mb-4 col-md-6 col-12">
-                  <label class="form-label">Approval<span class="text-danger">*</span></label>
-                  <select class="form-select" name="Approval" required [(ngModel)]="newBudget.approval">
-                    <option value="APPROVED">APPROVED</option>
-                    <option value="PENDING">PENDING</option>
-                    <option value="REJECTED">REJECTED</option>
-                  </select>
-                </div>
-            </div>
-          </div>
-        </div>
-        <div class="mt-4 d-flex justify-content-end">
-          <button type="submit" class="btn btn-primary" [disabled]="form.invalid">
-            Create Budget
-          </button>
-        </div>
-      </div>
-      </div>
-    </form>
-  </div>
+    <div class="form-group">
+      <label for="budgetStatus">Budget Status <span class="text-danger">*</span></label>
+      <select id="budgetStatus" class="form-select" name="budgetStatus" required [(ngModel)]="newBudget.budgetStatus">
+        <option value="Insufficient">Insufficient</option>
+        <option value="Sufficient">Sufficient</option>
+        <option value="Exceeded">Exceeded</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="approval">Approval <span class="text-danger">*</span></label>
+      <select id="approval" class="form-select" name="approval" required [(ngModel)]="newBudget.approval">
+        <option value="APPROVED">APPROVED</option>
+        <option value="PENDING">PENDING</option>
+        <option value="REJECTED">REJECTED</option>
+      </select>
+    </div>
+
+    <div class="mt-4 d-flex justify-content-end">
+      <button type="submit" class="btn-submit" [disabled]="form.invalid">
+        Create Budget
+      </button>
+    </div>
+  </form>
 </div>

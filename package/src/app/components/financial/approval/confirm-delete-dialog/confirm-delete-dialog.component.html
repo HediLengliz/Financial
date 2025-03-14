@@ -1,0 +1,12 @@
+<div class="modal-card">
+  <h2>Confirm Soft Delete</h2>
+  <p>Are you sure you want to soft delete this approval? This action cannot be undone.</p>
+  <div class="input-group">
+    <label for="performedBy">Performed By:</label>
+    <input id="performedBy" [(ngModel)]="performedBy" placeholder="Enter user ID or name" />
+  </div>
+  <div class="button-group">
+    <button class="confirm-btn" (click)="onConfirm()">Confirm</button>
+    <button class="cancel-btn" (click)="onCancel()">Cancel</button>
+  </div>
+</div>

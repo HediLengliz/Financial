@@ -1,5 +1,5 @@
 export interface Invoice {
-  id?:number;
+  id:number;
   invoiceNumber: string;
   totalAmount: number;
   issueDate: string;

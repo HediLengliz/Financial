@@ -1,1 +1,48 @@
-<p>edit-invoice works!</p>
+<div class="container mt-4">
+  <h3>Edit Invoice</h3>
+  <form [formGroup]="invoiceForm" (ngSubmit)="onSubmit()" class="card p-4 shadow-sm">
+    <div class="form-group mb-3">
+      <label for="invoiceNumber">Invoice Number</label>
+      <input id="invoiceNumber" formControlName="invoiceNumber" class="form-control" placeholder="Enter invoice number"/>
+    </div>
+    <div class="form-group mb-3">
+      <label for="totalAmount">Total Amount</label>
+      <input id="totalAmount" formControlName="totalAmount" type="number" class="form-control" placeholder="Enter total amount"/>
+    </div>
+    <div class="form-group">
+      <label for="issuedBy">Issued By</label>
+      <input id="issuedBy" formControlName="issuedBy" class="form-control" type="text" placeholder="Enter issuer name" />
+    </div>
+    <div class="form-group">
+      <label for="issuedTo">Issued To</label>
+      <input id="issuedTo" formControlName="issuedTo" class="form-control" type="text" placeholder="Enter recipient name" />
+    </div>
+    <div class="form-group mb-3">
+      <label for="issueDate">Issue Date</label>
+      <input id="issueDate" formControlName="issueDate"  type="date" class="form-control"/>
+    </div>
+    <div class="form-group mb-3">
+      <label for="status">Status</label>
+      <select id="status" formControlName="status" class="form-control">
+        <option value="Active">Active</option>
+        <option value="Closed">Closed</option>
+        <option value="Adjusted">Adjusted</option>
+        <option value="Cancelled">Cancelled</option>
+      </select>
+    </div>
+    <div class="form-group mb-3">
+      <label for="dueDate">Due Date</label>
+      <input id="dueDate" formControlName="dueDate" type="date" class="form-control"/>
+    </div>
+    <div class="form-group mb-3">
+      <label for="tax">Tax</label>
+      <input id="tax" formControlName="tax" type="number" class="form-control" placeholder="Enter tax amount"/>
+    </div>
+    <div class="form-group mb-3">
+      <label for="createdAt">Created At</label>
+      <input id="createdAt" formControlName="createdAt" type="date" class="form-control"/>
+    </div>
+    <button type="submit" class="btn btn-primary" [disabled]="invoiceForm.invalid">Update Invoice</button>
+    <button (click)="goBack()">Back to Invoice Management</button>
+  </form>
+</div>

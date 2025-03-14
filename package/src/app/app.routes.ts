@@ -25,6 +25,7 @@ import { FinanceApprovalComponent } from './components/financial/approval/financ
 import {
   FinanceApprovalFormComponent
 } from "./components/financial/approval/finance-approval-form/finance-approval-form.component";
+import {ApprovalHistoryComponent} from "./components/financial/approval-history/approval-history.component";
 // import {
 //   ApprovalDashboardComponent
 // } from "./components/financial/approval/approval-dashbaord/approval-dashboard.component";
@@ -74,8 +75,8 @@ export const routes: Routes = [
             ]},
           { path: 'invoice', component: InvoiceComponent, children: [
               { path: 'new', component: AddInvoiceComponent },
-              { path: ':id', component: ShowInvoiceComponent },
               { path: 'edit/:id', component: EditInvoiceComponent },
+              { path: ':id', component: ShowInvoiceComponent },
             ]},
           {
             path: 'approval',
@@ -84,6 +85,7 @@ export const routes: Routes = [
               // { path: 'Dash', component: ApprovalDashboardComponent },
               // { path: ':approvalId/manager-approve', component: ManagerApprovalComponent },
               // { path: ':approvalId/finance-approve', component: FinanceApprovalComponent },
+              {path: 'history', component: ApprovalHistoryComponent},
               { path: 'request', component: ApprovalRequestComponent },
               { path: 'finance-approve/:approvalId/:financeTeamId', component: FinanceApprovalComponent },
               { path: 'finance-approval-form/:approvalId', component: FinanceApprovalFormComponent },

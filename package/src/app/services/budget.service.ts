@@ -44,6 +44,9 @@ export class BudgetService extends AbstractService{
   getBudgetById(id: string | null): Observable<Budget> {
     return this.http.get<Budget>(`${this.apiGatewayUrl}/get/${id}`);
   }
+  getbudgetById(id: number | null): Observable<Budget> {
+    return this.http.get<Budget>(`${this.apiGatewayUrl}/get/${id}`);
+  }
 
   createBudget(budgetData: any): Observable<Budget> {
     return this.http.post<Budget>(`${this.apiGatewayUrl}/create`, budgetData);
@@ -56,5 +59,9 @@ export class BudgetService extends AbstractService{
 
   deleteBudget(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiGatewayUrl}/delete/${id}`);
+  }
+
+  fetchForecast(budgetId: number): Observable<{ forecast: number }> {
+    return this.http.get<{ forecast: number }>(`${this.apiGatewayUrl}/forecast/${budgetId}`);
   }
 }

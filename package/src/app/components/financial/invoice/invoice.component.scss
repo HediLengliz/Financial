@@ -24,8 +24,8 @@ h3 {
 }
 
 .form-control:focus, .form-select:focus {
-  border-color: #007bff;
-  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+  border-color: #19b557;
+  box-shadow: 0 0 5px rgba(6, 152, 125, 0.47);
 }
 /* Buttons */
 .btn {
@@ -44,12 +44,12 @@ h3 {
 }
 
 .btn-outline-primary {
-  border-color: #007bff;
-  color: #007bff;
+  border-color: #02ffa6;
+  color: rgba(6, 152, 125, 0.47);
 }
 
 .btn-outline-primary:hover {
-  background-color: #007bff;
+  background-color: rgba(6, 152, 125, 0.47);
   color: #08525e;
 }
 
@@ -96,17 +96,17 @@ h3 {
 }
 
 .table th {
-  background-color: #007bff;
+  background-color: rgba(0, 255, 151, 0.59);
   color: white;
   text-align: left;
   padding: 12px;
-  border-bottom: 2px solid #0056b3;
+  border-bottom: 2px solid #19b557;
   cursor: pointer;
   transition: background-color 0.3s ease;
 }
 
 .table th:hover {
-  background-color: #0056b3;
+  background-color: rgba(6, 152, 125, 0.47);
 }
 
 .table td {
@@ -116,7 +116,7 @@ h3 {
 }
 
 .table tr:hover {
-  background-color: rgba(0, 123, 255, 0.1);
+  background-color: rgba(2, 191, 169, 0.1);
 }
 
 /* Badge Styles */
@@ -167,7 +167,7 @@ h3 {
 .primary-button {
   display: inline-block;
   padding: 10px 20px;
-  background-color: #007bff;
+  background-color: rgba(6, 152, 125, 0.47);
   color: white;
   border-radius: 5px;
   text-decoration: none;
@@ -175,7 +175,7 @@ h3 {
 }
 
 .primary-button:hover {
-  background-color: #0056b3;
+  background-color: rgb(0, 202, 164);
 }
 
 /* Responsive Styles */

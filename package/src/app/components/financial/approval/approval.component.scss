@@ -16,7 +16,7 @@ h1 {
   letter-spacing: 1px;
 }
 
-/* Request and Refresh Buttons */
+/* Request, Refresh, and Logs Buttons */
 .request-button {
   display: flex;
   justify-content: center;
@@ -25,7 +25,8 @@ h1 {
 }
 
 .request-btn,
-.refresh-btn {
+.refresh-btn,
+.logs-btn {
   background: linear-gradient(45deg, #007bff, #0056b3); /* Blue gradient */
   color: white;
   padding: 10px 20px;
@@ -39,7 +40,8 @@ h1 {
 }
 
 .request-btn:hover,
-.refresh-btn:hover {
+.refresh-btn:hover,
+.logs-btn:hover {
   transform: scale(1.05);
 }
 
@@ -73,7 +75,7 @@ h1 {
 
 .stat-card:nth-child(1) i { color: #ffc107; } /* Yellow for Pending */
 .stat-card:nth-child(2) i { color: #007bff; } /* Blue for Manager Approved */
-.stat-card:nth-child(3) i { color: #28a745; } /* Green for Fully Approved (construction vibe) */
+.stat-card:nth-child(3) i { color: #28a745; } /* Green for Fully Approved */
 
 .stat-card h3 {
   color: #003087; /* Dark blue */
@@ -109,12 +111,29 @@ h1 {
   gap: 20px;
 }
 
+/* Approval Cards */
 .card {
   background-color: #ffffff;
   padding: 15px;
   border-radius: 10px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  transition: transform 0.2s;
+  transition: transform 0.2s, background-color 0.3s ease;
+
+  &.pending {
+    background-color: rgba(255, 165, 0, 0.5); /* Orange for pending */
+  }
+
+  &.approved {
+    background-color: rgba(0, 128, 0, 0.5); /* Green for approved */
+  }
+
+  &.rejected {
+    background-color: rgba(255, 0, 0, 0.5); /* Red for rejected */
+  }
+
+  &.deleted {
+    background-color: rgba(0, 0, 139, 0.5); /* Dark blue for deleted */
+  }
 }
 
 .card:hover {
@@ -183,24 +202,6 @@ h1 {
   text-align: center;
   color: #007bff;
   font-size: 1.2rem;
-}
-.card {
-  padding: 16px;
-  border-radius: 8px;
-  margin-bottom: 16px;
-  transition: background-color 0.3s ease;
-
-  &.pending {
-    background-color: rgba(211, 211, 211, 0.51); // Grey for pending
-  }
-
-  &.approved {
-    background-color: rgba(144, 238, 144, 0.67); // Green for approved
-  }
-
-  &.rejected {
-    background-color: rgba(255, 1, 1, 0.44); // Red for rejected
-  }
 }
 
 /* No Data */

@@ -8,6 +8,7 @@ import { StatusPipe } from '../../../pipe/status.pipe';
 import { BudgetService } from '../../../services/budget.service';
 import { debounceTime, distinctUntilChanged, Subject } from 'rxjs';
 
+
 @Component({
   selector: 'app-budget',
   standalone: true,
@@ -207,6 +208,37 @@ export class BudgetComponent implements OnInit {
       }
       const comparison = String(valueA).localeCompare(String(valueB), undefined, { sensitivity: 'base' });
       return this.sortDirection === 'asc' ? comparison : -comparison;
+    });
+  }
+
+  viewDetailsAndForecast(id: number | undefined): void {
+    // Check if id is undefined
+    if (id === undefined) {
+      console.error('Budget ID is undefined');
+      this.toastr.error('Cannot fetch forecast without a valid ID', 'Error');
+      return;
+    }
+
+    // Navigate to the details page
+    this.router.navigate(['/financial/budget', id]).then(success => {
+      if (success) {
+        console.log('Navigation to budget details succeeded');
+      } else {
+        console.log('Navigation to budget details failed');
+      }
+    }).catch(error => {
+      console.error('Error during navigation:', error);
+    });
+
+    // Trigger the forecast request
+    this.budgetService.fetchForecast(id).subscribe({
+      next: (response) => {
+        this.toastr.success(`Forecasted Budget: ${response.forecast}`, 'Success', {timeOut: 4000});
+      },
+      error: (error) => {
+        this.toastr.error('Failed to fetch forecast', 'Error', { timeOut: 4000 });
+        console.error('Forecast error:', error);
+      }
     });
   }
 }
