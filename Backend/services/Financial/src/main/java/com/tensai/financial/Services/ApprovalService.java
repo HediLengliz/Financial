@@ -108,5 +108,35 @@ public class ApprovalService implements  IApprovalService {
         approval.setStatus(ApprovalStatus.valueOf(String.valueOf(approvalStatus))); // Assuming ApprovalStatus is an enum
         return approvalRepository.save(approval);
     }
+    @Override
+    @Transactional
+    public void softDelete(Long id, String performedBy) {
+        Approval approval = getApprovalById(id);
+        if (approval.getStatus() != ApprovalStatus.DELETED) {
+            approval.setStatus(ApprovalStatus.DELETED);
+            try {
+                approvalRepository.save(approval);
+                approvalHistoryService.logHistory(id, "soft-deleted", performedBy);
+            } catch (Exception e) {
+                throw new IllegalStateException("Failed to soft delete approval due to database constraint: " + e.getMessage());
+            }
+        } else {
+            throw new IllegalStateException("Approval is already deleted");
+        }
+    }
+
+    @Override
+    @Transactional
+    public void restoreApproval(Long id, String performedBy) {
+        Approval approval = getApprovalById(id);
+        if (approval.getStatus() == ApprovalStatus.DELETED) {
+            approval.setStatus(ApprovalStatus.PENDING); // Restore to PENDING state
+            approvalRepository.save(approval);
+            approvalHistoryService.logHistory(id, "restored", performedBy);
+        } else {
+            throw new IllegalStateException("Approval is not deleted");
+        }
+    }
+
 }
 

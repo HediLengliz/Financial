@@ -1,31 +1,30 @@
-package com.tensai.financial.Entities;
+package com.tensai.financial.DTOS;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
+import com.tensai.financial.Entities.Approval;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDateTime;
 
-@Entity
-@Table(name = "approvalHistory")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Builder
-public class ApprovalHistory {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class ApprovalHistoryDTO {
     Long id;
+
+    String performedBy;
+    LocalDateTime timestamp;
     String action;
     @ManyToOne
     @JoinColumn(name = "approval_id", nullable = false)
     @JsonBackReference
     Approval approval;
-    String performedBy;
-    LocalDateTime timestamp;
+    Long approvalId;  // Add this new field
 
 }

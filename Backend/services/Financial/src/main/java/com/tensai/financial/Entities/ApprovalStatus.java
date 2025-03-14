@@ -5,5 +5,6 @@ public enum ApprovalStatus {
     PENDING,
     REJECTED,
     MANAGER_APPROVED,
-    FULLY_APPROVED
+    FULLY_APPROVED,
+    DELETED
 }

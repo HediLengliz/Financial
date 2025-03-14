@@ -99,36 +99,26 @@ public class InvoiceService implements IInvoiceService {
     }
 
     public InvoiceDTO updateInvoice(Long id, InvoiceDTO dto) {
+        if (id == null) {
+            throw new IllegalArgumentException("Invoice ID must not be null");
+        }
         Invoice invoice = invoiceRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Invoice not found"));
-        Budget budget = budgetRepository.findById(dto.getBudgetId())
-                .orElseThrow(() -> new RuntimeException("Budget not found"));
+                .orElseThrow(() -> new RuntimeException("Invoice not found with ID: " + id));
+        // Update fields from DTO
         invoice.setInvoiceNumber(dto.getInvoiceNumber());
         invoice.setTotalAmount(dto.getTotalAmount());
-        invoice.setIssueDate(dto.getIssueDate());
-        invoice.setIssued_by(dto.getIssued_by());
-        invoice.setTax(dto.getTax());
+        invoice.setStatus(dto.getStatus());
         invoice.setDueDate(dto.getDueDate());
         invoice.setCreated_at(dto.getCreated_at());
         invoice.setIssued_to(dto.getIssued_to());
         invoice.setAmount(dto.getAmount());
-        invoice.setStatus(dto.getStatus());
-        invoice.getBudget().setId(dto.getBudgetId());
+        invoice.setIssued_by(dto.getIssued_by());
+        invoice.setTax(dto.getTax());
+        invoice.setIssueDate(dto.getIssueDate());
+        invoice.setApprovalStatus(dto.getApprovalStatus());
+
         Invoice savedInvoice = invoiceRepository.save(invoice);
-        return InvoiceDTO.builder()
-                .id(savedInvoice.getId())
-                .invoiceNumber(savedInvoice.getInvoiceNumber())
-                .totalAmount(savedInvoice.getTotalAmount())
-                .issueDate(savedInvoice.getIssueDate())
-                .issued_by(savedInvoice.getIssued_by())
-                .tax(savedInvoice.getTax())
-                .dueDate(savedInvoice.getDueDate())
-                .created_at(savedInvoice.getCreated_at())
-                .issued_to(savedInvoice.getIssued_to())
-                .amount(savedInvoice.getAmount())
-                .status(savedInvoice.getStatus())
-                .budgetId(savedInvoice.getBudget().getId())
-                .build();
+        return mapToDTO(savedInvoice); // Assume mapToDTO converts Invoice to InvoiceDTO
     }
 
     public void deleteInvoice(Long id) {
@@ -209,23 +199,15 @@ public class InvoiceService implements IInvoiceService {
     }
 
     @Override
-    public List<InvoiceDTO> loadAllInvoicesWithFilters(String invoiceNumber, BigDecimal amount, BigDecimal totalAmount, String issued_by, String issued_to, LocalDate issueDate, BigDecimal tax, LocalDate dueDate, LocalDate created_at, Status status, ApprovalStatus approvalStatus) {
-        return invoiceRepository.findAllByFilters(invoiceNumber, amount, totalAmount, issued_by, issued_to, issueDate, tax, dueDate, created_at, status, approvalStatus)
+    public List<InvoiceDTO> loadAllInvoicesWithFilters(
+            String invoiceNumber, BigDecimal amount, BigDecimal totalAmount, String issued_by,
+            String issued_to, LocalDate issueDate, BigDecimal tax, LocalDate dueDate,
+            LocalDate created_at, Status status, ApprovalStatus approvalStatus) {
+        return invoiceRepository.findAllByFilters(invoiceNumber, amount, totalAmount, issued_by,
+                        issued_to, issueDate, tax, dueDate, created_at, status, approvalStatus)
+
                 .stream()
-                .map(invoice -> InvoiceDTO.builder()
-                        .invoiceNumber(invoice.getInvoiceNumber())
-                        .totalAmount(invoice.getTotalAmount())
-                        .issueDate(invoice.getIssueDate())
-                        .budgetId(invoice.getBudget().getId())
-                        .issued_by(invoice.getIssued_by())
-                        .tax(invoice.getTax())
-                        .dueDate(invoice.getDueDate())
-                        .created_at(invoice.getCreated_at())
-                        .issued_to(invoice.getIssued_to())
-                        .amount(invoice.getAmount())
-                        .status(invoice.getStatus())
-                        .approvalStatus(invoice.getApprovalStatus())
-                        .build())
+                .map(this::mapToDTO) // Reuse the mapToDTO method
                 .collect(Collectors.toList());
     }
 
@@ -300,6 +282,11 @@ public class InvoiceService implements IInvoiceService {
             // Add content to the PDF
             document.add(new Paragraph("Invoice Number: " + invoiceDTO.getInvoiceNumber()));
             document.add(new Paragraph("Total Amount: " + invoiceDTO.getTotalAmount()));
+            document.add(new Paragraph("Issue Date: " + invoiceDTO.getIssueDate()));
+            document.add(new Paragraph("Issued By: " + invoiceDTO.getIssued_by()));
+            document.add(new Paragraph("Issued To: " + invoiceDTO.getIssued_to()));
+            document.add(new Paragraph("Tax: " + invoiceDTO.getTax()));
+            document.add(new Paragraph("Due Date: " + invoiceDTO.getDueDate()));
             document.add(new Paragraph("Status: " + invoiceDTO.getStatus()));
             // Add more invoice details as needed...
 
@@ -324,14 +311,22 @@ public class InvoiceService implements IInvoiceService {
             org.apache.poi.ss.usermodel.Row header = sheet.createRow(0);
             header.createCell(0).setCellValue("Invoice Number");
             header.createCell(1).setCellValue("Total Amount");
-            header.createCell(1).setCellValue("Status");
+            header.createCell(2).setCellValue("Issue Date");
+            header.createCell(3).setCellValue("Issued By");
+            header.createCell(4).setCellValue("Issued To");
+            header.createCell(5).setCellValue("Tax");
+            header.createCell(6).setCellValue("Status");
             // Add more headers1 as needed...
 
             // Create a row for invoice data
             Row dataRow = sheet.createRow(1);
             dataRow.createCell(0).setCellValue(invoice.getInvoiceNumber());
             dataRow.createCell(1).setCellValue(String.valueOf(invoice.getTotalAmount()));
-            dataRow.createCell(1).setCellValue((invoice.getStatus() == null) ? "" : invoice.getStatus().name());
+            dataRow.createCell(2).setCellValue(invoice.getIssueDate().toString());
+            dataRow.createCell(3).setCellValue(invoice.getIssued_by());
+            dataRow.createCell(4).setCellValue(invoice.getIssued_to());
+            dataRow.createCell(5).setCellValue(String.valueOf(invoice.getTax()));
+            dataRow.createCell(6).setCellValue((invoice.getStatus() == null) ? "" : invoice.getStatus().name());
 
             // Add more invoice details...
 
@@ -360,6 +355,11 @@ public class InvoiceService implements IInvoiceService {
             R run = factory.createR();
             Text text = factory.createText();
             text.setValue("Invoice Number: " + getInvoiceById(id).getInvoiceNumber());
+            text.setValue("Total amount: " + getInvoiceById(id).getTotalAmount());
+            text.setValue("Issue Date: " + getInvoiceById(id).getIssueDate());
+            text.setValue("Issued By: " + getInvoiceById(id).getIssued_by());
+            text.setValue("Tax: " + getInvoiceById(id).getTax());
+            text.setValue("Status: " + getInvoiceById(id).getStatus());
             run.getContent().add(text);
             paragraph.getContent().add(run);
             wordMLPackage.getMainDocumentPart().addObject(paragraph);

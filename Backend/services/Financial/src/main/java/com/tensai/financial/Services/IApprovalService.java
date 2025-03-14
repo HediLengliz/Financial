@@ -14,4 +14,6 @@ public interface IApprovalService {
     Approval getApprovalById(Long approvalId);
     List<Approval> getAllApprovals();
     Approval updateStatus(Long id, ApprovalStatus approvalStatus);
+    public void softDelete(Long id, String performedBy);
+    void restoreApproval(Long id, String performedBy);
 }

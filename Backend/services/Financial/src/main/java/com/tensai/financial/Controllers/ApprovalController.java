@@ -73,6 +73,31 @@ public class ApprovalController {
         Approval updatedApproval = approvalService.updateStatus(id, approvalStatus);
         return ResponseEntity.ok(updatedApproval);
     }
+    @PutMapping("/{id}/soft-delete")
+    public ResponseEntity<?> softDelete(@PathVariable Long id, @RequestParam String performedBy) {
+        try {
+            approvalService.softDelete(id, performedBy);
+            return ResponseEntity.ok().body("Approval soft-deleted successfully");
+        } catch (IllegalStateException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (Exception e) {
+            log.error("Unexpected error during soft delete: ", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
+        }
+    }
+    @PutMapping("/{id}/restore")
+    public ResponseEntity<?> restoreApproval(@PathVariable Long id, @RequestParam String performedBy) {
+        try {
+            approvalService.restoreApproval(id, performedBy);
+            return ResponseEntity.ok().body("Approval restored successfully");
+        } catch (IllegalStateException | IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
+    }
 
 
 }

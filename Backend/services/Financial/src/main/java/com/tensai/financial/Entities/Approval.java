@@ -1,7 +1,6 @@
 package com.tensai.financial.Entities;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 import lombok.experimental.*;
 

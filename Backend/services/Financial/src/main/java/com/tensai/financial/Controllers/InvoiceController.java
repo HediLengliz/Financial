@@ -66,8 +66,13 @@ public class InvoiceController {
             @ApiResponse(responseCode = "404", description = "Invoice not found")
     })
     @Operation(summary = "Update an invoice", description = "Updates an invoice entry.")
-    public ResponseEntity<InvoiceDTO> updateInvoice(@RequestBody InvoiceDTO invoiceDTO, @PathVariable Long id) {
-        return ResponseEntity.ok(invoiceService.updateInvoice(id, invoiceDTO));
+    public ResponseEntity<InvoiceDTO> updateInvoice(@PathVariable Long id, @RequestBody InvoiceDTO invoiceDTO) {
+        if (id == null) {
+            throw new IllegalArgumentException("Invoice ID must not be null");
+        }
+        InvoiceDTO updatedInvoice = invoiceService.updateInvoice(id, invoiceDTO);
+        return ResponseEntity.ok(updatedInvoice);
+
     }
     @GetMapping("/get/{id}")
     @ApiResponses(value = {

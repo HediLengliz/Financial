@@ -29,7 +29,7 @@ public interface InvoiceRepository extends JpaRepository<Invoice, Long> {
             "AND (:issued_to IS NULL OR e.issued_to LIKE %:issued_to%) " +
             "AND (:issueDate IS NULL OR e.issueDate = :issueDate) " +
             "AND (:tax IS NULL OR e.tax = :tax) " +
-            "AND (:dueDate IS NULL OR e.dueDate = :dueDate) " +
+            "AND (:dueDate IS NULL OR e.dueDate >= :dueDate) " +
             "AND (:created_at IS NULL OR e.created_at = :created_at) " +
             "AND (:status IS NULL OR e.status = :status) " +
             "AND (:approvalStatus IS NULL OR e.approvalStatus = :approvalStatus)")
