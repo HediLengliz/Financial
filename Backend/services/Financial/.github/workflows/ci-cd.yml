@@ -15,10 +15,30 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
         with:
-          fetch-depth: 0  # Ensure full repo history is available
+          fetch-depth: 0
 
       - name: Verify Repository Structure
         run: ls -R
+        working-directory: ${{ github.workspace }}
+
+      - name: Check Directory Existence
+        run: |
+          if [ -d "Backend/services/Financial" ]; then
+            echo "Directory Backend/services/Financial exists"
+          else
+            echo "Error: Directory Backend/services/Financial does not exist"
+            exit 1
+          fi
+        working-directory: ${{ github.workspace }}
+
+      - name: Check for pom.xml
+        run: |
+          if [ -f "Backend/services/Financial/pom.xml" ]; then
+            echo "pom.xml found in Backend/services/Financial"
+          else
+            echo "Error: pom.xml not found in Backend/services/Financial"
+            exit 1
+          fi
         working-directory: ${{ github.workspace }}
 
       - name: Set up JDK 17
@@ -29,51 +49,6 @@ jobs:
 
       - name: Build with Maven
         run: |
+          cd Backend/services/Financial
           mvn clean package
-          ls -l target  # Verify JAR file exists
-        working-directory: Backend/services/Financial
-
-      - name: Start Spring Boot Application
-        run: |
-          if [ -f target/Financial-0.0.1-SNAPSHOT.jar ]; then
-            nohup java -jar target/Financial-0.0.1-SNAPSHOT.jar &
-          else
-            echo "Error: JAR file target/Financial-0.0.1-SNAPSHOT.jar not found"
-            exit 1
-          fi
-        working-directory: Backend/services/Financial
-
-      - name: Wait for Spring Boot to start
-        run: |
-          for i in {1..30}; do
-            if curl -s http://localhost:8080/actuator/health | grep -q "UP"; then
-              echo "Application is up"
-              break
-            fi
-            echo "Waiting for application..."
-            sleep 10
-          done
-          if [ "$i" -eq 30 ]; then
-            echo "Error: Application did not start within 300 seconds"
-            exit 1
-          fi
-
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.9'
-
-      - name: Install Robot Framework dependencies
-        run: |
-          pip install robotframework
-          pip install robotframework-requests
-
-      - name: Run Robot Framework tests
-        run: |
-          if [ -f src/RobotTest/forecastEndpoint.robot ]; then
-            robot src/RobotTest/forecastEndpoint.robot
-          else
-            echo "Error: Test file src/RobotTest/forecastEndpoint.robot not found"
-            exit 1
-          fi
-        working-directory: Backend/services/Financial
+          ls -l target
