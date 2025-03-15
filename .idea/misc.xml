@@ -9,6 +9,8 @@
         <option value="$PROJECT_DIR$/Backend/services/Financial/pom.xml" />
         <option value="$PROJECT_DIR$/Backend/services/api-gateway/pom.xml" />
         <option value="$PROJECT_DIR$/Backend/services/configservice/pom.xml" />
+        <option value="$PROJECT_DIR$/Backend/buildini-parent/pom.xml" />
+        <option value="$PROJECT_DIR$/buildini-parent/pom.xml" />
       </list>
     </option>
   </component>
