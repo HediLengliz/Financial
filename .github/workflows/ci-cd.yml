@@ -25,7 +25,7 @@ jobs:
         run: mvn clean package
 
       - name: Start Spring Boot Application
-        run: nohup java -jar target/Financial-0.0.1-SNAPSHOT.jar
+        run: nohup java -jar target/Financial-0.0.1-SNAPSHOT.jar &
         # Replace "your-springboot-app.jar" with your actual jar file name.
 
       - name: Wait for Spring Boot to start
@@ -45,3 +45,6 @@ jobs:
       - name: Run Robot Framework tests
         run: robot src/RobotTest/forecastEndpoint.robot
         # Adjust the path if your Robot Framework tests are located elsewhere.
+
+      - name: Stop Spring Boot Application
+        run: pkill -f 'java -jar target/Financial-0.0.1-SNAPSHOT.jar'
