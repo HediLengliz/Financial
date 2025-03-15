@@ -21,17 +21,18 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
+      # 1. Build inside the Financial folder (no -f needed)
       - name: Build with Maven
         run: mvn clean package
-        working-directory: ./Financial
+        working-directory: Backend/services/Financial
+
+      # 2. Start the Spring Boot JAR in the background
       - name: Start Spring Boot Application
-        run: nohup java -jar target/Financial-0.0.1-SNAPSHOT.jar
-        # Replace "your-springboot-app.jar" with your actual jar file name.
-        working-directory: ./Financial
+        run: nohup java -jar target/Financial-0.0.1-SNAPSHOT.jar &
+        working-directory: Backend/services/Financial
 
       - name: Wait for Spring Boot to start
-        run: sleep 40
-        # Adjust sleep duration if your application needs more time to be fully up.
+        run: sleep 60
 
       - name: Set up Python
         uses: actions/setup-python@v4
@@ -43,7 +44,7 @@ jobs:
           pip install robotframework
           pip install robotframework-requests
 
+      # 3. Run Robot Framework tests from the Financial folder
       - name: Run Robot Framework tests
         run: robot src/RobotTest/forecastEndpoint.robot
-        working-directory: ./Financial
-        # Adjust the path if your Robot Framework tests are located elsewhere.
+        working-directory: Backend/services/Financial
