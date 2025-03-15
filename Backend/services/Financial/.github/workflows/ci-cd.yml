@@ -14,11 +14,6 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
-        with:
-          fetch-depth: 0  # Ensures all branches and history are fetched
-
-      - name: Verify Repository Structure
-        run: ls -R
 
       - name: Set up JDK 17
         uses: actions/setup-java@v3
@@ -26,16 +21,16 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      # Build in the correct directory (Financial)
       - name: Build with Maven
         run: mvn clean package
+        working-directory: ./path/to/your/maven/project
 
-      # Ensure the application JAR runs correctly
       - name: Start Spring Boot Application
         run: nohup java -jar target/Financial-0.0.1-SNAPSHOT.jar &
+        working-directory: ./path/to/your/maven/project
 
       - name: Wait for Spring Boot to start
-        run: sleep 60
+        run: sleep 40
 
       - name: Set up Python
         uses: actions/setup-python@v4
