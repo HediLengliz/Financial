@@ -43,7 +43,7 @@ public class BudgetController{
     public ResponseEntity<BudgetDTO> getBudget(@PathVariable UUID projectId) {
         return ResponseEntity.ok(budgetService.getBudgetByProject(projectId));
     }
-    @GetMapping("/load-with-filters")
+    @GetMapping("/ ")
     @Operation(summary = "Load All Budgets with Filters", description = "Fetches all budgets with optional filtering parameters.")
     public ResponseEntity<List<BudgetDTO>> loadBudgetsWithFilters(
             @RequestParam(value = "projectName", required = false) String projectName,
