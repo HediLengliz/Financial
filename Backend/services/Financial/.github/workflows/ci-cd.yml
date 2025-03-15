@@ -14,6 +14,11 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
+        with:
+          fetch-depth: 0  # Ensures all branches and history are fetched
+
+      - name: Verify Repository Structure
+        run: ls -R
 
       - name: Set up JDK 17
         uses: actions/setup-java@v3
@@ -21,15 +26,13 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      # 1. Build inside the Financial folder (no -f needed)
+      # Build in the correct directory (Financial)
       - name: Build with Maven
         run: mvn clean package
-        working-directory: Backend/services/Financial
 
-      # 2. Start the Spring Boot JAR in the background
+      # Ensure the application JAR runs correctly
       - name: Start Spring Boot Application
         run: nohup java -jar target/Financial-0.0.1-SNAPSHOT.jar &
-        working-directory: Backend/services/Financial
 
       - name: Wait for Spring Boot to start
         run: sleep 60
@@ -44,7 +47,5 @@ jobs:
           pip install robotframework
           pip install robotframework-requests
 
-      # 3. Run Robot Framework tests from the Financial folder
       - name: Run Robot Framework tests
         run: robot src/RobotTest/forecastEndpoint.robot
-        working-directory: Backend/services/Financial
