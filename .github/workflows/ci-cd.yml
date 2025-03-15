@@ -3,10 +3,10 @@ name: CI/CD Pipeline
 on:
   push:
     branches:
-      - master
+      - Financial
   pull_request:
     branches:
-      - master
+      - Financial
 
 jobs:
   build-test:
@@ -14,6 +14,12 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
+        with:
+          fetch-depth: 0  # Ensure full repo history is available
+
+      - name: Verify Repository Structure
+        run: ls -R
+        working-directory: ${{ github.workspace }}
 
       - name: Set up JDK 17
         uses: actions/setup-java@v3
@@ -21,16 +27,18 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
+      # 🚨 Set correct working directory for Maven build
       - name: Build with Maven
         run: mvn clean package
+        working-directory: Backend/services/Financial  # 👈 This ensures Maven runs in the correct folder
 
+      # 🚨 Set correct working directory for running the JAR
       - name: Start Spring Boot Application
         run: nohup java -jar target/Financial-0.0.1-SNAPSHOT.jar &
-        # Replace "your-springboot-app.jar" with your actual jar file name.
+        working-directory: Backend/services/Financial  # 👈 Ensures it runs from the right place
 
       - name: Wait for Spring Boot to start
-        run: sleep 40
-        # Adjust sleep duration if your application needs more time to be fully up.
+        run: sleep 60
 
       - name: Set up Python
         uses: actions/setup-python@v4
@@ -42,9 +50,7 @@ jobs:
           pip install robotframework
           pip install robotframework-requests
 
+      # 🚨 Ensure Robot Framework tests run from the right place
       - name: Run Robot Framework tests
         run: robot src/RobotTest/forecastEndpoint.robot
-        # Adjust the path if your Robot Framework tests are located elsewhere.
-
-      - name: Stop Spring Boot Application
-        run: pkill -f 'java -jar target/Financial-0.0.1-SNAPSHOT.jar'
+        working-directory: Backend/services/Financial
