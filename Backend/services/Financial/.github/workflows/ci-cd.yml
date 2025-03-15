@@ -3,10 +3,10 @@ name: CI/CD Pipeline
 on:
   push:
     branches:
-      - master
+      - Financial
   pull_request:
     branches:
-      - master
+      - Financial
 
 jobs:
   build-test:
@@ -19,7 +19,7 @@ jobs:
 
       - name: Verify Repository Structure
         run: ls -R
-        working-directory: ${{ github.workspace }}
+        working-directory:  Backend/services/Financial/pom.xml
 
       - name: Set up JDK 17
         uses: actions/setup-java@v3
