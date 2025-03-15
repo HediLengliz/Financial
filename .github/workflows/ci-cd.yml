@@ -3,10 +3,10 @@ name: CI/CD Pipeline
 on:
   push:
     branches:
-      - Financial
+      - master
   pull_request:
     branches:
-      - Financial
+      - master
 
 jobs:
   build-test:
