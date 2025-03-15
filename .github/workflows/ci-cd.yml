@@ -3,10 +3,10 @@ name: CI/CD Pipeline
 on:
   push:
     branches:
-      - master
+      - Financial
   pull_request:
     branches:
-      - master
+      - Financial
 
 jobs:
   build-test:
@@ -27,15 +27,11 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      # 🚨 Set correct working directory for Maven build
       - name: Build with Maven
-        run: mvn clean package
-        working-directory: Backend/services/Financial  # 👈 This ensures Maven runs in the correct folder
+        run: mvn clean package -f Backend/services/Financial/pom.xml
 
-      # 🚨 Set correct working directory for running the JAR
       - name: Start Spring Boot Application
-        run: nohup java -jar target/Financial-0.0.1-SNAPSHOT.jar &
-        working-directory: Backend/services/Financial  # 👈 Ensures it runs from the right place
+        run: nohup java -jar Backend/services/Financial/target/Financial-0.0.1-SNAPSHOT.jar &
 
       - name: Wait for Spring Boot to start
         run: sleep 60
@@ -50,7 +46,7 @@ jobs:
           pip install robotframework
           pip install robotframework-requests
 
-      # 🚨 Ensure Robot Framework tests run from the right place
       - name: Run Robot Framework tests
-        run: robot src/RobotTest/forecastEndpoint.robot
-        working-directory: Backend/services/Financial
+        run: robot Backend/services/Financial/src/RobotTest/forecastEndpoint.robot
+      - name: Check Financial Directory
+        run: ls Backend/services/Financial
