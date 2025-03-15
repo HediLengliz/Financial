@@ -1,4 +1,4 @@
-name: CI/CD Pipeline
+name: Simplified CI/CD Pipeline
 
 on:
   push:
@@ -9,37 +9,11 @@ on:
       - Financial
 
 jobs:
-  build-test:
+  build:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-
-      - name: Verify Repository Structure
-        run: ls -R
-        working-directory: ${{ github.workspace }}
-
-      - name: Check Directory Existence
-        run: |
-          if [ -d "Backend/services/Financial" ]; then
-            echo "Directory Backend/services/Financial exists"
-          else
-            echo "Error: Directory Backend/services/Financial does not exist"
-            exit 1
-          fi
-        working-directory: ${{ github.workspace }}
-
-      - name: Check for pom.xml
-        run: |
-          if [ -f "Backend/services/Financial/pom.xml" ]; then
-            echo "pom.xml found in Backend/services/Financial"
-          else
-            echo "Error: pom.xml not found in Backend/services/Financial"
-            exit 1
-          fi
-        working-directory: ${{ github.workspace }}
 
       - name: Set up JDK 17
         uses: actions/setup-java@v3
@@ -48,7 +22,5 @@ jobs:
           java-version: '17'
 
       - name: Build with Maven
-        run: |
-          cd Backend/services/Financial
-          mvn clean package
-          ls -l target
+        run: mvn clean package
+        working-directory: ./Backend/services/Financial
