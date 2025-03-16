@@ -16,7 +16,7 @@
         <module name="discovery" />
         <module name="configservice" />
       </profile>
-      <profile name="Annotation profile for projets" enabled="true">
+      <profile name="Annotation profile for Financial" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
