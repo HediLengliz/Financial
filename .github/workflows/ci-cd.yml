@@ -21,7 +21,7 @@ jobs:
       - name: Build with Maven
         run: mvn clean package -f Backend/services/Financial/pom.xml
       - name: Start Spring Boot Application
-        run: nohup java -jar -Dspring.profiles.active=local Backend/services/Financial/target/Financial-0.0.1-SNAPSHOT.jar &
+        run: nohup java -jar -D spring.profiles.active=local Backend/services/Financial/target/Financial-0.0.1-SNAPSHOT.jar &
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
