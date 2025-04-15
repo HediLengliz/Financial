@@ -15,29 +15,44 @@ public record ProjectResponseDTO(
         LocalDate startDate,
         LocalDate endDate,
         String imageUrl,
-        List<WorkflowResponse> workflows
+        double progress,
+        List<WorkflowResponse> workflows,
+        UserDTO projectManager // Added
 ) {
     public static ProjectResponseDTO fromEntity(Project project) {
         List<WorkflowResponse> workflows = project.getWorkflows().stream()
                 .map(WorkflowResponse::fromEntity)
                 .toList();
 
+        // Create UserDTO for the project manager if present
+        UserDTO managerDTO = project.getProjectManager() != null ?
+                new UserDTO(
+                        project.getProjectManager().getId(),
+                        project.getProjectManager().getName(),
+                        project.getProjectManager().getAvailability(),
+                        project.getProjectManager().getRole(),
+                        project.getProjectManager().getEmail()
+                ) : null;
+
         return new ProjectResponseDTO(
                 project.getId(),
                 project.getName(),
                 project.getDescription(),
-                project.getStatus().toString(),
-                project.getPriority().toString(),
+                project.getStatus(), // Assuming status is a String now
+                project.getPriority(), // Assuming priority is a String now
                 project.getStartDate(),
                 project.getEndDate(),
                 buildImageUrl(project.getImagePath()),
-                workflows
+                project.getProgress(),
+                workflows,
+                managerDTO
         );
     }
 
     private static String buildImageUrl(String imagePath) {
         return imagePath != null
-                ? "http://localhost:8080/api/projects/images/" + imagePath
+                ? "http://localhost:8081/api/projects/images/" + imagePath // Updated path to match @RequestMapping
                 : null;
     }
+
 }

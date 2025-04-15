@@ -1,6 +1,6 @@
 # API Gateway application.yml
 server:
-  port: 8080  # API Gateway port
+  port: 8081  # API Gateway port
   servlet:
     context-path: /api   # Only if you need a global context path for the gateway
 

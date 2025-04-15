@@ -11,7 +11,7 @@ public record TaskResponse(
         String status,
         String priority,
         LocalDate dueDate,
-        Long WorkflowId,
+        Long workflowId,
         int orderInWorkflow
 ) {
     public static TaskResponse fromEntity(Task task) {

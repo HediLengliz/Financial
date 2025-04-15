@@ -3,8 +3,8 @@ package com.tensai.projets.dtos;
 import com.tensai.projets.models.Workflow;
 
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.List;
-import java.util.Collections; // Import Collections for empty list
 
 public record WorkflowResponse(
         Long id,
@@ -14,7 +14,9 @@ public record WorkflowResponse(
         LocalDate createdAt,
         Long projectId,
         boolean hasTasks,
-        List<TaskResponse> tasks // This can now be null
+        double progress,
+        List<TaskResponse> tasks, // This can now be null
+        String userName // Added only userName
 ) {
     public static WorkflowResponse fromEntity(Workflow workflow) {
         // Handle null tasks by initializing to an empty list
@@ -22,7 +24,10 @@ public record WorkflowResponse(
                 ? workflow.getTasks().stream()
                 .map(TaskResponse::fromEntity)
                 .toList()
-                : Collections.emptyList(); // Use empty list if tasks is null
+                : Collections.emptyList();
+
+        // Get user name if assigned
+        String userName = workflow.getUser() != null ? workflow.getUser().getName() : null;
 
         return new WorkflowResponse(
                 workflow.getId(),
@@ -31,8 +36,10 @@ public record WorkflowResponse(
                 workflow.getStatus(),
                 workflow.getCreatedAt(),
                 workflow.getProject() != null ? workflow.getProject().getId() : null,
-                !tasks.isEmpty(), // Calculate hasTasks
-                tasks
+                !tasks.isEmpty(),
+                workflow.getProgress(),
+                tasks,
+                userName
         );
     }
 }

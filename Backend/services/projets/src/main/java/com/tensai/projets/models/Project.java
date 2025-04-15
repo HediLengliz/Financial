@@ -21,8 +21,8 @@ public class Project {
     private Long id;
 
     private String name;
-    private String description;
-    private String status;  // Change from Status enum to String
+    @Column(columnDefinition = "TEXT")
+    private String description;    private String status;  // Change from Status enum to String
     private String priority;  // Change from Priority enum to String
     private LocalDate startDate;
     private LocalDate endDate;
@@ -32,56 +32,109 @@ public class Project {
     @BatchSize(size = 20)
     private List<Workflow> workflows = new ArrayList<>();
 
-    // Constructors, getters, and setters remain the same
+    private double progress; // Add this field
 
+    @ManyToOne
+    @JoinColumn(name = "project_manager_id", nullable = false) // Foreign key to User
+    private User projectManager; // Reference to the project manager
+    @ManyToOne
+    @JoinColumn(name = "project_owner_id", nullable = false)
+    private User projectOwner;
 
-// Constructors
-    public Project() {}
+    // Constructors
+    public Project() {
+    }
 
     public Project(String name, String description, String status, String priority,
-                   LocalDate startDate, LocalDate endDate) {
+                   LocalDate startDate, LocalDate endDate, User projectManager) {
         this.name = name;
         this.description = description;
         this.status = status;
         this.priority = priority;
         this.startDate = startDate;
         this.endDate = endDate;
+        this.projectManager = projectManager;
     }
 
-    public void setId(Long id) { this.id = id; }
+    public User getProjectOwner() {
+        return projectOwner;
+    }
 
-    public void setName(String name) { this.name = name; }
+    public void setProjectOwner(User projectOwner) {
+        this.projectOwner = projectOwner;
+    }
+    public Long getProjectManagerId() {
+        return projectManager != null ? projectManager.getId() : null;
+    }
+    public Long getProjectOwnerId() {
+        return projectManager != null ? projectManager.getId() : null;
+    }
 
-    public void setDescription(String description) { this.description = description; }
+    // Getters and Setters
+    public double getProgress() {
+        return progress;
+    }
 
-    public void setStatus(String status) { this.status = status; }
+    public void setProgress(double progress) {
+        this.progress = progress;
+    }
 
-    public void setPriority(String priority) { this.priority = priority; }
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-    public void setStartDate(LocalDate startDate) { this.startDate = startDate; }
+    public void setName(String name) {
+        this.name = name;
+    }
 
-    public void setEndDate(LocalDate endDate) { this.endDate = endDate; }
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
-    public void setImagePath(String imagePath) { this.imagePath = imagePath; }
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public void setPriority(String priority) {
+        this.priority = priority;
+    }
+
+    public void setStartDate(LocalDate startDate) {
+        this.startDate = startDate;
+    }
+
+    public void setEndDate(LocalDate endDate) {
+        this.endDate = endDate;
+    }
+
+    public void setImagePath(String imagePath) {
+        this.imagePath = imagePath;
+    }
 
     public String getDescription() {
         return description;
     }
+
     public String getStatus() {
         return status;
     }
+
     public String getPriority() {
         return priority;
     }
+
     public LocalDate getStartDate() {
         return startDate;
     }
+
     public LocalDate getEndDate() {
         return endDate;
     }
+
     public String getImagePath() {
         return imagePath;
     }
+
     public List<Workflow> getWorkflows() {
         return workflows;
     }
@@ -89,11 +142,20 @@ public class Project {
     public Long getId() {
         return id;
     }
+
     public String getName() {
         return name;
     }
 
+    public void setWorkflows(List<Workflow> workflows) {
+        this.workflows = workflows;
+    }
 
-    public void setWorkflows(List<Workflow> workflows) { this.workflows = workflows; }
+    public User getProjectManager() {
+        return projectManager;
+    }
 
+    public void setProjectManager(User projectManager) {
+        this.projectManager = projectManager;
+    }
 }

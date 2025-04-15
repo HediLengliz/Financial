@@ -5,7 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 
-public record CreateWorkflowRequest<message>(
+public record CreateWorkflowRequest(
         @NotBlank(message = "Name is required")
         @Size(max = 100, message = "Name must be less than 100 characters")
         String name,
@@ -17,10 +17,6 @@ public record CreateWorkflowRequest<message>(
         @Positive(message = "Project ID must be positive")
         Long projectId,
 
-        @NotBlank(message = "status is required")
-        String status
-
-
-) {
-
-}
+        @Positive(message = "User ID must be positive") // Optional field
+        Long userId // Added for assigning a user during creation
+) {}

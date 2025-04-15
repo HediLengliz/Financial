@@ -48,7 +48,7 @@ public class Task {
 
     private boolean deleted = false;
 
-    private Integer orderInWorkflow; // Defines the sequence of the task within the workflow
+    private int orderInWorkflow; // Defines the sequence of the task within the workflow
     public String status ;
 
     public String getDescription() {
@@ -99,7 +99,7 @@ public class Task {
         return status;
     }
 
-    public Integer getOrderInWorkflow() {
+    public int getOrderInWorkflow() {
         return orderInWorkflow;
     }
 
@@ -136,7 +136,7 @@ public class Task {
     }
 
     public void setStatus(String status) {
-        this.status = status;
+        this.status = status != null ? status.toUpperCase() : null;
     }
 
     public void setUpdatedAt(LocalDateTime updatedAt) {

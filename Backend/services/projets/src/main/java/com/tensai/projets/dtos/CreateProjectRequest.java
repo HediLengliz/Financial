@@ -20,11 +20,7 @@ public record CreateProjectRequest(
         @Size(max = 500, message = "Description must be less than 500 characters")
         String description,
 
-        @NotBlank(message = "Status is required")
-        String status,  // Change from Status to String
-
-        @NotBlank(message = "Priority is required")
-        String priority,  // Change from Priority to String
+        String priority, // Optional, no default, no @NotBlank
 
         @NotNull(message = "Start date is required")
         @DateTimeFormat(pattern = "MM/dd/yyyy")
@@ -37,5 +33,8 @@ public record CreateProjectRequest(
         @NotNull
         @Valid
         MultipartFile imageFile,
-        List<Long> workflowIds
+
+        List<Long> workflowIds,
+
+        Long projectManagerId // Added (optional, if you prefer body over path variable)
 ) {}

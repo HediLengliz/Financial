@@ -11,5 +11,6 @@ public record WorkflowUpdateRequest(
         @Size(max = 500, message = "Description must be less than 500 characters")
         String description,
 
-        @NotNull Long projectId // Ensure the project ID is provided during updates
+        @NotNull Long projectId,
+        String status// Ensure the project ID is provided during updates
 ) {}

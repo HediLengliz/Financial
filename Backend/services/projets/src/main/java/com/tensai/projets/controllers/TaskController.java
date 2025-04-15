@@ -3,61 +3,139 @@ package com.tensai.projets.controllers;
 import com.tensai.projets.dtos.CreateTaskRequest;
 import com.tensai.projets.dtos.TaskResponse;
 import com.tensai.projets.dtos.UpdateTaskRequest;
+import com.tensai.projets.models.User;
+import com.tensai.projets.models.Workflow;
+import com.tensai.projets.models.Project;
+import com.tensai.projets.models.Task;
+import com.tensai.projets.repositories.WorkflowRepository;
+import com.tensai.projets.repositories.ProjectRepository;
 import com.tensai.projets.services.TaskService;
-
-import org.springframework.http.HttpStatus;
+import com.tensai.projets.services.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
-import jakarta.validation.Valid;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/tasks")
+@RequestMapping("/tasks")
 public class TaskController {
 
-    private final TaskService taskService;
+    @Autowired
+    private TaskService taskService;
 
-    public TaskController(TaskService taskService) {
-        this.taskService = taskService;
-    }
+    @Autowired
+    private WorkflowRepository workflowRepository;
 
-    // CREATE TASK
+    @Autowired
+    private ProjectRepository projectRepository;
+
+    @Autowired
+    private UserService userService;
+
     @PostMapping("/{workflowId}/tasks")
+    @PreAuthorize("hasRole('PROJECT_MANAGER')")
     public ResponseEntity<TaskResponse> createTask(
             @PathVariable Long workflowId,
-            @Valid @RequestBody CreateTaskRequest request) {
-        TaskResponse response = taskService.createTask(request);
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+            @RequestBody CreateTaskRequest request,
+            @AuthenticationPrincipal Jwt jwt) {
+        validateWorkflowAccess(workflowId, jwt);
+        TaskResponse createdTask = taskService.createTask(request);
+        return ResponseEntity.ok(createdTask);
     }
 
-    // GET TASKS FOR A WORKFLOW
     @GetMapping("/workflow/{workflowId}")
-    public ResponseEntity<List<TaskResponse>> getTasksByWorkflowId(@PathVariable Long workflowId) {
-        List<TaskResponse> responseList = taskService.getTasksByWorkflowId(workflowId);
-        return ResponseEntity.ok(responseList);
+    @PreAuthorize("hasRole('PROJECT_MANAGER')")
+    public ResponseEntity<List<TaskResponse>> getTasksByWorkflowId(
+            @PathVariable Long workflowId,
+            @AuthenticationPrincipal Jwt jwt) {
+        validateWorkflowAccess(workflowId, jwt);
+        List<TaskResponse> tasks = taskService.getTasksByWorkflowId(workflowId);
+        return ResponseEntity.ok(tasks);
     }
 
-    // READ SINGLE TASK
-    @GetMapping("/{id}")
-    public ResponseEntity<TaskResponse> getTaskById(@PathVariable Long id) {
-        TaskResponse response = taskService.getTaskById(id);
-        return ResponseEntity.ok(response);
+    @GetMapping("/{taskId}")
+    @PreAuthorize("hasRole('PROJECT_MANAGER')")
+    public ResponseEntity<TaskResponse> getTaskById(
+            @PathVariable Long taskId,
+            @AuthenticationPrincipal Jwt jwt) {
+        validateTaskAccess(taskId, jwt);
+        TaskResponse task = taskService.getTaskById(taskId);
+        return ResponseEntity.ok(task);
     }
 
-    // UPDATE TASK
-    @PutMapping("/{id}")
+    @PutMapping("/{taskId}")
+    @PreAuthorize("hasRole('PROJECT_MANAGER')")
     public ResponseEntity<TaskResponse> updateTask(
-            @PathVariable Long id,
-            @Valid @RequestBody UpdateTaskRequest request) {
-        TaskResponse response = taskService.updateTask(id, request);
-        return ResponseEntity.ok(response);
+            @PathVariable Long taskId,
+            @RequestBody UpdateTaskRequest request,
+            @AuthenticationPrincipal Jwt jwt) {
+        validateTaskAccess(taskId, jwt);
+        TaskResponse updatedTask = taskService.updateTask(taskId, request);
+        return ResponseEntity.ok(updatedTask);
     }
 
-    // DELETE TASK
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteTask(@PathVariable Long id) {
-        taskService.deleteTask(id);
+    @DeleteMapping("/{taskId}")
+    @PreAuthorize("hasRole('PROJECT_MANAGER')")
+    public ResponseEntity<Void> deleteTask(
+            @PathVariable Long taskId,
+            @AuthenticationPrincipal Jwt jwt) {
+        validateTaskAccess(taskId, jwt);
+        taskService.deleteTask(taskId);
         return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping("/{taskId}/status")
+    @PreAuthorize("hasRole('PROJECT_MANAGER')")
+    public ResponseEntity<Void> updateTaskStatus(
+            @PathVariable Long taskId,
+            @RequestBody String status,
+            @AuthenticationPrincipal Jwt jwt) {
+        validateTaskAccess(taskId, jwt);
+        taskService.updateTaskStatus(taskId, status);
+        return ResponseEntity.noContent().build();
+    }
+
+    private void validateWorkflowAccess(Long workflowId, Jwt jwt) {
+        Long userId = extractUserId(jwt);
+        Optional<Workflow> workflowOpt = workflowRepository.findById(workflowId);
+        if (workflowOpt.isEmpty()) {
+            throw new RuntimeException("Workflow not found with ID: " + workflowId);
+        }
+        Workflow workflow = workflowOpt.get();
+        Project project = workflow.getProject();
+        if (project == null ||
+                (project.getProjectManager() == null || !project.getProjectManager().getId().equals(userId)) &&
+                        (project.getProjectOwner() == null || !project.getProjectOwner().getId().equals(userId))) {
+            throw new RuntimeException("User not authorized to access workflow: " + workflowId);
+        }
+    }
+
+    private void validateTaskAccess(Long taskId, Jwt jwt) {
+        Long userId = extractUserId(jwt);
+        Optional<Task> taskOpt = Optional.ofNullable(taskService.getTaskEntity(taskId));
+        if (taskOpt.isEmpty()) {
+            throw new RuntimeException("Task not found with ID: " + taskId);
+        }
+        Task task = taskOpt.get();
+        Workflow workflow = task.getWorkflow();
+        Project project = workflow.getProject();
+        if (project == null ||
+                (project.getProjectManager() == null || !project.getProjectManager().getId().equals(userId)) &&
+                        (project.getProjectOwner() == null || !project.getProjectOwner().getId().equals(userId))) {
+            throw new RuntimeException("User not authorized to access task: " + taskId);
+        }
+    }
+
+    private Long extractUserId(Jwt jwt) {
+        User user = userService.syncUserFromJwt(jwt); // Use UserService to resolve user
+        if (user == null || user.getId() == null) {
+            throw new RuntimeException("Unable to resolve user ID from JWT token");
+        }
+        return user.getId();
     }
 }

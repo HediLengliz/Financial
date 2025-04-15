@@ -1,0 +1,254 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Project Overview</title>
+    <!--suppress CssUnusedSymbol -->
+    <style type="text/css">
+        body {
+            font-family: 'Helvetica', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            color: #333;
+            background: #f4f5f7;
+        }
+        .container {
+            width: 90%;
+            margin: 20px auto;
+            background: #fff;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .header {
+            padding: 20px;
+            display: table;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        .header img {
+            max-width: 80px;
+            height: 80px;
+            border-radius: 4px;
+            display: table-cell;
+            vertical-align: middle;
+            object-fit: cover;
+        }
+        .header .title-section {
+            display: table-cell;
+            vertical-align: middle;
+            padding-left: 20px;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 24px;
+            font-weight: 600;
+            color: #172b4d;
+        }
+        .header .badges {
+            margin-top: 5px;
+        }
+        .badge {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+            text-transform: capitalize;
+            display: inline-block;
+            margin-right: 5px;
+        }
+        .badge-status-completed { background: rgba(40, 167, 69, 0.2); color: #28a745; }
+        .badge-status-in_progress { background: rgba(255, 193, 7, 0.2); color: #ffc107; }
+        .badge-status-not_started { background: rgba(108, 117, 125, 0.2); color: #6c757d; }
+        .badge-priority-low { background: rgba(25, 135, 230, 0.2); color: #198754; }
+        .badge-priority-medium { background: rgba(255, 193, 7, 0.2); color: #ffc107; }
+        .badge-priority-high { background: rgba(220, 53, 69, 0.2); color: #dc3545; }
+        .content {
+            padding: 20px;
+            display: table;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        .left-column {
+            display: table-cell;
+            width: 65%;
+            padding-right: 20px;
+            vertical-align: top;
+        }
+        .right-column {
+            display: table-cell;
+            width: 35%;
+            vertical-align: top;
+        }
+        .card {
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+        .card h2 {
+            font-size: 18px;
+            font-weight: 600;
+            color: #172b4d;
+            margin: 0 0 15px 0;
+        }
+        .project-details p {
+            margin: 8px 0;
+            font-size: 14px;
+        }
+        .project-details span {
+            font-weight: bold;
+            color: #007bff;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        th {
+            background: #007bff;
+            color: #fff;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 12px;
+        }
+        tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+        tr:hover {
+            background: #e9ecef;
+        }
+        td {
+            font-size: 13px;
+        }
+        .status {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            color: #fff;
+        }
+        .status-not_started { background: #6c757d; }
+        .status-in_progress { background: #ffc107; color: #333; }
+        .status-completed { background: #28a745; }
+        .progress-container {
+            text-align: center;
+            margin: 20px 0;
+        }
+        .progress-circle {
+            position: relative;
+            display: inline-block;
+        }
+        .progress-circle svg {
+            transform: rotate(-90deg); /* Start from the top */
+        }
+        .progress-circle .background-circle {
+            fill: none;
+            stroke: #e9ecef;
+            stroke-width: 16;
+        }
+        .progress-circle .foreground-circle {
+            fill: none;
+            stroke: #007bff;
+            stroke-width: 16;
+            stroke-linecap: round;
+        }
+        .progress-circle .percentage {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 28px;
+            font-weight: bold;
+            color: #007bff;
+        }
+        .progress-circle .label {
+            position: absolute;
+            top: 65%;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 16px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <!--suppress HtmlUnknownTarget -->
+        <img th:src="${imageDataUrl != '' ? imageDataUrl : ''}" alt="Project Image" />
+        <div class="title-section">
+            <h1 th:text="${project.name}">Project Name</h1>
+            <div class="badges">
+                <span class="badge badge-status"
+                      th:with="statusClass=${project.status == 'not_started' ? 'badge-status-not_started' : (project.status == 'in_progress' ? 'badge-status-in_progress' : 'badge-status-completed')}"
+                      th:classappend="${statusClass}"
+                      th:text="${project.status}">Status</span>
+                <span class="badge badge-priority"
+                      th:with="priorityClass=${project.priority == 'low' ? 'badge-priority-low' : (project.priority == 'medium' ? 'badge-priority-medium' : 'badge-priority-high')}"
+                      th:classappend="${priorityClass}"
+                      th:text="${project.priority}">Priority</span>
+            </div>
+        </div>
+    </div>
+    <div class="content">
+        <div class="left-column">
+            <div class="card">
+                <h2>Project Overview</h2>
+                <div class="project-details">
+                    <p th:with="startDateFormatted=${project.startDate != null ? #temporals.format(project.startDate, 'MMMM d, yyyy') : 'N/A'}">
+                        Start Date: <span th:text="${startDateFormatted}">Start Date</span>
+                    </p>
+                    <p th:with="endDateFormatted=${project.endDate != null ? #temporals.format(project.endDate, 'MMMM d, yyyy') : 'N/A'}">
+                        End Date: <span th:text="${endDateFormatted}">End Date</span>
+                    </p>
+                    <p>Total Workflows: <span th:text="${project.workflows.size()}">0</span></p>
+                </div>
+            </div>
+            <div class="card">
+                <h2>Workflows</h2>
+                <table>
+                    <tr>
+                        <th>Name</th>
+                        <th>Status</th>
+                        <th>Progress</th>
+                        <th>Due Date</th>
+                    </tr>
+                    <tr th:each="workflow : ${project.workflows}" th:with="statusClass=${workflow.status == 'not_started' ? 'status-not_started' : (workflow.status == 'in_progress' ? 'status-in_progress' : 'status-completed')}">
+                        <td th:text="${workflow.name}">Workflow Name</td>
+                        <td>
+                            <span class="status" th:classappend="${statusClass}" th:text="${workflow.status}">Status</span>
+                        </td>
+                        <td th:text="${#numbers.formatDecimal(workflow.progress, 1, 2) + '%'}">0%</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <div class="right-column">
+            <div class="card">
+                <h2>Project Progress</h2>
+                <div class="progress-container">
+                    <div class="progress-circle" th:with="progress=${project.progress != null ? project.progress : 0}">
+                        <svg width="200" height="200">
+                            <!-- Background Circle -->
+                            <circle class="background-circle" cx="100" cy="100" r="80" />
+                            <!-- Foreground Circle (Dynamic Progress) -->
+                            <circle class="foreground-circle"
+                                    cx="100" cy="100" r="80"
+                                    th:attr="stroke-dasharray=${progress / 100 * 2 * 3.1415 * 80} + ', ' + 2 * 3.1415 * 80" />
+                        </svg>
+                        <div class="percentage" th:text="${#numbers.formatDecimal(progress, 0, 0) + '%'}">0%</div>
+                        <div class="label">Completed</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
