@@ -30,7 +30,6 @@ public record CreateProjectRequest(
         @DateTimeFormat(pattern = "MM/dd/yyyy")
         LocalDate endDate,
 
-        @NotNull
         @Valid
         MultipartFile imageFile,
 

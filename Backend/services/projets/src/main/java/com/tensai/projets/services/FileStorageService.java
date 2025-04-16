@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.PostConstruct;
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -40,66 +39,54 @@ public class FileStorageService {
 
     @PostConstruct
     public void init() {
-        // Initialize Cloudinary
         cloudinary = new Cloudinary(ObjectUtils.asMap(
                 "cloud_name", cloudName,
                 "api_key", apiKey,
                 "api_secret", apiSecret));
     }
 
-    // Existing method for storing MultipartFile (used for project images)
-    public String storeFile(MultipartFile file) {
+    public String storeFileLocaly(MultipartFile file) {
         try {
-            String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
-            Path targetLocation = this.fileStorageLocation.resolve(fileName);
-            Files.copy(file.getInputStream(), targetLocation);
-
-            // Upload to Cloudinary
-            Map uploadResult = cloudinary.uploader().upload(targetLocation.toFile(),
-                    ObjectUtils.asMap("resource_type", "auto", "folder", "project-reports"));
+            // Remove the extension from the public_id
+            String originalFileName = file.getOriginalFilename();
+            String fileNameWithoutExtension = originalFileName != null ?
+                    originalFileName.substring(0, originalFileName.lastIndexOf('.')) : "image";
+            String fileName = System.currentTimeMillis() + "_" + fileNameWithoutExtension;
+            Map uploadResult = cloudinary.uploader().upload(file.getBytes(),
+                    ObjectUtils.asMap("resource_type", "image", "folder", "project-reports", "public_id", fileName));
             String publicId = (String) uploadResult.get("public_id");
-
-            return publicId; // Return the public ID to store in your database
+            System.out.println("Stored file with public_id: " + publicId);
+            return publicId;
         } catch (Exception ex) {
             throw new RuntimeException("Could not store file " + file.getOriginalFilename(), ex);
         }
     }
 
-    // Updated method for storing byte array (PDFs) in Cloudinary
+
+
     public String storeFile(byte[] fileBytes, String fileName) {
         try {
             String finalFileName = System.currentTimeMillis() + "_" + fileName;
-            // Upload to Cloudinary directly from byte array
             Map uploadResult = cloudinary.uploader().upload(fileBytes,
                     ObjectUtils.asMap("resource_type", "auto", "folder", "project-reports", "public_id", finalFileName));
-            String publicId = (String) uploadResult.get("public_id");
-
-            return publicId; // Return the public ID to store in your database
+            return (String) uploadResult.get("public_id");
         } catch (Exception ex) {
             throw new RuntimeException("Could not store file " + fileName, ex);
         }
     }
 
-    public Resource loadImage(String fileName) {
+    public Resource loadImage(String publicId) {
         try {
-            Path filePath = this.fileStorageLocation.resolve(fileName).normalize();
-            Resource resource = new UrlResource(filePath.toUri());
-            if (resource.exists()) {
-                return resource;
-            } else {
-                throw new RuntimeException("File not found " + fileName);
-            }
+            String cloudinaryUrl = getFileUrl(publicId);
+            return new UrlResource(cloudinaryUrl);
         } catch (Exception ex) {
-            throw new RuntimeException("File not found " + fileName, ex);
+            throw new RuntimeException("File not found " + publicId, ex);
         }
     }
 
     public void deleteFile(String publicId) {
         try {
-            // Delete from Cloudinary
-            cloudinary.uploader().destroy(publicId, ObjectUtils.asMap("resource_type", "raw"));
-
-            // Delete from local storage (if applicable)
+            cloudinary.uploader().destroy(publicId, ObjectUtils.asMap("resource_type", "image"));
             Path filePath = this.fileStorageLocation.resolve(publicId).normalize();
             Files.deleteIfExists(filePath);
         } catch (Exception ex) {
@@ -107,8 +94,13 @@ public class FileStorageService {
         }
     }
 
-    // Method to get the URL of a file in Cloudinary
     public String getFileUrl(String publicId) {
-        return cloudinary.url().resourceType("raw").generate(publicId);
+        // Append .jpg to the URL to ensure the frontend can handle it
+        String url = cloudinary.url()
+                .resourceType("image")
+                .secure(true)
+                .generate(publicId) + ".jpg";
+        System.out.println("Generated URL for public_id " + publicId + ": " + url);
+        return url;
     }
 }

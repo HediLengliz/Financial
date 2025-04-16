@@ -49,7 +49,7 @@ public class TaskController {
     }
 
     @GetMapping("/workflow/{workflowId}")
-    @PreAuthorize("hasRole('PROJECT_MANAGER')")
+    @PreAuthorize("hasAnyRole('PROJECT_OWNER', 'PROJECT_MANAGER')")
     public ResponseEntity<List<TaskResponse>> getTasksByWorkflowId(
             @PathVariable Long workflowId,
             @AuthenticationPrincipal Jwt jwt) {
@@ -59,7 +59,7 @@ public class TaskController {
     }
 
     @GetMapping("/{taskId}")
-    @PreAuthorize("hasRole('PROJECT_MANAGER')")
+    @PreAuthorize("hasAnyRole('PROJECT_OWNER', 'PROJECT_MANAGER')")
     public ResponseEntity<TaskResponse> getTaskById(
             @PathVariable Long taskId,
             @AuthenticationPrincipal Jwt jwt) {

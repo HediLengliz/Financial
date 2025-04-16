@@ -3,6 +3,7 @@ package com.tensai.projets.models;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.oauth2.jwt.Jwt;
+
 import java.util.*;
 
 @Entity
@@ -20,20 +21,22 @@ public class User {
 
     @Column(nullable = false)
     private String name;
-//    @Column(unique = true, nullable = false)  // Mandatory and unique
-//    private String sub;
 
     @Column(nullable = false)
-    private boolean availability; // true = available, false = not available
+    private boolean availability;
 
     @Column(nullable = false)
-    private String role; // PROJECT_MANAGER or PROJECT_OWNER
+    private String role;
 
     @Column(nullable = false, unique = true)
     private String email;
 
     private String firstName;
     private String lastName;
+
+    // Store the Cloudinary public_id for the profile picture
+    @Column(name = "profile_picture")
+    private String profilePicture;
 
     @OneToMany(mappedBy = "projectManager", cascade = CascadeType.ALL)
     @Builder.Default
@@ -43,7 +46,6 @@ public class User {
     @Builder.Default
     private List<Workflow> workflows = new ArrayList<>();
 
-    // Helper method to update from JWT
     public void updateFromJwt(Jwt jwt) {
         this.email = jwt.getClaimAsString("email");
         this.name = jwt.getClaimAsString("preferred_username");

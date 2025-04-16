@@ -71,6 +71,7 @@ public class WorkflowController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('PROJECT_MANAGER')") // Restrict to PROJECT_MANAGER
     public ResponseEntity<WorkflowResponse> updateWorkflow(
             @PathVariable Long id,
             @RequestBody WorkflowUpdateRequest request) {
@@ -79,6 +80,7 @@ public class WorkflowController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('PROJECT_MANAGER')") // Restrict to PROJECT_MANAGER
     public ResponseEntity<Void> deleteWorkflow(@PathVariable Long id) {
         workflowService.deleteWorkflow(id);
         return ResponseEntity.noContent().build();

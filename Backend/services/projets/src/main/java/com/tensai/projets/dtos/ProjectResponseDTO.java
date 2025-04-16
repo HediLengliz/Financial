@@ -2,6 +2,7 @@ package com.tensai.projets.dtos;
 
 import com.tensai.projets.models.Project;
 import com.tensai.projets.models.Workflow;
+import com.tensai.projets.services.FileStorageService;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -17,14 +18,13 @@ public record ProjectResponseDTO(
         String imageUrl,
         double progress,
         List<WorkflowResponse> workflows,
-        UserDTO projectManager // Added
+        UserDTO projectManager
 ) {
-    public static ProjectResponseDTO fromEntity(Project project) {
+    public static ProjectResponseDTO fromEntity(Project project, FileStorageService fileStorageService) {
         List<WorkflowResponse> workflows = project.getWorkflows().stream()
                 .map(WorkflowResponse::fromEntity)
                 .toList();
 
-        // Create UserDTO for the project manager if present
         UserDTO managerDTO = project.getProjectManager() != null ?
                 new UserDTO(
                         project.getProjectManager().getId(),
@@ -38,21 +38,18 @@ public record ProjectResponseDTO(
                 project.getId(),
                 project.getName(),
                 project.getDescription(),
-                project.getStatus(), // Assuming status is a String now
-                project.getPriority(), // Assuming priority is a String now
+                project.getStatus(),
+                project.getPriority(),
                 project.getStartDate(),
                 project.getEndDate(),
-                buildImageUrl(project.getImagePath()),
+                buildImageUrl(project.getImagePath(), fileStorageService),
                 project.getProgress(),
                 workflows,
                 managerDTO
         );
     }
 
-    private static String buildImageUrl(String imagePath) {
-        return imagePath != null
-                ? "http://localhost:8081/api/projects/images/" + imagePath // Updated path to match @RequestMapping
-                : null;
+    private static String buildImageUrl(String imagePath, FileStorageService fileStorageService) {
+        return imagePath != null ? fileStorageService.getFileUrl(imagePath) : null;
     }
-
 }

@@ -48,6 +48,7 @@ public class SecurityConfig {
                         .requestMatchers(
                                 "/users/register",
                                 "/users/login",
+                                "/users/login/remember-me",
                                 "/swagger-ui/**",
                                 "/v3/api-docs/**"
                         ).permitAll()
@@ -57,7 +58,7 @@ public class SecurityConfig {
                         .requestMatchers("/workflows/**").hasAnyAuthority("ROLE_PROJECT_OWNER", "ROLE_PROJECT_MANAGER")
                         // Endpoints requiring authentication only
                         .requestMatchers("/alerts/**").authenticated()
-                        .requestMatchers("http://localhost:8081/api/projects/images/**").authenticated()
+//                        .requestMatchers("/projects/report-projects/project-reports/**").permitAll()
                         .requestMatchers("/users/logout").authenticated()
                         // Reports and tasks will be secured via method-level security
                         .requestMatchers("/reports/**").authenticated()

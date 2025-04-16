@@ -58,18 +58,14 @@ public class ProjectService {
         this.restTemplate = restTemplate;
     }
 
-    // Updated createProject to include project owner
     public ProjectResponseDTO createProject(CreateProjectRequest request, Long projectManagerId, User projectOwner) {
-        // Validate that the authenticated user is a PROJECT_OWNER
         if (!"PROJECT_OWNER".equals(projectOwner.getRole())) {
             throw new RuntimeException("Only PROJECT_OWNER can create projects");
         }
 
-        // Find the project manager and validate
         User projectManager = userRepository.findById(projectManagerId)
                 .orElseThrow(() -> new RuntimeException("Project manager not found"));
 
-        // Ensure the user is a project manager and available
         if (!"PROJECT_MANAGER".equals(projectManager.getRole())) {
             throw new RuntimeException("Selected user is not a project manager");
         }
@@ -77,7 +73,6 @@ public class ProjectService {
             throw new RuntimeException("Selected project manager is not available");
         }
 
-        // Create the project
         Project project = new Project();
         project.setName(request.name());
         project.setDescription(request.description());
@@ -85,30 +80,30 @@ public class ProjectService {
         project.setPriority(request.priority());
         project.setStartDate(request.startDate());
         project.setEndDate(request.endDate());
-        project.setImagePath(request.imageFile() != null ? fileStorageService.storeFile(request.imageFile()) : null);
+        project.setImagePath(request.imageFile() != null ? fileStorageService.storeFileLocaly(request.imageFile()) : null);
         project.setProgress(0.0);
         project.setProjectManager(projectManager);
-        project.setProjectOwner(projectOwner); // Set the project owner
+        project.setProjectOwner(projectOwner);
 
-        // Update the project manager's availability
         projectManager.setAvailability(false);
         userRepository.save(projectManager);
 
-        // Save the project
         Project savedProject = projectRepository.save(project);
         handleProjectAlerts(savedProject);
-        return ProjectResponseDTO.fromEntity(savedProject);
+        return ProjectResponseDTO.fromEntity(savedProject, fileStorageService);
     }
 
-    // Updated getProjects to filter by project owner
     @Transactional(readOnly = true)
-    public List<ProjectResponseDTO> getProjects(String keyword, String status, String priority, User projectOwner) {
-        // Validate that the user is a PROJECT_OWNER
-        if (!"PROJECT_OWNER".equals(projectOwner.getRole())) {
-            throw new RuntimeException("Only PROJECT_OWNER can view their projects");
-        }
+    public List<ProjectResponseDTO> getProjects(String keyword, String status, String priority, User user) {
+        List<Project> projects;
 
-        List<Project> projects = projectRepository.findByProjectOwner(projectOwner);
+        if ("PROJECT_OWNER".equals(user.getRole())) {
+            projects = projectRepository.findByProjectOwner(user);
+        } else if ("PROJECT_MANAGER".equals(user.getRole())) {
+            projects = projectRepository.findByProjectManager(user);
+        } else {
+            throw new RuntimeException("User must be a PROJECT_OWNER or PROJECT_MANAGER to view projects");
+        }
 
         if (keyword != null && !keyword.trim().isEmpty()) {
             projects = projects.stream()
@@ -141,17 +136,15 @@ public class ProjectService {
         );
 
         return projects.stream()
-                .map(ProjectResponseDTO::fromEntity)
+                .map(project -> ProjectResponseDTO.fromEntity(project, fileStorageService))
                 .collect(Collectors.toList());
     }
 
-    // Existing methods remain largely unchanged, but ensure getProjectById checks ownership
     @Transactional
     public ProjectResponseDTO getProjectById(Long id, User projectOwner) {
         Project project = projectRepository.findByIdWithWorkflows(id)
                 .orElseThrow(() -> new GlobalExceptionHandler.ProjectNotFoundException(id));
 
-        // Verify that the project belongs to the authenticated project owner
         if (!"PROJECT_OWNER".equals(projectOwner.getRole()) || !project.getProjectOwner().getId().equals(projectOwner.getId())) {
             throw new RuntimeException("You do not have permission to view this project");
         }
@@ -167,27 +160,32 @@ public class ProjectService {
             workflowRepository.save(workflow);
         }
 
-        double projectProgress = calculateProjectProgress(project);
-        project.setProgress(projectProgress);
-        updateProjectStatus(project, projectProgress);
+        updateProjectStatusAndProgress(project);
         projectRepository.save(project);
 
-        return ProjectResponseDTO.fromEntity(project);
+        return ProjectResponseDTO.fromEntity(project, fileStorageService);
     }
 
-    // Update deleteProject to check ownership
     public void deleteProject(Long id, User projectOwner) {
         Project project = getProjectEntity(id);
         if (!"PROJECT_OWNER".equals(projectOwner.getRole()) || !project.getProjectOwner().getId().equals(projectOwner.getId())) {
             throw new RuntimeException("You do not have permission to delete this project");
         }
+
+        User projectManager = project.getProjectManager();
+        if (projectManager != null) {
+            projectManager.setAvailability(true);
+            userRepository.save(projectManager);
+        }
+
         if (project.getImagePath() != null) {
             fileStorageService.deleteFile(project.getImagePath());
         }
+
         projectRepository.deleteById(id);
     }
 
-    // Update updateProject to check ownership
+    @Transactional
     public ProjectResponseDTO updateProject(Long id, UpdateProjectRequest request, User projectOwner) {
         Project existingProject = getProjectEntity(id);
         if (!"PROJECT_OWNER".equals(projectOwner.getRole()) || !existingProject.getProjectOwner().getId().equals(projectOwner.getId())) {
@@ -195,24 +193,45 @@ public class ProjectService {
         }
         String imagePath = existingProject.getImagePath();
 
-        if (request.imageUrl() != null && !request.imageUrl().isEmpty()) {
-            imagePath = fileStorageService.storeFile(request.imageUrl());
+        if (request.imageFile() != null) {
+            imagePath = fileStorageService.storeFileLocaly(request.imageFile());
         }
 
         existingProject.setName(request.name() != null ? request.name() : existingProject.getName());
         existingProject.setDescription(request.description() != null ? request.description() : existingProject.getDescription());
-        if (request.status() != null) existingProject.setStatus(request.status());
+        if (request.status() != null) {
+            existingProject.setStatus(request.status());
+            // If the status is manually set to "COMPLETED", set progress to 100%
+            if ("COMPLETED".equalsIgnoreCase(request.status())) {
+                existingProject.setProgress(100.0);
+            }
+        }
         existingProject.setPriority(request.priority());
         existingProject.setStartDate(request.startDate() != null ? request.startDate() : existingProject.getStartDate());
         existingProject.setEndDate(request.endDate() != null ? request.endDate() : existingProject.getEndDate());
         existingProject.setImagePath(imagePath);
 
+        // Fetch workflows to check their status and update project progress
+        List<Workflow> workflows = workflowRepository.findWithTasksByProjectId(id);
+        existingProject.getWorkflows().clear();
+        existingProject.getWorkflows().addAll(workflows);
+
+        // Update each workflow's progress and status
+        for (Workflow workflow : existingProject.getWorkflows()) {
+            double workflowProgress = calculateWorkflowProgress(workflow);
+            workflow.setProgress(workflowProgress);
+            updateWorkflowStatus(workflow, workflowProgress);
+            workflowRepository.save(workflow);
+        }
+
+        // Update project status and progress based on workflows
+        updateProjectStatusAndProgress(existingProject);
+
         Project updatedProject = projectRepository.save(existingProject);
         handleProjectAlerts(updatedProject);
-        return ProjectResponseDTO.fromEntity(updatedProject);
+        return ProjectResponseDTO.fromEntity(updatedProject, fileStorageService);
     }
 
-    // Existing methods (unchanged unless specified)
     private void handleProjectAlerts(Project project) {
         if ("HIGH".equalsIgnoreCase(project.getPriority())) {
             sendAlert("PROJECT", "HIGH_PRIORITY", project.getName(), null);
@@ -243,6 +262,15 @@ public class ProjectService {
         return projectRepository.findById(id)
                 .orElseThrow(() -> new GlobalExceptionHandler.ProjectNotFoundException(id));
     }
+    public void updateProjectStatus(Project project, double progress) {
+        if (progress == 100.0) {
+            project.setStatus("COMPLETED");
+        } else if (progress > 0.0) {
+            project.setStatus("IN_PROGRESS");
+        } else {
+            project.setStatus("NOT_STARTED");
+        }
+    }
 
     public double calculateProjectProgress(Project project) {
         List<Workflow> workflows = project.getWorkflows();
@@ -262,16 +290,6 @@ public class ProjectService {
         return (completedTasks * 100.0) / tasks.size();
     }
 
-    public void updateProjectStatus(Project project, double progress) {
-        if (progress == 100.0) {
-            project.setStatus("COMPLETED");
-        } else if (progress > 0.0) {
-            project.setStatus("IN_PROGRESS");
-        } else {
-            project.setStatus("NOT_STARTED");
-        }
-    }
-
     private void updateWorkflowStatus(Workflow workflow, double progress) {
         if (progress == 100.0) {
             workflow.setStatus("COMPLETED");
@@ -279,6 +297,39 @@ public class ProjectService {
             workflow.setStatus("IN_PROGRESS");
         } else {
             workflow.setStatus("NOT_STARTED");
+        }
+    }
+
+    private void updateProjectStatusAndProgress(Project project) {
+        List<Workflow> workflows = project.getWorkflows();
+        if (workflows == null || workflows.isEmpty()) {
+            project.setProgress(0.0);
+            project.setStatus("NOT_STARTED");
+            return;
+        }
+
+        // Check if all workflows are completed
+        boolean allWorkflowsCompleted = workflows.stream()
+                .allMatch(workflow -> "COMPLETED".equalsIgnoreCase(workflow.getStatus()));
+
+        if (allWorkflowsCompleted) {
+            project.setStatus("COMPLETED");
+            project.setProgress(100.0);
+        } else {
+            // If not all workflows are completed, calculate progress and update status accordingly
+            double projectProgress = calculateProjectProgress(project);
+            project.setProgress(projectProgress);
+
+            // Only update status based on progress if the status wasn't manually set to "COMPLETED"
+            if (!"COMPLETED".equalsIgnoreCase(project.getStatus())) {
+                if (projectProgress == 100.0) {
+                    project.setStatus("COMPLETED");
+                } else if (projectProgress > 0.0) {
+                    project.setStatus("IN_PROGRESS");
+                } else {
+                    project.setStatus("NOT_STARTED");
+                }
+            }
         }
     }
 
@@ -309,7 +360,6 @@ public class ProjectService {
         return response.getBody();
     }
 
-    // Keep getAvailableProjectManagers unchanged
     @Transactional(readOnly = true)
     public List<UserDTO> getAvailableProjectManagers() {
         List<User> availableManagers = userRepository.findByRoleAndAvailability("PROJECT_MANAGER", true);

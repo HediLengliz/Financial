@@ -20,6 +20,6 @@ public record UpdateProjectRequest(
         LocalDate startDate,
         LocalDate endDate,
         List<Long> workflowIds,
-        MultipartFile imageUrl,
+        MultipartFile imageFile,
         List<Long> workflows
 ) {}
