@@ -32,9 +32,7 @@ jobs:
         
       - name: Build API Gateway
         run: mvn clean package -f Backend/services/api-gateway/pom.xml
-        
-      - name: Build User Service
-        run: mvn clean package -f Backend/services/user-service/pom.xml
+
       
       - name: Build Financial Service
         run: mvn clean package -f Backend/services/Financial/pom.xml
