@@ -2,9 +2,11 @@ name: CI/CD Pipeline
 on:
   push:
     branches:
+      - main
       - Financial
   pull_request:
     branches:
+      - main
       - Financial
 jobs:
   build-test:
@@ -18,14 +20,30 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: '17'
-      - name: Build with Maven
+      
+      - name: Build Parent POM
+        run: mvn clean install -f buildini-parent/pom.xml
+      
+      - name: Build Config Server
+        run: mvn clean package -f Backend/services/configservice/pom.xml
+        
+      - name: Build Discovery Service
+        run: mvn clean package -f Backend/services/discovery/pom.xml
+        
+      - name: Build API Gateway
+        run: mvn clean package -f Backend/services/api-gateway/pom.xml
+        
+      - name: Build User Service
+        run: mvn clean package -f Backend/services/user-service/pom.xml
+      
+      - name: Build Financial Service
         run: mvn clean package -f Backend/services/Financial/pom.xml
-      - name: Start Spring Boot Application
-        run: nohup java -jar -D spring.profiles.active=local Backend/services/Financial/target/Financial-0.0.1-SNAPSHOT.jar &
+      
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.9'
+      
       - name: Install Robot Framework dependencies
         run: |
           pip install robotframework

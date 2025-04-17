@@ -11,8 +11,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.reactive.CorsWebFilter;
 import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
-import org.springframework.web.servlet.config.annotation.CorsRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
 
 import java.util.List;
 
@@ -33,9 +32,9 @@ public class ApiGatewayApplication {
 
 				)
 				.route("financial", r -> r
-						.path("/financial/**")  // Your API gateway route for financial services
+								.path("/financial/**")  // Your API gateway route for financial services
 //						.filters(f -> f.stripPrefix(1))
-						.uri("lb://financial")
+								.uri("lb://financial")
 				)
 				.build();
 	}
@@ -52,7 +51,4 @@ public class ApiGatewayApplication {
 
 		return new CorsWebFilter(source);
 	}
-	}
-
-
-
+}

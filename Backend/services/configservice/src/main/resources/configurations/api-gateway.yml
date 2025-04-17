@@ -1,46 +1,42 @@
-# API Gateway application.yml
 server:
-  port: 8080  # API Gateway port
+  port: 8080
   servlet:
-    context-path: /api   # Only if you need a global context path for the gateway
+    context-path: /api
 
 spring:
   application:
-    name: api-gateway  # Name for Eureka registration
+    name: api-gateway
   cloud:
     gateway:
       routes:
         - id: projects-service
-          uri: lb://PROJECTS-SERVICE  # Match the corrected service name
+          uri: lb://PROJECTS-SERVICE
           predicates:
             - Path=/api/projects/**
-
- # Remove "/api" from the path
+        - id: users-service
+          uri: lb://USERS-SERVICE
+          predicates:
+            - Path=/api/users/**
+        - id: financial-service
+          uri: lb://FINANCIAL-SERVICE
+          predicates:
+            - Path=/financial/**
       discovery:
         locator:
-          enabled: true               # Auto-discover services from Eureka
-          lower-case-service-id: true # Use lowercase service names
+          enabled: true
+          lower-case-service-id: true
       httpclient:
-        connect-timeout: 5000       # 1 second
-        response-timeout: 10s         # 5 seconds
-#    globalcors:
-#        cors:
-#          configurations:
-#          '[/**]':
-#        allowed-origins: "http://localhost:4200"
-#        allowed-methods: "*"
-#        allowed-headers: "*"
+        connect-timeout: 5000
+        response-timeout: 10s
 
-# Eureka Client Configuration
 eureka:
   client:
     service-url:
-      defaultZone: http://localhost:8761/eureka/  # Correct URL format
-    registry-fetch-interval-seconds: 5  # How often to fetch registry updates
-    register-with-eureka: true  # API Gateway should register with Eureka
-    fetch-registry: true        # API Gateway should fetch the registry
+      defaultZone: http://localhost:8761/eureka/  # Fixed URL
+    registry-fetch-interval-seconds: 5
+    register-with-eureka: true
+    fetch-registry: true
 
-# Logging Configuration
 logging:
   level:
     org.springframework.cloud.gateway: DEBUG

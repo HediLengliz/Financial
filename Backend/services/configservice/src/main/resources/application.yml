@@ -8,8 +8,22 @@ spring:
       server:
         native:
           search-locations : classpath:/configurations
+#  security:
+#    user:
+#      name: admin
+#      password: admin
+#    ignored: /actuator/health  # Disable security for health endpoint
 
 
 server:
   port: 8888
+#management:
+#  endpoints:
+#    web:
+#      exposure:
+#        include: health,info
+#  endpoint:
+#    health:
+#      show-details: always  # Optional: Show health details
+
 

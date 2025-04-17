@@ -4,6 +4,7 @@ import com.tensai.financial.DTOS.BudgetDTO;
 import com.tensai.financial.Entities.*;
 import com.tensai.financial.Repositories.BudgetRepository;
 import com.tensai.financial.Services.BudgetService;
+import com.tensai.financial.Services.NotificationService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -23,12 +24,13 @@ import java.util.Map;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/financial/budgets")
+    @RequestMapping("/financial/budgets")
 @RequiredArgsConstructor
 @Tag(name = "Budget Management", description = "managing budgets")
 public class BudgetController{
     private final BudgetService budgetService;
     private final BudgetRepository budgetRepository;
+    private final NotificationService notificationService;
 
     @GetMapping("/test")
     public String test() {
@@ -39,11 +41,11 @@ public class BudgetController{
             @ApiResponse(responseCode = "200", description = "Budget details retrieved successfully"),
             @ApiResponse(responseCode = "404", description = "Budget not found")
     })
-    @GetMapping("/{projectId}")
+    @GetMapping("/project/{projectId}")
     public ResponseEntity<BudgetDTO> getBudget(@PathVariable UUID projectId) {
         return ResponseEntity.ok(budgetService.getBudgetByProject(projectId));
     }
-    @GetMapping("/ ")
+    @GetMapping("/load-with-filters")
     @Operation(summary = "Load All Budgets with Filters", description = "Fetches all budgets with optional filtering parameters.")
     public ResponseEntity<List<BudgetDTO>> loadBudgetsWithFilters(
             @RequestParam(value = "projectName", required = false) String projectName,
@@ -85,7 +87,18 @@ public class BudgetController{
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Unexpected error: Duplicate project ID generated");
         }
 
-        return ResponseEntity.ok(budgetService.createBudget(budgetDTO));
+        BudgetDTO createdBudget = budgetService.createBudget(budgetDTO);
+        
+        // Send notification
+        notificationService.sendNotification(
+                "New budget created with amount: $" + budgetDTO.getAllocatedAmount(),
+                "BUDGET",
+                "admin@buildini.com", // You might want to replace this with a dynamic email
+                createdBudget.getId().toString(),
+                "BUDGET"
+        );
+        
+        return ResponseEntity.ok(createdBudget);
     }
     @DeleteMapping("/delete/{id}")
     @ApiResponses({
@@ -95,6 +108,16 @@ public class BudgetController{
     @Operation(summary = "Delete a budget", description = "Deletes a budget entry.")
     public ResponseEntity<Void> deleteBudget(@PathVariable Long id) {
         budgetService.deleteBudget(id);
+        
+        // Send notification
+        notificationService.sendNotification(
+                "Budget with ID: " + id + " has been deleted",
+                "BUDGET",
+                "admin@buildini.com", // You might want to replace this with a dynamic email
+                id.toString(),
+                "BUDGET"
+        );
+        
         return ResponseEntity.ok().build();
     }
     @PutMapping("/update/{id}")
@@ -107,7 +130,19 @@ public class BudgetController{
         if (budgetDTO.getProjectId() == null) {
             budgetDTO.setProjectId(UUID.randomUUID()); // Generate a new UUID if not provided
         }
-        return ResponseEntity.ok(budgetService.updateBudget(id, budgetDTO));
+        
+        BudgetDTO updatedBudget = budgetService.updateBudget(id, budgetDTO);
+        
+        // Send notification
+        notificationService.sendNotification(
+                "Budget with ID: " + id + " has been updated",
+                "BUDGET",
+                "admin@buildini.com", // You might want to replace this with a dynamic email
+                id.toString(),
+                "BUDGET"
+        );
+        
+        return ResponseEntity.ok(updatedBudget);
     }
     @GetMapping("/get/{id}")
     @ApiResponses({

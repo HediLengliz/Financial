@@ -5,6 +5,8 @@ import com.tensai.financial.DTOS.InvoiceDTO;
 import com.tensai.financial.Entities.ApprovalStatus;
 import com.tensai.financial.Entities.Status;
 import com.tensai.financial.Services.InvoiceService;
+import com.tensai.financial.Services.PdfGenerator;
+import com.tensai.financial.Services.QrCodeGenerator;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -27,6 +29,8 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @Tag(name = "Invoice Management", description = "APIs for managing invoices")
 public class InvoiceController {
+    private final PdfGenerator pdfGenerator;
+    private final QrCodeGenerator qrCodeGenerator;
     private final InvoiceService invoiceService;
     @GetMapping("/all")
     @ApiResponses(value = {
@@ -101,13 +105,37 @@ public class InvoiceController {
         List<InvoiceDTO> filteredInvoices = invoiceService.loadAllInvoicesWithFilters(invoiceNumber,amount, totalAmount, issued_by,  issued_to,  issueDate, tax, dueDate, created_at,  status, approvalStatus);
         return ResponseEntity.ok(filteredInvoices);
     }
+    // New endpoint for PDF of all invoices
     @GetMapping("/export/pdf/{id}")
-    public ResponseEntity<byte[]> exportPdf(@PathVariable Long id) {
-        ByteArrayOutputStream outputStream = invoiceService.generatePdf(id);
+    @Operation(summary = "Download PDF of all invoices", description = "Generates a PDF containing all invoices.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "PDF generated successfully"),
+            @ApiResponse(responseCode = "500", description = "Error generating PDF")
+    })
+    public ResponseEntity<byte[]> downloadAllInvoicesPdf() {
+        List<InvoiceDTO> invoices = invoiceService.getAllInvoices();
+        byte[] pdfBytes = pdfGenerator.generateInvoicesPdf(invoices);
         return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=invoice_" + id + ".pdf")
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=all_invoices.pdf")
                 .contentType(MediaType.APPLICATION_PDF)
-                .body(outputStream.toByteArray());
+                .body(pdfBytes);
+    }
+
+    // New endpoint for QR code
+    @GetMapping("/all/pdf/qrcode")
+    @Operation(summary = "Get QR code for all invoices PDF", description = "Generates a QR code linking to the PDF of all invoices.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "QR code generated successfully"),
+            @ApiResponse(responseCode = "500", description = "Error generating QR code")
+    })
+    public ResponseEntity<byte[]> getAllInvoicesPdfQrCode() {
+        // Construct the URL for the PDF endpoint (adjust the base URL as needed)
+        String pdfUrl = "http://localhost:8080/financial/invoices/all/pdf"; // Replace with your actual host/port
+        byte[] qrCodeBytes = qrCodeGenerator.generateQrCode(pdfUrl, 250, 250);
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=invoices-qrcode.png")
+                .contentType(MediaType.IMAGE_PNG)
+                .body(qrCodeBytes);
     }
 
     @GetMapping("/export/excel/{id}")

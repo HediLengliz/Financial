@@ -5,19 +5,12 @@ import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
-import org.springframework.cloud.logging.LoggingRebinder;
 import org.springframework.context.annotation.Configuration;
 
 @Aspect
 @Configuration
 @Slf4j
 public class MethodMonitoring {
-    private final LoggingRebinder loggingRebinder;
-
-    public MethodMonitoring(LoggingRebinder loggingRebinder) {
-        this.loggingRebinder = loggingRebinder;
-    }
-
     @Pointcut("execution(* com.tensai.financial.Services.BudgetService.*(..)) || " +
             "execution(* com.tensai.financial.Services.ExpenseService.*(..)) || " +
             "execution(* com.tensai.financial.Services.InvoiceService.*(..))")

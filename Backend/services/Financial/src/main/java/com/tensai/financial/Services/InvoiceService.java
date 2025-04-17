@@ -1,15 +1,13 @@
 package com.tensai.financial.Services;
-import com.itextpdf.text.Document;
-import com.itextpdf.text.DocumentException;
-import com.itextpdf.text.Paragraph;
-import com.itextpdf.text.pdf.PdfWriter;
+import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.layout.Document;
+import com.itextpdf.layout.element.Paragraph;
 import com.tensai.financial.DTOS.InvoiceDTO;
 import com.tensai.financial.Entities.ApprovalStatus;
 import com.tensai.financial.Entities.Budget;
 import com.tensai.financial.Entities.Invoice;
 import com.tensai.financial.Entities.Status;
-import com.tensai.financial.FeignClients.ProjectClient;
-import com.tensai.financial.FeignClients.SupplierClient;
 import com.tensai.financial.Repositories.BudgetRepository;
 import com.tensai.financial.Repositories.InvoiceRepository;
 import lombok.AllArgsConstructor;
@@ -34,8 +32,7 @@ import java.util.stream.Collectors;
 public class InvoiceService implements IInvoiceService {
     private final InvoiceRepository invoiceRepository;
     private final BudgetRepository budgetRepository;
-    private final ProjectClient projectClient;
-    private final SupplierClient supplierClient;
+
 
     public List<InvoiceDTO> getAllInvoices() {
         return invoiceRepository.findAll()
@@ -265,39 +262,6 @@ public class InvoiceService implements IInvoiceService {
                 .collect(Collectors.toList());
     }
 
-    public ByteArrayOutputStream generatePdf(Long id) {
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        Document document = new Document();
-
-        try {
-            // Initialize PdfWriter with the output stream
-            PdfWriter.getInstance(document, outputStream);
-
-            // Open the document to write
-            document.open();
-
-            // Retrieve the invoice data
-            InvoiceDTO invoiceDTO = getInvoiceById(id);
-
-            // Add content to the PDF
-            document.add(new Paragraph("Invoice Number: " + invoiceDTO.getInvoiceNumber()));
-            document.add(new Paragraph("Total Amount: " + invoiceDTO.getTotalAmount()));
-            document.add(new Paragraph("Issue Date: " + invoiceDTO.getIssueDate()));
-            document.add(new Paragraph("Issued By: " + invoiceDTO.getIssued_by()));
-            document.add(new Paragraph("Issued To: " + invoiceDTO.getIssued_to()));
-            document.add(new Paragraph("Tax: " + invoiceDTO.getTax()));
-            document.add(new Paragraph("Due Date: " + invoiceDTO.getDueDate()));
-            document.add(new Paragraph("Status: " + invoiceDTO.getStatus()));
-            // Add more invoice details as needed...
-
-        } catch (DocumentException e) {
-            e.printStackTrace(); // Handle exceptions appropriately in production code
-        } finally {
-            document.close(); // Ensure the document is closed in a finally block
-        }
-
-        return outputStream; // Return the output stream containing the PDF
-    }
 
     public ByteArrayOutputStream generateExcel(Long id) {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();

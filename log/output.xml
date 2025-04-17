@@ -1,97 +1,97 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<robot generator="Robot 7.2.2 (Python 3.13.2 on win32)" generated="2025-03-15T02:25:30.503977" rpa="false" schemaversion="5">
+<robot generator="Robot 7.2.2 (Python 3.13.2 on win32)" generated="2025-04-10T16:02:06.144158" rpa="false" schemaversion="5">
 <suite id="s1" name="forecastEndpoint" source="C:\Users\hedi2\Desktop\Buildini\Backend\services\Financial\src\RobotTest\forecastEndpoint.robot">
 <test id="s1-t1" name="Forecast Project Budget Success" line="8">
 <kw name="Create Session" owner="RequestsLibrary">
-<msg time="2025-03-15T02:25:30.813016" level="INFO">Creating Session using : alias=financial, url=http://localhost:8071/financial/budgets, headers={},                     cookies={}, auth=None, timeout=None, proxies=None, verify=False,                     debug=0 </msg>
+<msg time="2025-04-10T16:02:06.450563" level="INFO">Creating Session using : alias=financial, url=http://localhost:8071/financial/budgets, headers={},                     cookies={}, auth=None, timeout=None, proxies=None, verify=False,                     debug=0 </msg>
 <arg>financial</arg>
 <arg>${BASE_URL}</arg>
 <doc>Create Session: create a HTTP session to a server</doc>
-<status status="PASS" start="2025-03-15T02:25:30.812743" elapsed="0.001304"/>
+<status status="PASS" start="2025-04-10T16:02:06.450349" elapsed="0.001677"/>
 </kw>
 <kw name="GET On Session" owner="RequestsLibrary">
-<msg time="2025-03-15T02:25:30.970587" level="INFO">GET Request : url=http://localhost:8071/financial/budgets/forecast/11 
+<msg time="2025-04-10T16:02:06.462857" level="INFO">GET Request : url=http://localhost:8071/financial/budgets/forecast/11 
  path_url=/financial/budgets/forecast/11 
  headers={'User-Agent': 'python-requests/2.32.3', 'Accept-Encoding': 'gzip, deflate', 'Accept': '*/*', 'Connection': 'keep-alive'} 
  body=None 
  </msg>
-<msg time="2025-03-15T02:25:30.970749" level="INFO">GET Response : url=http://localhost:8071/financial/budgets/forecast/11 
+<msg time="2025-04-10T16:02:06.463036" level="INFO">GET Response : url=http://localhost:8071/financial/budgets/forecast/11 
  status=200, reason= 
- headers={'Content-Type': 'application/json', 'Transfer-Encoding': 'chunked', 'Date': 'Sat, 15 Mar 2025 01:25:30 GMT', 'Keep-Alive': 'timeout=60', 'Connection': 'keep-alive'} 
+ headers={'Content-Type': 'application/json', 'Transfer-Encoding': 'chunked', 'Date': 'Thu, 10 Apr 2025 15:02:06 GMT', 'Keep-Alive': 'timeout=60', 'Connection': 'keep-alive'} 
  body={"forecast":48.00} 
  </msg>
-<msg time="2025-03-15T02:25:30.970876" level="INFO">${response} = &lt;Response [200]&gt;</msg>
+<msg time="2025-04-10T16:02:06.463155" level="INFO">${response} = &lt;Response [200]&gt;</msg>
 <var>${response}</var>
 <arg>financial</arg>
 <arg>/forecast/11</arg>
 <arg>expected_status=200</arg>
 <doc>Sends a GET request on a previously created HTTP Session.</doc>
-<status status="PASS" start="2025-03-15T02:25:30.814194" elapsed="0.156724"/>
+<status status="PASS" start="2025-04-10T16:02:06.452257" elapsed="0.010936"/>
 </kw>
 <kw name="Should Be Equal As Integers" owner="BuiltIn">
-<msg time="2025-03-15T02:25:30.971423" level="INFO">Argument types are:
+<msg time="2025-04-10T16:02:06.463678" level="INFO">Argument types are:
 &lt;class 'int'&gt;
 &lt;class 'str'&gt;</msg>
 <arg>${response.status_code}</arg>
 <arg>200</arg>
 <doc>Fails if objects are unequal after converting them to integers.</doc>
-<status status="PASS" start="2025-03-15T02:25:30.971049" elapsed="0.000457"/>
+<status status="PASS" start="2025-04-10T16:02:06.463319" elapsed="0.000447"/>
 </kw>
 <kw name="Log" owner="BuiltIn">
-<msg time="2025-03-15T02:25:30.971879" level="INFO">Forecast value: 48.0</msg>
+<msg time="2025-04-10T16:02:06.464127" level="INFO">Forecast value: 48.0</msg>
 <arg>Forecast value: ${response.json()["forecast"]}</arg>
 <doc>Logs the given message with the given level.</doc>
-<status status="PASS" start="2025-03-15T02:25:30.971601" elapsed="0.000332"/>
+<status status="PASS" start="2025-04-10T16:02:06.463859" elapsed="0.000330"/>
 </kw>
 <doc>Validate that forecast is calculated successfully (HTTP 200)</doc>
-<status status="PASS" start="2025-03-15T02:25:30.811941" elapsed="0.160071"/>
+<status status="PASS" start="2025-04-10T16:02:06.449490" elapsed="0.014777"/>
 </test>
 <test id="s1-t2" name="Forecast Project Budget Not Found" line="15">
 <kw name="Create Session" owner="RequestsLibrary">
-<msg time="2025-03-15T02:25:30.972819" level="INFO">Creating Session using : alias=financial, url=http://localhost:8071/financial/budgets, headers={},                     cookies={}, auth=None, timeout=None, proxies=None, verify=False,                     debug=0 </msg>
+<msg time="2025-04-10T16:02:06.465173" level="INFO">Creating Session using : alias=financial, url=http://localhost:8071/financial/budgets, headers={},                     cookies={}, auth=None, timeout=None, proxies=None, verify=False,                     debug=0 </msg>
 <arg>financial</arg>
 <arg>${BASE_URL}</arg>
 <doc>Create Session: create a HTTP session to a server</doc>
-<status status="PASS" start="2025-03-15T02:25:30.972690" elapsed="0.000250"/>
+<status status="PASS" start="2025-04-10T16:02:06.464941" elapsed="0.000442"/>
 </kw>
 <kw name="GET On Session" owner="RequestsLibrary">
-<msg time="2025-03-15T02:25:30.979296" level="INFO">GET Request : url=http://localhost:8071/financial/budgets/forecast/999 
+<msg time="2025-04-10T16:02:06.470166" level="INFO">GET Request : url=http://localhost:8071/financial/budgets/forecast/999 
  path_url=/financial/budgets/forecast/999 
  headers={'User-Agent': 'python-requests/2.32.3', 'Accept-Encoding': 'gzip, deflate', 'Accept': '*/*', 'Connection': 'keep-alive'} 
  body=None 
  </msg>
-<msg time="2025-03-15T02:25:30.979417" level="INFO">GET Response : url=http://localhost:8071/financial/budgets/forecast/999 
+<msg time="2025-04-10T16:02:06.470268" level="INFO">GET Response : url=http://localhost:8071/financial/budgets/forecast/999 
  status=404, reason= 
- headers={'Content-Type': 'application/json', 'Transfer-Encoding': 'chunked', 'Date': 'Sat, 15 Mar 2025 01:25:30 GMT', 'Keep-Alive': 'timeout=60', 'Connection': 'keep-alive'} 
+ headers={'Content-Type': 'application/json', 'Transfer-Encoding': 'chunked', 'Date': 'Thu, 10 Apr 2025 15:02:06 GMT', 'Keep-Alive': 'timeout=60', 'Connection': 'keep-alive'} 
  body={"message":"No past expenses available to forecast the budget."} 
  </msg>
-<msg time="2025-03-15T02:25:30.979534" level="INFO">${response} = &lt;Response [404]&gt;</msg>
+<msg time="2025-04-10T16:02:06.470473" level="INFO">${response} = &lt;Response [404]&gt;</msg>
 <var>${response}</var>
 <arg>financial</arg>
 <arg>/forecast/999</arg>
 <arg>expected_status=404</arg>
 <doc>Sends a GET request on a previously created HTTP Session.</doc>
-<status status="PASS" start="2025-03-15T02:25:30.973023" elapsed="0.006550"/>
+<status status="PASS" start="2025-04-10T16:02:06.465533" elapsed="0.004989"/>
 </kw>
 <kw name="Should Be Equal As Integers" owner="BuiltIn">
-<msg time="2025-03-15T02:25:30.980414" level="INFO">Argument types are:
+<msg time="2025-04-10T16:02:06.471180" level="INFO">Argument types are:
 &lt;class 'int'&gt;
 &lt;class 'str'&gt;</msg>
 <arg>${response.status_code}</arg>
 <arg>404</arg>
 <doc>Fails if objects are unequal after converting them to integers.</doc>
-<status status="PASS" start="2025-03-15T02:25:30.979723" elapsed="0.000879"/>
+<status status="PASS" start="2025-04-10T16:02:06.470628" elapsed="0.000667"/>
 </kw>
 <kw name="Log" owner="BuiltIn">
-<msg time="2025-03-15T02:25:30.981307" level="INFO">Message: No past expenses available to forecast the budget.</msg>
+<msg time="2025-04-10T16:02:06.471650" level="INFO">Message: No past expenses available to forecast the budget.</msg>
 <arg>Message: ${response.json()["message"]}</arg>
 <doc>Logs the given message with the given level.</doc>
-<status status="PASS" start="2025-03-15T02:25:30.980878" elapsed="0.000494"/>
+<status status="PASS" start="2025-04-10T16:02:06.471390" elapsed="0.000313"/>
 </kw>
 <doc>Validate behavior when no past expenses are available (HTTP 404)</doc>
-<status status="PASS" start="2025-03-15T02:25:30.972391" elapsed="0.009140"/>
+<status status="PASS" start="2025-04-10T16:02:06.464549" elapsed="0.007239"/>
 </test>
-<status status="PASS" start="2025-03-15T02:25:30.512531" elapsed="0.469693"/>
+<status status="PASS" start="2025-04-10T16:02:06.153734" elapsed="0.318469"/>
 </suite>
 <statistics>
 <total>
