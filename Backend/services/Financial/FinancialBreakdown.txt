@@ -1,0 +1,109 @@
+1. Invoice Table & Its Functionalities
+📌 What is the Invoice Table?
+An invoice is a bill issued to a client for work completed, materials delivered, or services rendered. In construction projects, invoices are generated for contractors, subcontractors, suppliers, or clients.
+🛠 Functionalities of Invoices in Construction Projects
+Invoice Generation: Create invoices for completed tasks, resource usage, or external contractor services.
+Invoice Tracking: Monitor paid/unpaid invoices and their due dates.
+Payment Processing Integration: Link invoices to payments and transactions.
+Tax Calculation: Apply taxes (e.g., VAT) based on the project’s region.
+Approval Workflow: Require project managers or finance teams to approve invoices before payment.
+Link to Budget & Expenses: Ensure invoices do not exceed the allocated budget.
+Automated Reminders: Send notifications for overdue invoices via Kafka.
+📊 Invoice Table Schema
+sql
+CopyEdit
+CREATE TABLE invoice (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    invoice_number VARCHAR(50) UNIQUE NOT NULL,
+    project_id BIGINT NOT NULL,
+    issued_by BIGINT NOT NULL, -- Link to User Table (Finance/Admin)
+    issued_to BIGINT NOT NULL, -- Link to Contractor/Supplier
+    amount DECIMAL(15,2) NOT NULL,
+    tax DECIMAL(10,2),
+    total_amount DECIMAL(15,2) GENERATED ALWAYS AS (amount + tax) STORED,
+    status ENUM('PENDING', 'PAID', 'OVERDUE') DEFAULT 'PENDING',
+    due_date DATE NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (project_id) REFERENCES project(id),
+    FOREIGN KEY (issued_by) REFERENCES user(id),
+    FOREIGN KEY (issued_to) REFERENCES user(id)
+);
+
+
+2. Budget Table & Its Functionalities
+📌 What is the Budget Table?
+A budget represents the allocated funds for a project, covering material costs, labor, subcontractors, and other expenses.
+🛠 Functionalities of Budget Management
+Project Budget Allocation: Define a budget for each project phase (e.g., excavation, foundation, structure).
+Cost Estimation & Forecasting: Estimate future costs and compare them with the planned budget.
+Real-Time Budget Tracking: Monitor whether spending aligns with the allocated budget.
+Approval Workflow: Require approval before modifying project budgets.
+Integration with Expenses: Ensure expenses do not exceed the budget.
+Alerts & Notifications: Trigger warnings when costs exceed a defined threshold.
+📊 Budget Table Schema
+sql
+CopyEdit
+CREATE TABLE budget (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    project_id BIGINT NOT NULL,
+    allocated_amount DECIMAL(15,2) NOT NULL,
+    spent_amount DECIMAL(15,2) DEFAULT 0,
+    remaining_amount DECIMAL(15,2) GENERATED ALWAYS AS (allocated_amount - spent_amount) STORED,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (project_id) REFERENCES project(id)
+);
+
+
+3. Expense Table & Its Functionalities
+📌 What is the Expense Table?
+An expense represents money spent on materials, salaries, subcontractors, permits, or equipment.
+🛠 Functionalities of Expense Management
+Track Spending: Record every project-related expense and compare it against the budget.
+Categorize Expenses: Classify expenses as labor costs, material costs, operational costs, etc.
+Vendor Payments: Track payments to suppliers and subcontractors.
+Real-Time Reports: Provide detailed reports on daily, weekly, or monthly expenses.
+Approval Workflow: Require manager approval for large expenses.
+Alerts & Budget Restrictions: Prevent expenses from exceeding allocated budgets.
+📊 Expense Table Schema
+sql
+CopyEdit
+CREATE TABLE expense (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    project_id BIGINT NOT NULL,
+    budget_id BIGINT NOT NULL,
+    category ENUM('LABOR', 'MATERIAL', 'EQUIPMENT', 'ADMINISTRATION', 'OTHER') NOT NULL,
+    amount DECIMAL(15,2) NOT NULL,
+    paid_by BIGINT NOT NULL, -- Link to User Table (Finance/Admin)
+    description TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (project_id) REFERENCES project(id),
+    FOREIGN KEY (budget_id) REFERENCES budget(id),
+    FOREIGN KEY (paid_by) REFERENCES user(id)
+);
+
+
+4. Functionalities Linked to Project, User, and Resource Management
+🔹 Link Between Budget & Project Management
+A project can have multiple budgets for different phases.
+A budget ensures that project managers do not overspend.
+Real-time tracking of project financial status.
+🔹 Link Between Expenses & User Management
+Users (finance/admin) approve expenses.
+Only authorized users can modify or add expenses.
+Employees can submit expense requests for reimbursement.
+🔹 Link Between Invoices & Resource Management
+Resource Procurement: Materials, tools, and equipment must be invoiced before use.
+Subcontractor Management: Invoices ensure payments to contractors.
+Expense Tracking: Invoices are logged as project expenses.
+
+5. Financial Workflow in Construction Projects
+Project Budget Allocation → Define the budget for a project phase.
+Expense Tracking → Log all expenses linked to the budget.
+Invoice Processing → Generate invoices for suppliers, subcontractors, or project owners.
+Payment & Approval → Approve invoices and release payments.
+Budget Monitoring → Ensure spending remains within limits.
+Alerts & Notifications → Send warnings if a budget overrun is detected.
+
+Conclusion
+The Financial Management Microservice plays a central role in the Project Management System, ensuring cost control, transparency, and accountability.

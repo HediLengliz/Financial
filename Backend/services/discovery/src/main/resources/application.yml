@@ -1,7 +1,21 @@
+server:
+  port: 8761
+
+eureka:
+  client:
+    register-with-eureka: false
+    fetch-registry: false
+    service-url:
+      defaultZone: https://${EUREKA_HOST:localhost}:${EUREKA_PORT:8761}/eureka/
+  instance:
+    prefer-ip-address: true
+  server:
+    enable-self-preservation: false
+
 spring:
-    config:
-      import: optional:configserver:http://localhost:8888
-    application:
-      name: discovery-service
-
-
+  application:
+    name: discovery-service
+  cache:
+    type: caffeine
+  config:
+    import: optional:configserver:${CONFIG_SERVER_URL:https://config-server:8888}

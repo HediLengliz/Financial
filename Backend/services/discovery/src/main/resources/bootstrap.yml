@@ -1,0 +1,11 @@
+spring:
+  cloud:
+    config:
+      uri: http://config-server:8888
+      fail-fast: true
+      retry:
+        max-attempts: 20
+        initial-interval: 1000
+      allow-override: true  # Allow environment variables to override
+      override-system-properties: true
+      override-none: false
