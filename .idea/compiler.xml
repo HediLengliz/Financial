@@ -24,10 +24,10 @@
           <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.36/lombok-1.18.36.jar" />
         </processorPath>
         <module name="Financial" />
-        <module name="projets" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
+      <module name="projets" target="17" />
       <module name="user-service" target="17" />
     </bytecodeTargetLevel>
   </component>
