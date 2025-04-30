@@ -22,12 +22,13 @@ public class Project {
 
     private String name;
     @Column(columnDefinition = "TEXT")
-    private String description;    private String status;  // Change from Status enum to String
+    private String description;
+    private String status;  // Change from Status enum to String
     private String priority;  // Change from Priority enum to String
     private LocalDate startDate;
     private LocalDate endDate;
     private String imagePath;
-
+    private int Equipment_Cost;
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
     @BatchSize(size = 20)
     private List<Workflow> workflows = new ArrayList<>();
@@ -158,4 +159,5 @@ public class Project {
     public void setProjectManager(User projectManager) {
         this.projectManager = projectManager;
     }
+
 }

@@ -49,6 +49,7 @@ public class SecurityConfig {
                                 "/users/register",
                                 "/users/login",
                                 "/users/login/remember-me",
+                                "/users/forgot-password",
                                 "/swagger-ui/**",
                                 "/v3/api-docs/**"
                         ).permitAll()

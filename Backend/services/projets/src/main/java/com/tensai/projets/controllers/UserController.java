@@ -17,6 +17,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Map;
@@ -47,8 +48,17 @@ public class UserController {
     )
     @PutMapping(value = "/me", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<UserResponse> updateUserProfile(
-            @ModelAttribute UpdateUserRequest request,
+            @RequestPart(value = "name", required = false) String name,
+            @RequestPart(value = "firstName", required = false) String firstName,
+            @RequestPart(value = "lastName", required = false) String lastName,
+            @RequestPart(value = "email", required = false) String email,
+            @RequestPart(value = "profilePicture", required = false) MultipartFile profilePicture,
             @AuthenticationPrincipal Jwt jwt) {
+        System.out.println("Received update request: name=" + name + ", email=" + email +
+                ", firstName=" + firstName + ", lastName=" + lastName +
+                ", profilePicture=" + (profilePicture != null ? profilePicture.getOriginalFilename() : "null"));
+
+        UpdateUserRequest request = new UpdateUserRequest(name, firstName, lastName, email, profilePicture);
         User user = userService.syncUserFromJwt(jwt);
         UserResponse updatedUser = userService.updateUserProfile(user.getId(), request, user);
         return ResponseEntity.ok(updatedUser);

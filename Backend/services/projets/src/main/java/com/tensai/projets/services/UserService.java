@@ -73,14 +73,24 @@ public class UserService {
                 .orElseThrow(() -> new RuntimeException("User not found with ID: " + userId));
 
         String profilePicturePath = user.getProfilePicture();
+        System.out.println("Current profile picture: " + profilePicturePath);
 
         // Update profile picture if a new file is provided
-        if (request.profilePicture() != null && !request.profilePicture().isEmpty()) {
-            // Delete existing profile picture if it exists
-            if (profilePicturePath != null) {
-                fileStorageService.deleteFile(profilePicturePath);
+        if (request.profilePicture() != null) {
+            System.out.println("New profile picture provided");
+            try {
+                // Delete existing profile picture if it exists
+                if (profilePicturePath != null) {
+                    fileStorageService.deleteFile(profilePicturePath);
+                    System.out.println("Deleted old profile picture: " + profilePicturePath);
+                }
+                profilePicturePath = fileStorageService.storeFileLocaly(request.profilePicture());
+                System.out.println("Stored new profile picture with public_id: " + profilePicturePath);
+            } catch (Exception e) {
+                throw new RuntimeException("Failed to store profile picture: " + e.getMessage(), e);
             }
-            profilePicturePath = fileStorageService.storeFileLocaly(request.profilePicture());
+        } else {
+            System.out.println("No new profile picture provided");
         }
 
         // Update other fields
@@ -92,11 +102,23 @@ public class UserService {
                 throw new RuntimeException("Email already in use");
             }
             user.setEmail(request.email());
-            keycloakService.updateUserEmail(user.getEmail(), request.email());
         }
         user.setProfilePicture(profilePicturePath);
+        System.out.println("User profile picture set to: " + profilePicturePath);
 
         User updatedUser = userRepository.save(user);
+        System.out.println("Saved user with profile picture: " + updatedUser.getProfilePicture());
+
+        // Update Keycloak email if changed
+        if (request.email() != null && !request.email().trim().isEmpty() && !request.email().equals(authenticatedUser.getEmail())) {
+            try {
+                keycloakService.updateUserEmail(authenticatedUser.getEmail(), request.email());
+                System.out.println("Updated email in Keycloak");
+            } catch (Exception e) {
+                throw new RuntimeException("Failed to update email in Keycloak: " + e.getMessage(), e);
+            }
+        }
+
         return UserResponse.fromEntity(updatedUser, fileStorageService);
     }
 
