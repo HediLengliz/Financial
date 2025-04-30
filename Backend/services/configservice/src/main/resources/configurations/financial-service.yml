@@ -6,8 +6,8 @@ server:
 spring:
   datasource:
     url: jdbc:mysql://localhost:3306/financialdb?useSSL=false&serverTimezone=UTC
-    username: financial_admin
-    password:
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   jpa:
@@ -25,14 +25,14 @@ spring:
   mail:
     host: smtp.gmail.com
     port: 587
-    username: zedmain147@gmail.com
-    password: tipm aczo ngsy acny
+    username: ${MAIL_USERNAME}
+    password: ${MAIL_PASSWORD}
     protocol: smtp
     properties:
       mail.smtp.auth: true
       mail.smtp.starttls.enable: true
       mail.smtp.starttls.required: true
-    from: zedmain147@gmail.com
+    from: ${MAIL_FROM}
 
   kafka:
     bootstrap-servers: localhost:9092
@@ -71,10 +71,10 @@ springdoc:
 
 paypal:
   client:
-    id: AUZy14wNSMMv-EqT_DPWEvvwbOE3ZovoG8ysD6TFQHUHWYmcE4lHJLiJ4gbzowAdWr6Wfy0C1sO8f0K4
-    secret: ENUiXFZ9XHCaljoqMvMx2GEbrbDRMzPsPzVgwTrb_GMu7UmE7mQ8ERdEBzQQIhacOnNSnH20hT-hMrn4
+    id: ${PAYPAL_CLIENT_ID}
+    secret: ${PAYPAL_CLIENT_SECRET}
   mode: sandbox
 
 stripe:
   api:
-    key: sk_test_51REEhJRqsEP0VBxEavC0WbHuu8JhJjqgQ2GiXxEGjOmR0dRGN1CGoYq9Xa2RTg0NFP65WGgBP9duaLbPuZmI5HhT005ag9hrAI
+    key: ${STRIPE_API_KEY}
