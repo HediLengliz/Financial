@@ -6,7 +6,7 @@ server:
 # Eureka Client Configuration (Microservice Registration)
 spring:
   application:
-    name: projects-service  # Unique name for Eureka (e.g., "workflow-service")
+    name: projects-service  # Unique name for Eureka
   datasource:
     url: jdbc:postgresql://localhost:5434/projectdb
     username: project_admin
@@ -19,12 +19,49 @@ spring:
     show-sql: true
     properties:
       hibernate.format_sql: true
-  # Kafka configuration (uncomment if needed)
-  # kafka:
-  #   producer:
-  #     bootstrap-servers: kafka:9092
-  #     key-serializer: org.apache.kafka.common.serialization.StringSerializer
-  #     value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+  kafka:
+    bootstrap-servers: localhost:9092  # Use localhost:9092 for outside Docker
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+    consumer:
+      group-id: project-service-group
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+    properties:
+      spring.json.trusted.packages: "*"  # Allow all packages for deserialization
+      spring.json.value.default.type: com.tensai.projets.dtos.AlertEvent  # Your event class
+  mail:
+    host: localhost  # Resolved to the MailDev container's mapped port
+    port: 1025       # SMTP port exposed by MailDev
+    properties:
+      mail.smtp:
+        auth: false   # MailDev doesn't require authentication
+        starttls.enable: false
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:9090/realms/tensai-realm
+          jws-algorithms: RS256
+          audience: projects-service
+          jwk-set-uri: http://localhost:9090/realms/tensai-realm/protocol/openid-connect/certs
+
+## Keycloak Configuration
+keycloak:
+  realm: tensai-realm
+  auth-server-url: http://localhost:9090
+  resource: projects-service
+  credentials:
+    secret: qZeCIguldWwtckRJPjh5rkTEu5IxLTGt
+  use-resource-role-mappings: true
+
+# Cloudinary Configuration
+cloudinary:
+  cloud-name: dlqksf70c
+  api-key: 573436971741363
+  api-secret: wgXympMIBTnPdZvY3sz3VxMdVjU
 
 # Eureka Client Settings
 eureka:
@@ -46,6 +83,8 @@ logging:
     org.hibernate.type.descriptor.sql.BasicBinder: TRACE
     com.example.projectmanagement: DEBUG
     com.netflix.eureka: DEBUG  # Enable Eureka client logs for debugging
+    org.springframework.security: DEBUG
+
 
 springdoc:
   swagger-ui:
@@ -59,3 +98,8 @@ springdoc:
   paths-to-exclude: /error
   default-produces-media-type: application/json
   default-consumes-media-type: application/json
+
+
+predictor:
+  service:
+    url: http://localhost:8001
