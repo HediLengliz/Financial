@@ -6,7 +6,6 @@
         <groupId>com.tensai</groupId>
         <artifactId>buildini-parent</artifactId>
         <version>0.0.1-SNAPSHOT</version>
-        <relativePath>../../../buildini-parent/pom.xml</relativePath>
     </parent>
     <artifactId>Financial</artifactId>
     <version>0.0.1-SNAPSHOT</version>
