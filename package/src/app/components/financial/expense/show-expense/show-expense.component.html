@@ -1,23 +1,80 @@
-<div class="expense-overview">
-  <h2>Expense Overview</h2>
-  <p>Manage and track your project expenses efficiently</p>
+<!-- show-expense.component.html -->
+<mat-card class="cardWithShadow overflow-hidden">
+  <mat-card-header class="d-flex align-items-center p-x-24">
+    <mat-card-title>Expense Analysis</mat-card-title>
+    <div class="m-l-auto">
+      <button mat-fab class="shadow-none bg-primary icon-48">
+        <i-tabler name="currency-dollar" class="text-white d-flex"></i-tabler>
+      </button>
+    </div>
+  </mat-card-header>
 
-  <div class="expense-details">
-    <h3>Expense Details</h3>
-    <p>Description: <strong>{{ expense.description }}</strong></p>
-    <p>Created At: {{ expense.createdAt | date: 'medium' }}</p>
-    <p>Updated At: {{ expense.updatedAt | date: 'medium' }}</p>
-    <p>Amount: {{ expense.amount | currency: 'USD' }}</p>
-    <p>Category: {{ expense.category }}</p>
-    <p>Status: <span class="badge" [ngClass]="getStatusClass(expense.status)">{{ expense.status | titlecase }}</span></p>
-    <div class="expense-summary">
-      <h4>Expense Summary</h4>
-      <div class="circular-progress">
-        <div class="circle" [ngStyle]="{'clip-path': 'inset(0 ' + (100 - progress) + '% 0 0)'}">
-          <div class="progress-text">{{ progress | number: '1.0-0' }}%</div>
+  <div class="row p-24">
+    <!-- Expense Details Column -->
+    <div class="col-md-6">
+      <div class="expense-details">
+        <h4 class="f-s-24">{{ expense?.amount | currency:'USD' }}</h4>
+        <div class="d-flex align-items-center m-t-16">
+          <mat-icon class="text-success">arrow_upward</mat-icon>
+          <div class="f-s-14 f-w-600 m-l-12">{{ getStatusPercentage() }}%</div>
+          <div class="f-s-14 m-l-4">vs budget</div>
+        </div>
+
+        <div class="m-t-24">
+          <div class="detail-item">
+            <span class="f-w-600">Description:</span>
+            <p>{{ expense?.description }}</p>
+          </div>
+
+          <div class="row m-t-16">
+            <div class="col-6">
+              <div class="detail-item">
+                <span class="f-w-600">Category:</span>
+                <p>{{ expense?.category }}</p>
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="detail-item">
+                <span class="f-w-600">Status:</span>
+                <span class="badge" [ngClass]="getStatusClass(expense)">
+        {{ expense?.status | titlecase }}
+      </span>
+              </div>
+            </div>
+          </div>
+
+          <div class="row m-t-16">
+            <div class="col-6">
+              <div class="detail-item">
+                <span class="f-w-600">Created At:</span>
+                <p>{{ expense?.createdAt | date:'medium' }}</p>
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="detail-item">
+                <span class="f-w-600">Updated At:</span>
+                <p>{{ expense?.updatedAt | date:'medium' }}</p>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
+
+    <!-- Chart Column -->
+    <div class="col-md-6">
+      <apx-chart
+        [series]="expenseChart.series"
+        [chart]="expenseChart.chart"
+        [dataLabels]="expenseChart.dataLabels"
+        [plotOptions]="expenseChart.plotOptions"
+        [xaxis]="expenseChart.xaxis">
+      </apx-chart>
+    </div>
   </div>
-  <button (click)="goBack()">Back to Expense Management</button>
+</mat-card>
+
+<div *ngIf="!expense" class="text-center p-24">
+  <mat-spinner diameter="40"></mat-spinner>
+  <p class="m-t-16">Loading expense details...</p>
 </div>

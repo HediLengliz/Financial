@@ -1,20 +1,26 @@
-import { Component } from '@angular/core';
-import {ApprovalService} from "../../../services/approval.service";
-import {ApprovalHistory} from "../../../models/approvalHistory";
-import {ApprovalHistoryService} from "../../../services/approval-history.service";
-import {FormsModule} from "@angular/forms";
-import {NgForOf} from "@angular/common";
+import { Component, OnInit } from '@angular/core';
+import { ApprovalHistoryService } from '../../../services/approval-history.service';
+import { ApprovalHistory } from '../../../models/approvalHistory';
+import { FormsModule } from '@angular/forms';
+import { MatCardModule } from '@angular/material/card';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatButtonModule } from '@angular/material/button';
 
 @Component({
   selector: 'app-approval-history',
+  standalone: true,
   imports: [
     FormsModule,
-    NgForOf
+    MatCardModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatButtonModule,
   ],
   templateUrl: './approval-history.component.html',
-  styleUrl: './approval-history.component.scss'
+  styleUrl: './approval-history.component.scss',
 })
-export class ApprovalHistoryComponent {
+export class ApprovalHistoryComponent implements OnInit {
   histories: ApprovalHistory[] = [];
   approvalIdToRestore: number | null = null;
   performedBy: string = '';
@@ -33,7 +39,7 @@ export class ApprovalHistoryComponent {
       error: (error) => {
         console.error('Error fetching histories', error);
         alert('Failed to load approval history');
-      }
+      },
     });
   }
 
@@ -48,10 +54,9 @@ export class ApprovalHistoryComponent {
         },
         error: (error) => {
           console.error('Error restoring approval', error);
-          // Display error message from backend (e.g., "Approval is not deleted")
           const message = error.error || 'An error occurred while restoring the approval';
           alert('Failed to restore approval: ' + message);
-        }
+        },
       });
     } else {
       alert('Please enter both Approval ID and Performed By');
@@ -60,5 +65,21 @@ export class ApprovalHistoryComponent {
 
   goBack() {
     window.history.back();
+  }
+
+  // Determine badge color based on action
+  getColor(action: string): string {
+    switch (action.toUpperCase()) {
+      case 'APPROVED':
+        return 'success'; // Green
+      case 'REJECTED':
+        return 'danger'; // Red
+      case 'DELETED':
+        return 'warning'; // Yellow
+      case 'RESTORED':
+        return 'primary'; // Blue
+      default:
+        return 'secondary'; // Gray
+    }
   }
 }

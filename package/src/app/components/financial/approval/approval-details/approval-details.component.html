@@ -1,27 +1,67 @@
 <div class="modal-content">
-  <h2>Approval Details</h2>
-  <p><strong>ID:</strong> {{ data.approval.id }}</p>
-  <p><strong>Status:</strong> {{ data.approval.status }}</p>
-  <!-- Example Timeline (assuming timeline data exists) -->
-  <div class="timeline">
-    <h3>Action History</h3>
-    <ul>
-      <li>Created: 2023-10-01</li>
-      <li>Manager Approved: 2023-10-02</li>
-      <!-- Add more dynamic data as needed -->
-    </ul>
-  </div>
-  <div class="status-update">
-    <label for="status">Update Status:</label>
-    <select id="status" [(ngModel)]="newStatus">
-      <option value="PENDING">Pending</option>
-      <option value="APPROVED">Approved</option>
-      <option value="REJECTED">Rejected</option>
-    </select>
-    <button class="update-btn" (click)="updateStatus()">Update</button>
-  </div>
-  <div class="delete-section">
-    <button class="delete-btn" (click)="confirmSafeDelete()">Safe Delete</button>
-  </div>
-  <button class="close-btn" (click)="closeModal()">Close</button>
+  <mat-card class="cardWithShadow">
+    <mat-card-content>
+      <!-- Header -->
+      <div class="d-flex align-items-center justify-content-between w-100">
+        <mat-card-title>Approval Details</mat-card-title>
+        <button mat-icon-button (click)="closeModal()" aria-label="Close modal">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+
+      <!-- Approval Details -->
+      <div class="details-section m-t-16">
+        <p><strong>ID:</strong> {{ data.approval.id }}</p>
+        <p><strong>Status:</strong> {{ data.approval.status }}</p>
+        <p *ngIf="data.approval.expenseId"><strong>Expense ID:</strong> {{ data.approval.expenseId }}</p>
+        <p *ngIf="data.approval.invoiceId"><strong>Invoice ID:</strong> {{ data.approval.invoiceId }}</p>
+        <p><strong>Project ID:</strong> {{ data.approval.projectId }}</p>
+        <p><strong>Requested At:</strong> {{ data.approval.requestedAt | date:'medium' }}</p>
+        <p *ngIf="data.approval.approvedAt"><strong>Approved At:</strong> {{ data.approval.approvedAt | date:'medium' }}</p>
+      </div>
+
+      <!-- Action History Timeline -->
+      <div class="timeline m-t-16">
+        <mat-card-title>Action History</mat-card-title>
+        <div class="timeline-content">
+          <ng-container *ngIf="data.approval.approvalHistories?.length; else noHistory">
+            <div class="timeline-item d-flex overflow-hidden" *ngFor="let history of data.approval.approvalHistories">
+              <div class="time text-right f-s-14">{{ history.timestamp | date:'medium' }}</div>
+              <div class="point d-flex align-items-center">
+                <span class="timeline-badge border-{{ getActionColor(history.action) }} m-y-8"></span>
+                <span class="timline-border d-block"></span>
+              </div>
+              <div class="desc">
+                <span class="lh-20 f-s-14">Action: {{ history.action }}</span>
+                <span class="lh-20 f-w-600 d-block f-s-14">Performed By: {{ history.performedBy }}</span>
+              </div>
+            </div>
+          </ng-container>
+          <ng-template #noHistory>
+            <div class="text-center f-s-14 text-muted">
+              No action history available.
+            </div>
+          </ng-template>
+        </div>
+      </div>
+
+      <!-- Update Status Section -->
+      <div class="status-update m-t-16">
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-label>Update Status</mat-label>
+          <mat-select [(ngModel)]="newStatus" name="status">
+            <mat-option value="PENDING">Pending</mat-option>
+            <mat-option value="APPROVED">Approved</mat-option>
+            <mat-option value="REJECTED">Rejected</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <button mat-raised-button color="primary" (click)="updateStatus()" class="w-100">Update Status</button>
+      </div>
+
+      <!-- Safe Delete Section -->
+      <div class="delete-section m-t-16">
+        <button mat-raised-button color="warn" (click)="confirmSafeDelete()" class="w-100">Safe Delete</button>
+      </div>
+    </mat-card-content>
+  </mat-card>
 </div>

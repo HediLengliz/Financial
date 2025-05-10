@@ -1,29 +1,39 @@
-<div class="budget-overview">
-  <h2>Budget Overview</h2>
-  <p>Manage and track your project budgets efficiently</p>
+<mat-card class="cardWithShadow">
+  <mat-card-content>
+    <div class="d-flex align-items-center justify-content-between w-100 mb-3">
+      <mat-card-title>Budget Overview</mat-card-title>
+      <button mat-icon-button color="inherit" aria-label="More options">
+        <mat-icon class="f-s-24">more_vert</mat-icon>
+      </button>
+    </div>
 
-  <div class="budget-details">
-    <h3>Budget Details</h3>
-    <p>Project: <strong>{{ budget?.projectName }}</strong></p>
-    <p>Allocated Amount: {{ budget?.allocatedAmount | currency: budget!.currency }}</p>
-    <p>Spent Amount: {{ budget?.spentAmount | currency: budget!.currency }}</p>
-    <p>Remaining Amount: {{ budget?.remainingAmount | currency: budget!.currency }}</p>
-    <p>Status: <span class="badge" [ngClass]="getStatusClass(budget?.status)">{{ budget?.status }}</span></p>
-    <p>Currency: {{ budget?.currency }}</p>
+    <p class="mb-4">Manage and track your project budgets efficiently</p>
 
-    <div class="budget-summary">
-      <h4>Budget Summary</h4>
-      <div class="circular-progress">
-        <div class="circle" [ngStyle]="{'clip-path': 'inset(0 ' + (100 - progress) + '% 0 0)'}">
-          <div class="progress-text">{{ progress | number: '1.0-0'}}%</div>
-        </div>
-      </div>
-      <div class="chart-container" style="width: 100%; height: 400px;">
-        <h4>Forecasting Chart</h4>
-        <canvas id="budgetChart" style="width: 100%; height: 100%;"></canvas>
+    <div class="budget-details mb-4">
+      <p><strong>Project:</strong> {{ budget?.projectName }}</p>
+      <p><strong>Allocated:</strong> {{ budget?.allocatedAmount | currency: budget!.currency }}</p>
+      <p><strong>Spent:</strong> {{ budget?.spentAmount | currency: budget!.currency }}</p>
+      <p><strong>Remaining:</strong> {{ budget?.remainingAmount | currency: budget!.currency }}</p>
+      <p>
+        <strong>Status:</strong>
+        <span class="badge" [ngClass]="getStatusClass(budget?.status)">
+          {{ budget?.status }}
+        </span>
+      </p>
+      <p><strong>Currency:</strong> {{ budget?.currency }}</p>
+    </div>
+
+    <div class="d-flex flex-wrap align-items-start justify-content-between gap-4">
+      <div class="chart-container" style="flex: 1 1 500px;">
+        <mat-card class="shadow-sm p-3">
+          <mat-card-title class="text-center">Budget Forecasting Chart</mat-card-title>
+          <canvas id="budgetChart" style="width: 100%; height: 300px;"></canvas>
+        </mat-card>
       </div>
     </div>
-  </div>
 
-  <button (click)="goBack()">Back to Budget Management</button>
-</div>
+    <div class="mt-4">
+      <button mat-raised-button color="primary" (click)="goBack()">Back to Budget Management</button>
+    </div>
+  </mat-card-content>
+</mat-card>

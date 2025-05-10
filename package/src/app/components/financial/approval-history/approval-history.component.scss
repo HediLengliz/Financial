@@ -1,46 +1,148 @@
-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-bottom: 20px;
+.cardWithShadow {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
 }
 
-th, td {
-  padding: 8px;
-  text-align: left;
-  border-bottom: 1px solid #ddd;
+.p-y-24 {
+  padding: 24px 0;
 }
 
-th {
-  background-color: #f4f4f4;
+.m-t-24 {
+  margin-top: 24px;
 }
 
-h3 {
-  margin-top: 20px;
+.f-s-14 {
+  font-size: 14px;
 }
 
-div {
-  margin-bottom: 10px;
+.text-right {
+  text-align: right;
 }
 
-label {
-  display: inline-block;
-  width: 100px;
+.text-muted {
+  color: #6c757d;
 }
 
-input {
-  padding: 8px;
-  width: 200px;
+.text-center {
+  text-align: center;
 }
 
-button {
-  padding: 8px 16px;
-  background-color: #28a745;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
+.timeline {
+  position: relative;
+
+  .timeline-item {
+    position: relative;
+    padding-bottom: 20px;
+
+    &:last-child {
+      padding-bottom: 0;
+
+      .point {
+        .timline-border {
+          display: none;
+        }
+      }
+    }
+
+    .time {
+      width: 120px;
+      color: #6c757d;
+    }
+
+    .point {
+      width: 40px;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+
+      .timeline-badge {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        border: 2px solid;
+        display: inline-block;
+
+        &.border-success {
+          border-color: #28a745;
+          background-color: #28a745;
+        }
+
+        &.border-danger {
+          border-color: #dc3545;
+          background-color: #dc3545;
+        }
+
+        &.border-warning {
+          border-color: #ffc107;
+          background-color: #ffc107;
+        }
+
+        &.border-primary {
+          border-color: #007bff;
+          background-color: #007bff;
+        }
+
+        &.border-secondary {
+          border-color: #6c757d;
+          background-color: #6c757d;
+        }
+      }
+
+      .timline-border {
+        width: 1px;
+        flex: 1;
+        background-color: #e9ecef;
+      }
+    }
+
+    .desc {
+      flex: 1;
+
+      .lh-20 {
+        line-height: 20px;
+      }
+
+      .f-w-600 {
+        font-weight: 600;
+      }
+
+      .text-primary {
+        color: #007bff;
+      }
+    }
+  }
 }
 
-button:hover {
-  background-color: #218838;
+.m-y-8 {
+  margin: 8px 0;
+}
+
+.d-flex {
+  display: flex;
+}
+
+.align-items-center {
+  align-items: center;
+}
+
+.overflow-hidden {
+  overflow: hidden;
+}
+
+.restore-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 16px;
+
+  .w-100 {
+    width: 100%;
+  }
+
+  .button-group {
+    display: flex;
+    gap: 8px;
+    margin-top: 8px;
+  }
 }

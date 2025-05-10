@@ -4,10 +4,19 @@ import {FormsModule} from "@angular/forms";
 import {ToastrService} from "ngx-toastr";
 import {BudgetService} from "../../../../services/budget.service";
 import {v4, v4 as uuidv4} from 'uuid';
+import {MatFormField, MatLabel} from "@angular/material/form-field";
+import {MatButton} from "@angular/material/button";
+import {MatDatepicker, MatDatepickerInput, MatDatepickerToggle} from "@angular/material/datepicker";
+import {MatInput} from "@angular/material/input";
+import {MatOption, MatSelect} from "@angular/material/select";
+import {MatCard, MatCardContent, MatCardTitle} from "@angular/material/card";
+import { MatButtonModule } from '@angular/material/button';
+import {MatIconModule} from "@angular/material/icon";
+
 @Component({
   selector: 'app-add-budget',
-  imports: [ FormsModule,
-    RouterLink,
+  imports: [FormsModule,
+    RouterLink, MatLabel, MatButton, MatDatepicker, MatFormField, MatInput, MatDatepickerInput, MatDatepickerToggle, MatSelect, MatOption, MatCard, MatCardTitle, MatCardContent,  MatIconModule,
 
   ],
   templateUrl: './add-budget.component.html',
@@ -57,27 +66,15 @@ export class AddBudgetComponent implements OnInit{
       budgetStatus: this.newBudget.budgetStatus
 
     };
-    this.budgetService.createBudget(budgetData ).subscribe({
-      next: (res) => {
-        this.toastr.success('Budget created successfully!', 'Success', {
-          timeOut: 2000,
-          progressBar: true
-        });
-        this.router.navigate(['/financial/budget/new']);
-        this.budgetService.notifyBudgetUpdated(); // Notify the creation
-        this.router.navigate(['/financial/budget']); // Navigate to budget list
-
+    this.budgetService.createBudget(budgetData).subscribe({
+      next: () => {
+        this.toastr.success('Budget created successfully!', 'Success', { timeOut: 2000, progressBar: true });
+        this.budgetService.notifyBudgetUpdated();
+        this.router.navigate(['/financial/budget']);
       },
       error: (err) => {
-        if (err.status === 422 && err.error.message) {
-          this.handleValidationErrors(err.error.message);
-        } else {
-          this.toastr.error('Error creating budget: ' + err.message, 'Error', {
-            timeOut: 4000,
-            progressBar: true
-          });
-        }
-        console.error('Error creating budget:', err);
+        this.toastr.error(err?.error?.message || 'Error creating budget', 'Error', { timeOut: 4000, progressBar: true });
+        console.error(err);
       }
     });
   }
@@ -98,10 +95,9 @@ export class AddBudgetComponent implements OnInit{
 
   private formatDate(dateString: string): string {
     const date = new Date(dateString);
-    const month = (date.getMonth() + 1).toString().padStart(2, '0');
-    const day = date.getDate().toString().padStart(2, '0');
-    const year = date.getFullYear();
-    return `${year}-${month}-${day}`; // Format as yyyy-MM-dd
-
+    const mm = String(date.getMonth() + 1).padStart(2, '0');
+    const dd = String(date.getDate()).padStart(2, '0');
+    const yyyy = date.getFullYear();
+    return `${yyyy}-${mm}-${dd}`;
   }
 }

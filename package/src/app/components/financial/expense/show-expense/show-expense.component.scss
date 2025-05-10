@@ -14,6 +14,15 @@ h2 {
   color: #333;
   text-align: center;
 }
+.expense-overview {
+  padding: 20px;
+  max-height: 80vh; // Limit height for modal
+  overflow-y: auto; // Enable scrolling if content is long
+}
+
+.expense-details {
+  margin: 16px 0;
+}
 
 h3 {
   font-size: 24px;
@@ -98,5 +107,51 @@ button:hover {
 
   .progress-text {
     font-size: 20px;
+  }
+}
+.cardWithShadow {
+  min-width: 500px;
+
+  .expense-details {
+    padding: 20px;
+
+    .detail-item {
+      margin-bottom: 1rem;
+
+      .badge {
+        padding: 10px 10px;
+        border-radius: 3px;
+      }
+    }
+  }
+
+  .bg-light {
+    background-color: #f8f9fa;
+  }
+}
+.badge {
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+
+  &-success { background: #d4edda; color: #155724; }
+  &-danger { background: #f8d7da; color: #721c24; }
+  &-warning { background: #fff3cd; color: #856404; }
+  &-secondary { background: #d6d8d9; color: #1b1e21; }
+  &-info { background: #d1ecf1; color: #0c5460; }
+}
+.badge {
+  &-success { background: #d4edda; color: #155724; }
+  &-danger { background: #f8d7da; color: #721c24; }
+  &-warning { background: #fff3cd; color: #856404; }
+  &-info { background: #d1ecf1; color: #0c5460; }
+}
+
+apx-chart {
+  .apexcharts-bar-area {
+    stroke-width: 0;
+  }
+  .apexcharts-xaxis-label {
+    font-size: 0.8rem;
   }
 }

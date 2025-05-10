@@ -50,6 +50,6 @@ export const appConfig: ApplicationConfig = {
       MaterialModule,
       TablerIconsModule.pick(TablerIcons),
       NgScrollbarModule,
-    ),
+    ), provideAnimationsAsync(),
   ],
 };

@@ -1,39 +1,124 @@
 <div class="container-fluid">
+  <!-- Header -->
   <div class="row mb-4">
     <div class="col-12">
       <h3>Expense Management</h3>
     </div>
   </div>
 
+  <!-- Statistics Section -->
+  <div class="row mb-4">
+    <!-- Expenses by Category -->
+    <div class="col-12 col-lg-6 mb-4">
+      <mat-card class="cardWithShadow">
+        <mat-card-content>
+          <div class="d-flex w-100">
+            <mat-card-title>Expenses by Category</mat-card-title>
+            <div class="m-l-auto">
+              <button mat-icon-button [matMenuTriggerFor]="categoryMenu" aria-label="Category chart menu">
+                <i-tabler name="dots-vertical"></i-tabler>
+              </button>
+              <mat-menu #categoryMenu="matMenu" xPosition="before">
+                <button mat-menu-item (click)="exportChartData('category')">
+                  <span>Export Data</span>
+                </button>
+                <button mat-menu-item (click)="refreshCharts()">
+                  <span>Refresh</span>
+                </button>
+              </mat-menu>
+            </div>
+          </div>
+          <apx-chart [series]="categoryChart.series!" [chart]="categoryChart.chart!" [labels]="categoryChart.labels!"
+                     [tooltip]="categoryChart.tooltip!" [legend]="categoryChart.legend!" [colors]="categoryChart.colors!"
+                     [plotOptions]="categoryChart.plotOptions!"></apx-chart>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <!-- Expenses by Status -->
+    <div class="col-12 col-lg-6 mb-4">
+      <mat-card class="cardWithShadow">
+        <mat-card-content>
+          <div class="d-flex w-100">
+            <mat-card-title>Expenses by Status</mat-card-title>
+            <div class="m-l-auto">
+              <button mat-icon-button [matMenuTriggerFor]="statusMenu" aria-label="Status chart menu">
+                <i-tabler name="dots-vertical"></i-tabler>
+              </button>
+              <mat-menu #statusMenu="matMenu" xPosition="before">
+                <button mat-menu-item (click)="exportChartData('status')">
+                  <span>Export Data</span>
+                </button>
+                <button mat-menu-item (click)="refreshCharts()">
+                  <span>Refresh</span>
+                </button>
+              </mat-menu>
+            </div>
+          </div>
+          <apx-chart [series]="statusChart.series!" [chart]="statusChart.chart!" [labels]="statusChart.labels!"
+                     [tooltip]="statusChart.tooltip!" [legend]="statusChart.legend!" [colors]="statusChart.colors!"
+                     [plotOptions]="statusChart.plotOptions!"></apx-chart>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <!-- Expenses Over Time -->
+    <div class="col-12 mb-4">
+      <mat-card class="cardWithShadow">
+        <mat-card-content>
+          <div class="d-flex w-100">
+            <mat-card-title>Expenses Over Time</mat-card-title>
+            <div class="m-l-auto">
+              <button mat-icon-button [matMenuTriggerFor]="timeMenu" aria-label="Time chart menu">
+                <i-tabler name="dots-vertical"></i-tabler>
+              </button>
+              <mat-menu #timeMenu="matMenu" xPosition="before">
+                <button mat-menu-item (click)="toggleTimeViewMode()">
+                  <span>{{ timeViewMode === 'monthly' ? 'View Weekly' : 'View Monthly' }}</span>
+                </button>
+                <button mat-menu-item (click)="exportChartData('time')">
+                  <span>Export Data</span>
+                </button>
+                <button mat-menu-item (click)="refreshCharts()">
+                  <span>Refresh</span>
+                </button>
+              </mat-menu>
+            </div>
+          </div>
+          <apx-chart [series]="timeChart.series!" [chart]="timeChart.chart!" [xaxis]="timeChart.xaxis!"
+                     [yaxis]="timeChart.yaxis!" [dataLabels]="timeChart.dataLabels!" [grid]="timeChart.grid!"
+                     [stroke]="timeChart.stroke!" [tooltip]="timeChart.tooltip!" [legend]="timeChart.legend!"
+                     [colors]="timeChart.colors!"></apx-chart>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+
   <!-- Filter Section -->
   <div class="row mb-4">
     <div class="col-12 col-md-4 mb-2">
-      <input type="text" class="form-control" [(ngModel)]="searchKeyword" autocomplete="off" (input)="search()" placeholder="Search by description..." (keydown)="onKeyDown($event) ">
+      <input type="text" class="form-control" [(ngModel)]="searchKeyword" autocomplete="off" (input)="search()"
+             placeholder="Search by description..." (keydown)="onKeyDown($event)">
     </div>
     <div class="col-12 col-md-2 mb-2">
       <input type="number" class="form-control" [(ngModel)]="amountSearch" (input)="searchFilters()" placeholder="Amount">
     </div>
-    <div class="row mb-4">
-      <div class="col-12 col-md-2 mb-2">
-        <label class="form-label">Created At</label>
-        <input type="date" class="form-control" [(ngModel)]="createdAt" (change)="filterByCreatedAt()" placeholder="Created At"
-               title="Filter expenses created on this exact date">
-      </div>
-      <div class="col-12 col-md-2 mb-2">
-        <label class="form-label">Updated At</label>
-        <input type="date" class="form-control" [(ngModel)]="updatedAt" (change)="filterByUpdatedAt()" placeholder="Updated At"
-               title="Filter expenses updated on this exact date">
-      </div>
     <div class="col-12 col-md-2 mb-2">
-      <input type="text" class="form-control" [(ngModel)]="selectedCategory" (input)="searchFilters()" placeholder="Category">
+      <label class="form-label">Created At</label>
+      <input type="date" class="form-control" [(ngModel)]="createdAt" (change)="filterByCreatedAt()"
+             placeholder="Created At" title="Filter expenses created on this exact date">
     </div>
-    <div class="col-xl-2 col-lg-3 col-md-6 col-12">
-    <div class="status-filter mb-2">
-      <select
-        class="form-select"
-        [(ngModel)]="selectedStatus"
-        (change)="searchFilters()"
-      >
+    <div class="col-12 col-md-2 mb-2">
+      <label class="form-label">Updated At</label>
+      <input type="date" class="form-control" [(ngModel)]="updatedAt" (change)="filterByUpdatedAt()"
+             placeholder="Updated At" title="Filter expenses updated on this exact date">
+    </div>
+    <div class="col-12 col-md-2 mb-2">
+      <input type="text" class="form-control" [(ngModel)]="selectedCategory" (input)="searchFilters()"
+             placeholder="Category">
+    </div>
+    <div class="col-12 col-md-2 mb-2">
+      <select class="form-select" [(ngModel)]="selectedStatus" (change)="searchFilters()">
         <option value="">All Statuses</option>
         <option value="Active">Active</option>
         <option value="Closed">Closed</option>
@@ -41,113 +126,119 @@
         <option value="Cancelled">Cancelled</option>
       </select>
     </div>
-  </div>
     <div class="col-12 col-md-2 mb-2">
       <button class="btn btn-outline-secondary w-100" (click)="clearSearch()">Clear Filters</button>
     </div>
   </div>
 
   <!-- Expense Table -->
-  <div class="row">
-    <div class="col-12">
-      <div class="card shadow-sm">
-        <div class="table-responsive">
-          <table class="table table-hover mb-0">
-            <thead class="table-light">
-            <tr>
-              <th (click)="sort('description')" style="cursor: pointer;">
-                Description
-                <span *ngIf="sortColumn === 'description'">
-                    <i class="bi" [ngClass]="sortDirection === 'asc' ? 'bi-arrow-up' : 'bi-arrow-down'"></i>
-                  </span>
-              </th>
-              <th (click)="sort('amount')" style="cursor: pointer;">
-                Amount
-                <span *ngIf="sortColumn === 'amount'">
-                    <i class="bi" [ngClass]="sortDirection === 'asc' ? 'bi-arrow-up' : 'bi-arrow-down'"></i>
-                  </span>
-              </th>
-              <th (click)="sort('createdAt')" style="cursor: pointer;">
-                Created At
-                <span *ngIf="sortColumn === 'createdAt'">
-                    <i class="bi" [ngClass]="sortDirection === 'asc' ? 'bi-arrow-up' : 'bi-arrow-down'"></i>
-                  </span>
-              </th>
-              <th (click)="sort('category')" style="cursor: pointer;">
-                Category
-                <span *ngIf="sortColumn === 'category'">
-                    <i class="bi" [ngClass]="sortDirection === 'asc' ? 'bi-arrow-up' : 'bi-arrow-down'"></i>
-                  </span>
-              </th>
-              <th (click)="sort('updatedAt')" style="cursor: pointer;">
-                Updated At
-                <span *ngIf="sortColumn === 'updatedAt'">
-                    <i class="bi" [ngClass]="sortDirection === 'asc' ? 'bi-arrow-up' : 'bi-arrow-down'"></i>
-                  </span>
-              </th>
-              <th (click)="sort('status')" style="cursor: pointer;">
-                Status
-                <span *ngIf="sortColumn === 'status'">
-                    <i class="bi" [ngClass]="sortDirection === 'asc' ? 'bi-arrow-up' : 'bi-arrow-down'"></i>
-                  </span>
-              </th>
-              <th>Actions</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr *ngIf="isLoading">
-              <td colspan="7" class="text-center py-4">
-                <div class="spinner-border text-primary" role="status">
-                  <span class="visually-hidden">Loading...</span>
-                </div>
-              </td>
-            </tr>
-            <tr *ngFor="let expense of filteredExpenses">
-              <td data-label="Description">{{ expense.description }}</td>
-              <td data-label="Amount">{{ expense.amount | currency: 'USD' }}</td>
-              <td data-label="Created At">{{ expense.createdAt | date: 'medium' }}</td>
-              <td data-label="Category">{{ expense.category }}</td>
-              <td data-label="Updated At">{{ expense.updatedAt | date: 'medium' }}</td>
-              <td data-label="Status">
-                  <span class="badge" [ngClass]="expense.status | status">
-                    {{ expense.status | titlecase }}
-                  </span>
-              </td>
-              <td data-label="Actions">
-                <div class="d-flex gap-2">
-                  <button class="btn btn-outline-info:hover" [routerLink]="['/financial/expense/', expense.id]">
-                    Details
-                  </button>
-                  <button class="btn btn-outline-primary:hover" [routerLink]="['/financial/expense/edit', expense.id]">
-                    Edit
-                  </button>
-                  <button class="btn btn-outline-danger:hover " (click)="setExpenseToDelete(expense.id); confirmDeleteExpense()">
-                    Delete
-                  </button>
-                </div>
-              </td>
-            </tr>
-            <tr *ngIf="filteredExpenses.length === 0 && !isLoading">
-              <td colspan="7" class="text-center py-4">
-                <i class="bi bi-inbox me-2"></i>
-                {{ errorMessage || 'No expenses found' }}
-              </td>
-            </tr>
-            <tr class="add-new-expense">
-              <td colspan="7">
-                <a routerLink="/financial/expense/new" class="primary-button">
-                  <i class="bi bi-plus-circle-fill me-2"></i>
-                  Create New Expense
-                </a>
-              </td>
-            </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
+  <div class="table-container">
+    <table mat-table [dataSource]="filteredExpenses" class="w-100 mat-elevation-z8">
+      <!-- Description Column -->
+      <ng-container matColumnDef="description">
+        <th mat-header-cell *matHeaderCellDef (click)="sort('description')" style="cursor: pointer;">
+          Description
+          <span *ngIf="sortColumn === 'description'">
+            <mat-icon class="sort-icon">{{ sortDirection === 'asc' ? 'arrow_upward' : 'arrow_downward' }}</mat-icon>
+          </span>
+        </th>
+        <td mat-cell *matCellDef="let expense">{{ expense.description }}</td>
+      </ng-container>
+
+      <!-- Amount Column -->
+      <ng-container matColumnDef="amount">
+        <th mat-header-cell *matHeaderCellDef (click)="sort('amount')" style="cursor: pointer;">
+          Amount
+          <span *ngIf="sortColumn === 'amount'">
+            <mat-icon class="sort-icon">{{ sortDirection === 'asc' ? 'arrow_upward' : 'arrow_downward' }}</mat-icon>
+          </span>
+        </th>
+        <td mat-cell *matCellDef="let expense">{{ expense.amount | currency: 'USD' }}</td>
+      </ng-container>
+
+      <!-- Created At Column -->
+      <ng-container matColumnDef="createdAt">
+        <th mat-header-cell *matHeaderCellDef (click)="sort('createdAt')" style="cursor: pointer;">
+          Created At
+          <span *ngIf="sortColumn === 'createdAt'">
+            <mat-icon class="sort-icon">{{ sortDirection === 'asc' ? 'arrow_upward' : 'arrow_downward' }}</mat-icon>
+          </span>
+        </th>
+        <td mat-cell *matCellDef="let expense">{{ expense.createdAt | date: 'medium' }}</td>
+      </ng-container>
+
+      <!-- Category Column -->
+      <ng-container matColumnDef="category">
+        <th mat-header-cell *matHeaderCellDef (click)="sort('category')" style="cursor: pointer;">
+          Category
+          <span *ngIf="sortColumn === 'category'">
+            <mat-icon class="sort-icon">{{ sortDirection === 'asc' ? 'arrow_upward' : 'arrow_downward' }}</mat-icon>
+          </span>
+        </th>
+        <td mat-cell *matCellDef="let expense">{{ expense.category }}</td>
+      </ng-container>
+
+      <!-- Updated At Column -->
+      <ng-container matColumnDef="updatedAt">
+        <th mat-header-cell *matHeaderCellDef (click)="sort('updatedAt')" style="cursor: pointer;">
+          Updated At
+          <span *ngIf="sortColumn === 'updatedAt'">
+            <mat-icon class="sort-icon">{{ sortDirection === 'asc' ? 'arrow_upward' : 'arrow_downward' }}</mat-icon>
+          </span>
+        </th>
+        <td mat-cell *matCellDef="let expense">{{ expense.updatedAt | date: 'medium' }}</td>
+      </ng-container>
+
+      <!-- Status Column -->
+      <ng-container matColumnDef="status">
+        <th mat-header-cell *matHeaderCellDef>Status</th>
+        <td mat-cell *matCellDef="let expense">
+    <span class="badge" [ngClass]="(expense.status)">
+      {{ expense.status | titlecase }}
+    </span>
+        </td>
+      </ng-container>
+
+      <!-- Actions Column -->
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef>Actions</th>
+        <td mat-cell *matCellDef="let expense">
+          <div class="actions">
+            <button mat-icon-button color="accent" (click)="openExpenseDetails(expense.id)">
+              <mat-icon>visibility</mat-icon>
+            </button>
+            <button mat-icon-button color="primary" [routerLink]="['/financial/expense/edit', expense.id]">
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button mat-icon-button color="warn" (click)="setExpenseToDelete(expense.id); confirmDeleteExpense()">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </div>
+        </td>
+      </ng-container>
+
+      <!-- Table Rows -->
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+      <!-- Empty State -->
+      <tr class="mat-row" *matNoDataRow>
+        <td class="mat-cell text-center" colspan="7">
+          <div class="empty-state">
+            <mat-icon class="empty-icon">inbox</mat-icon>
+            <p>{{ errorMessage || 'No expenses found' }}</p>
+          </div>
+        </td>
+      </tr>
+    </table>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" *ngIf="isLoading">
+      <mat-spinner diameter="50"></mat-spinner>
+      <p class="loading-text">Loading expenses...</p>
     </div>
   </div>
-    <router-outlet></router-outlet>
 
-</div>
+  <!-- Router Outlet -->
+  <router-outlet></router-outlet>
 </div>

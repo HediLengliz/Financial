@@ -1,73 +1,164 @@
-/* Existing styles (if any) */
 .modal-content {
-  padding: 20px;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.cardWithShadow {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   border-radius: 8px;
-  background: #fff;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
-.timeline {
-  margin: 15px 0;
-}
-
-.status-update {
-  margin: 15px 0;
+.d-flex {
   display: flex;
-  gap: 10px;
+}
+
+.align-items-center {
   align-items: center;
 }
 
-.update-btn {
-  background-color: #007bff;
-  color: white;
-  border: none;
-  padding: 8px 16px;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background-color 0.3s;
+.justify-content-between {
+  justify-content: space-between;
 }
 
-.update-btn:hover {
-  background-color: #0056b3;
+.w-100 {
+  width: 100%;
 }
 
-.close-btn {
-  background-color: #6c757d;
-  color: white;
-  border: none;
-  padding: 8px 16px;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background-color 0.3s;
+.m-t-16 {
+  margin-top: 16px;
 }
 
-.close-btn:hover {
-  background-color: #5a6268;
+.f-s-14 {
+  font-size: 14px;
 }
 
-/* New Delete Button Style */
+.f-w-600 {
+  font-weight: 600;
+}
+
+.text-right {
+  text-align: right;
+}
+
+.text-muted {
+  color: #6c757d;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.details-section {
+  p {
+    margin: 8px 0;
+    font-size: 14px;
+
+    strong {
+      font-weight: 600;
+      margin-right: 8px;
+    }
+  }
+}
+
+.timeline {
+  position: relative;
+
+  .timeline-item {
+    position: relative;
+    padding-bottom: 20px;
+
+    &:last-child {
+      padding-bottom: 0;
+
+      .point {
+        .timline-border {
+          display: none;
+        }
+      }
+    }
+
+    .time {
+      width: 150px;
+      color: #6c757d;
+    }
+
+    .point {
+      width: 40px;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+
+      .timeline-badge {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        border: 2px solid;
+        display: inline-block;
+
+        &.border-success {
+          border-color: #28a745;
+          background-color: #28a745;
+        }
+
+        &.border-danger {
+          border-color: #dc3545;
+          background-color: #dc3545;
+        }
+
+        &.border-warning {
+          border-color: #ffc107;
+          background-color: #ffc107;
+        }
+
+        &.border-primary {
+          border-color: #007bff;
+          background-color: #007bff;
+        }
+
+        &.border-secondary {
+          border-color: #6c757d;
+          background-color: #6c757d;
+        }
+      }
+
+      .timline-border {
+        width: 1px;
+        flex: 1;
+        background-color: #e9ecef;
+      }
+    }
+
+    .desc {
+      flex: 1;
+
+      .lh-20 {
+        line-height: 20px;
+      }
+    }
+  }
+}
+
+.m-y-8 {
+  margin: 8px 0;
+}
+
+.overflow-hidden {
+  overflow: hidden;
+}
+
+.status-update {
+  .w-100 {
+    width: 100%;
+  }
+
+  button {
+    margin-top: 8px;
+  }
+}
+
 .delete-section {
-  margin: 15px 0;
-}
-
-.delete-btn {
-  background-color: #dc3545; /* Red for caution */
-  color: white;
-  border: none;
-  padding: 8px 16px;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 2px 5px rgba(220, 53, 69, 0.3);
-}
-
-.delete-btn:hover {
-  background-color: #c82333; /* Darker red on hover */
-  transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(220, 53, 69, 0.5);
-}
-
-.delete-btn:active {
-  transform: translateY(1px);
-  box-shadow: 0 2px 3px rgba(220, 53, 69, 0.3);
+  button {
+    width: 100%;
+  }
 }

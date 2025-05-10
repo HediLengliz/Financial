@@ -1,34 +1,46 @@
-<h2>Approval History</h2>
-<table>
-  <thead>
-  <tr>
-    <th>ID</th>
-    <th>Approval ID</th>
-    <th>Action</th>
-    <th>Performed By</th>
-    <th>Timestamp</th>
-  </tr>
-  </thead>
-  <tbody>
-  <tr *ngFor="let history of histories">
-    <td>{{ history.id }}</td>
-    <td>{{ history.approvalId }}</td>
-    <td>{{ history.action }}</td>
-    <td>{{ history.performedBy }}</td>
-    <td>{{ history.timestamp }}</td>
-  </tr>
-  </tbody>
-</table>
+<mat-card class="cardWithShadow">
+  <mat-card-content class="p-y-24">
+    <mat-card-title>Approval History</mat-card-title>
 
-<h3>Restore Deleted Approval</h3>
-<div>
-  <label for="approvalId">Approval ID:</label>
-  <input id="approvalId" [(ngModel)]="approvalIdToRestore" type="number" placeholder="Enter Approval ID" />
-</div>
-<div>
-  <label for="performedBy">Performed By:</label>
-  <input id="performedBy" [(ngModel)]="performedBy" placeholder="Enter your name" />
-</div>
+    <div class="timeline m-t-24">
+      @for (history of histories; track history.id) {
+        <div class="timeline-item d-flex overflow-hidden">
+          <div class="time text-right f-s-14">{{ history.timestamp }}</div>
+          <div class="point d-flex align-items-center">
+            <span class="timeline-badge border-{{ getColor(history.action) }} m-y-8"></span>
+            <span class="timline-border d-block"></span>
+          </div>
+          <div class="desc">
+            <span class="lh-20 f-s-14">Action: {{ history.action }}</span>
+            <span class="lh-20 f-w-600 d-block f-s-14">Approval ID: {{ history.approvalId }}</span>
+            <span class="lh-20 f-s-14">Performed By: {{ history.performedBy }}</span>
+          </div>
+        </div>
+      }
+      @empty {
+        <div class="text-center f-s-14 text-muted">
+          No approval history available.
+        </div>
+      }
+    </div>
 
-<button (click)="restoreApproval()">Restore</button>
-<button (click)="goBack()">Back to Approval Management</button>
+    <!-- Restore Deleted Approval Form -->
+    <div class="m-t-24">
+      <mat-card-title>Restore Deleted Approval</mat-card-title>
+      <form class="restore-form">
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-label>Approval ID</mat-label>
+          <input matInput type="number" [(ngModel)]="approvalIdToRestore" name="approvalId" placeholder="Enter Approval ID" required />
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-label>Performed By</mat-label>
+          <input matInput type="text" [(ngModel)]="performedBy" name="performedBy" placeholder="Enter your name" required />
+        </mat-form-field>
+        <div class="button-group">
+          <button mat-raised-button color="primary" (click)="restoreApproval()">Restore</button>
+          <button mat-stroked-button (click)="goBack()">Back to Approval Management</button>
+        </div>
+      </form>
+    </div>
+  </mat-card-content>
+</mat-card>

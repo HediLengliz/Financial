@@ -1,90 +1,125 @@
-<div class="container">
-  <!-- Header -->
-  <h1>Approval Dashboard</h1>
-
-  <!-- Error Message -->
-  <div class="error-message" *ngIf="errorMessage">
-    <p>{{ errorMessage }}</p>
-  </div>
-
-  <!-- Request New Approval Button -->
-  <div class="request-button">
-    <button class="request-btn" (click)="requestNewApproval()">
-      <i class="fas fa-plus"></i> Request New Approval
-    </button>
-    <button class="refresh-btn" (click)="refreshApprovals()">
-      <i class="fas fa-sync"></i> Refresh
-    </button>
-    <button class="logs-btn" (click)="goToHistory()">
-      <i class="fas fa-cogs"></i> Logs
-    </button>
-  </div>
-
-  <!-- Statistics Section -->
-  <div class="stats" *ngIf="!loading">
-    <div class="stat-card">
-      <i class="fas fa-hourglass-half"></i>
-      <h3>Pending</h3>
-      <p>{{ pendingCount }}</p>
-    </div>
-    <div class="stat-card">
-      <i class="fas fa-check-double"></i>
-      <h3>Fully Approved</h3>
-      <p>{{ fullyApprovedCount }}</p>
-    </div>
-    <div class="stat-card">
-      <i class="fas fa-check-double"></i>
-      <h3>Deleted Approvals</h3>
-      <p>{{ DeletedCount }}</p>
-    </div>
-  </div>
-
-  <!-- Search Bar -->
-  <div class="search-bar">
-    <input
-      type="text"
-      [(ngModel)]="searchTerm"
-      (input)="filterApprovals()"
-      placeholder="Search by ID or Status"
-    />
-    <i class="fas fa-search"></i>
-  </div>
-
-  <!-- Loading State -->
-  <div class="loading" *ngIf="loading">
-    <i class="fas fa-spinner fa-spin"></i> Loading approvals...
-  </div>
-
-  <!-- Approval List -->
-  <div class="approval-list" *ngIf="!loading">
-    <div class="card"
-         *ngFor="let approval of filteredApprovals"
-         [ngClass]="{
-           'pending': approval.status === 'PENDING',
-           'approved': approval.status === 'APPROVED',
-           'rejected': approval.status === 'REJECTED',
-           'deleted': approval.status === 'DELETED'
-         }"
-         [@fadeIn]>
-      <p><strong>ID:</strong> {{ approval.id }}</p>
-      <p><strong>Status:</strong> {{ approval.status }}</p>
-      <div class="actions">
-        <button *ngIf="approval.status === 'PENDING'"
-                (click)="approve(approval.id)"
-                class="action-btn">
-          <i class="fas fa-check"></i> Manager Approve
+<mat-card class="cardWithShadow">
+  <mat-card-content>
+    <!-- Header with Title and Action Buttons -->
+    <div class="d-flex align-items-center justify-content-between w-100">
+      <mat-card-title>Approval Dashboard</mat-card-title>
+      <div class="action-buttons">
+        <button mat-raised-button color="primary" (click)="requestNewApproval()">
+          <mat-icon>add</mat-icon> Request New Approval
         </button>
-        <button *ngIf="approval.status === 'MANAGER_APPROVED'"
-                (click)="navigateToFinanceForm(approval.id)"
-                class="action-btn">
-          <i class="fas fa-check-double"></i> Finance Team Approve
+        <button mat-raised-button color="accent" (click)="refreshApprovals()" class="m-l-8">
+          <mat-icon>refresh</mat-icon> Refresh
         </button>
-        <button (click)="openDetails(approval)" class="details-btn">
-          <i class="fas fa-info-circle"></i> View Details
+        <button mat-raised-button color="warn" (click)="goToHistory()" class="m-l-8">
+          <mat-icon>history</mat-icon> Logs
         </button>
       </div>
     </div>
-    <p *ngIf="filteredApprovals.length === 0" class="no-data">No approvals found.</p>
-  </div>
-  <router-outlet></router-outlet>
-</div>
+
+    <!-- Error Message -->
+    <div class="error-message m-t-16" *ngIf="errorMessage">
+      <mat-error>{{ errorMessage }}</mat-error>
+    </div>
+
+    <!-- Statistics Section -->
+    <div class="stats m-t-16" *ngIf="!loading">
+      <div class="stat-card">
+        <mat-icon class="stat-icon">hourglass_empty</mat-icon>
+        <h3>Pending</h3>
+        <p>{{ pendingCount }}</p>
+      </div>
+      <div class="stat-card">
+        <mat-icon class="stat-icon">check_circle</mat-icon>
+        <h3>Fully Approved</h3>
+        <p>{{ fullyApprovedCount }}</p>
+      </div>
+      <div class="stat-card">
+        <mat-icon class="stat-icon">delete</mat-icon>
+        <h3>Deleted Approvals</h3>
+        <p>{{ DeletedCount }}</p>
+      </div>
+    </div>
+
+    <!-- Search Bar -->
+    <div class="search-bar m-t-16">
+      <mat-form-field appearance="outline" class="w-100">
+        <mat-label>Search by ID or Status</mat-label>
+        <input matInput [(ngModel)]="searchTerm" (input)="filterApprovals()" placeholder="Search by ID or Status" name="searchTerm" />
+        <mat-icon matSuffix>search</mat-icon>
+      </mat-form-field>
+    </div>
+
+    <!-- Loading State -->
+    <div class="loading m-t-16" *ngIf="loading">
+      <mat-spinner diameter="40"></mat-spinner>
+      <span class="m-l-8">Loading approvals...</span>
+    </div>
+
+    <!-- Approval List (Table) -->
+    <div class="table-responsive m-t-16" *ngIf="!loading">
+      <table mat-table [dataSource]="dataSource" class="w-100">
+        <!-- ID Column -->
+        <ng-container matColumnDef="id">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16">ID</th>
+          <td mat-cell *matCellDef="let approval">
+            <span class="f-s-14">{{ approval.id }}</span>
+          </td>
+        </ng-container>
+
+        <!-- Status Column -->
+        <ng-container matColumnDef="status">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16">Status</th>
+          <td mat-cell *matCellDef="let approval">
+            <span class="bg-light-{{ getStatusColor(approval.status) }} text-{{ getStatusColor(approval.status) }} border-{{ getStatusColor(approval.status) }} rounded f-w-600 p-6 p-y-4 f-s-12">
+              {{ approval.status | titlecase }}
+            </span>
+          </td>
+        </ng-container>
+
+        <!-- Requested At Column -->
+        <ng-container matColumnDef="requestedAt">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16">Requested At</th>
+          <td mat-cell *matCellDef="let approval">
+            <span class="f-s-14">{{ approval.requestedAt | date:'medium' }}</span>
+          </td>
+        </ng-container>
+
+        <!-- Project ID Column -->
+        <ng-container matColumnDef="projectId">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16">Project ID</th>
+          <td mat-cell *matCellDef="let approval">
+            <span class="f-s-14">{{ approval.projectId }}</span>
+          </td>
+        </ng-container>
+
+        <!-- Actions Column -->
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16">Actions</th>
+          <td mat-cell *matCellDef="let approval">
+            <div class="actions">
+              <button *ngIf="approval.status === 'PENDING'" mat-icon-button color="primary" (click)="approve(approval.id)">
+                <mat-icon>check</mat-icon>
+              </button>
+              <button *ngIf="approval.status === 'MANAGER_APPROVED'" mat-icon-button color="primary" (click)="navigateToFinanceForm(approval.id)">
+                <mat-icon>done_all</mat-icon>
+              </button>
+              <button mat-icon-button color="accent" (click)="openDetails(approval)">
+                <mat-icon>info</mat-icon>
+              </button>
+            </div>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns" [@fadeIn]></tr>
+
+        <!-- Empty State -->
+        <tr class="mat-row" *matNoDataRow>
+          <td class="mat-cell text-center" colspan="5">No approvals found.</td>
+        </tr>
+      </table>
+    </div>
+  </mat-card-content>
+</mat-card>
+
+<router-outlet></router-outlet>

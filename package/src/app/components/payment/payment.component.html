@@ -1,0 +1,250 @@
+<div class="container-fluid">
+  <div class="row mb-4">
+    <div class="col-12">
+      <h3>Payment Management</h3>
+    </div>
+  </div>
+
+  <!-- Payment Form Section (Add/Edit) -->
+  <div *ngIf="showForm" class="row mb-5">
+    <div class="col-lg-12 col-md-12 col-12">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <h4 class="mb-4">{{ editingPaymentId ? 'Edit Payment' : 'Create New Payment' }}</h4>
+
+          <!-- Saved Payment Methods Section -->
+          <div *ngIf="savedPaymentMethods.length > 0" class="mb-4">
+            <h5>Saved Payment Methods</h5>
+            <div class="row">
+              <div class="col-md-4 mb-3" *ngFor="let method of savedPaymentMethods">
+                <div class="card p-3 h-100">
+                  <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span class="badge bg-info text-dark">{{method.paymentMethod}}</span>
+                    <button class="btn btn-sm btn-outline-primary" (click)="useSavedMethod(method)">Use</button>
+                  </div>
+                  <div>
+                    <div>{{ method.email }}</div>
+                    <div *ngIf="method.cardNumber">Card: {{ method.cardNumber }}</div>
+                    <div *ngIf="method.expiryDate">Exp: {{ method.expiryDate }}</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Payment Form -->
+          <form [formGroup]="paymentForm" (ngSubmit)="onSubmit()">
+            <div class="row">
+              <!-- Backend Required Fields -->
+              <div class="mb-4">
+                <h5>Payment Information</h5>
+                <div class="row">
+                  <div class="col-md-6 mb-3">
+                    <label class="form-label">Email <span class="text-danger">*</span></label>
+                    <input type="email" class="form-control" formControlName="email" placeholder="Enter email">
+                    <div *ngIf="paymentForm.get('email')?.invalid && paymentForm.get('email')?.touched" class="text-danger mt-1">
+                      <small *ngIf="paymentForm.get('email')?.errors?.['required']">Email is required</small>
+                      <small *ngIf="paymentForm.get('email')?.errors?.['email']">Invalid email format</small>
+                    </div>
+                  </div>
+
+                  <div class="col-md-6 mb-3">
+                    <label class="form-label">Amount <span class="text-danger">*</span></label>
+                    <input type="number" class="form-control" formControlName="amount" placeholder="Enter amount">
+                    <div *ngIf="paymentForm.get('amount')?.invalid && paymentForm.get('amount')?.touched" class="text-danger mt-1">
+                      <small *ngIf="paymentForm.get('amount')?.errors?.['required']">Amount is required</small>
+                      <small *ngIf="paymentForm.get('amount')?.errors?.['min']">Amount must be positive</small>
+                    </div>
+                  </div>
+
+                  <div class="col-md-6 mb-3">
+                    <label class="form-label">Payment Method <span class="text-danger">*</span></label>
+                    <select class="form-select" formControlName="paymentMethod">
+                      <option value="PAYPAL">PayPal</option>
+                      <option value="CARD">Credit/Debit Card</option>
+                    </select>
+                    <div *ngIf="paymentForm.get('paymentMethod')?.invalid && paymentForm.get('paymentMethod')?.touched" class="text-danger mt-1">
+                      <small *ngIf="paymentForm.get('paymentMethod')?.errors?.['required']">Payment method is required</small>
+                    </div>
+                  </div>
+
+                  <div class="col-md-6 mb-3">
+                    <label class="form-label">Description <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" formControlName="description" placeholder="Payment description">
+                    <div *ngIf="paymentForm.get('description')?.invalid && paymentForm.get('description')?.touched" class="text-danger mt-1">
+                      <small *ngIf="paymentForm.get('description')?.errors?.['required']">Description is required</small>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Card Details (conditional) -->
+              <div *ngIf="showCardDetails" class="col-12 mb-4">
+                <div class="card p-3 mb-3 bg-light">
+                  <h5 class="mb-3">Card Details</h5>
+                  <div class="row">
+                    <div class="col-md-4 mb-3">
+                      <label class="form-label">Card Number <span class="text-danger">*</span></label>
+                      <input type="text" class="form-control" formControlName="cardNumber" placeholder="16-digit card number">
+                      <div *ngIf="paymentForm.get('cardNumber')?.invalid && paymentForm.get('cardNumber')?.touched" class="text-danger mt-1">
+                        <small *ngIf="paymentForm.get('cardNumber')?.errors?.['required']">Card number is required</small>
+                        <small *ngIf="paymentForm.get('cardNumber')?.errors?.['pattern']">Card must be 16 digits</small>
+                      </div>
+                    </div>
+
+                    <div class="col-md-4 mb-3">
+                      <label class="form-label">Expiry Date (MM/YY) <span class="text-danger">*</span></label>
+                      <input type="text" class="form-control" formControlName="expiryDate" placeholder="MM/YY">
+                      <div *ngIf="paymentForm.get('expiryDate')?.invalid && paymentForm.get('expiryDate')?.touched" class="text-danger mt-1">
+                        <small *ngIf="paymentForm.get('expiryDate')?.errors?.['required']">Expiry date is required</small>
+                        <small *ngIf="paymentForm.get('expiryDate')?.errors?.['pattern']">Format must be MM/YY</small>
+                      </div>
+                    </div>
+
+                    <div class="col-md-4 mb-3">
+                      <label class="form-label">CVV <span class="text-danger">*</span></label>
+                      <input type="text" class="form-control" formControlName="cvv" placeholder="3 or 4 digit code">
+                      <div *ngIf="paymentForm.get('cvv')?.invalid && paymentForm.get('cvv')?.touched" class="text-danger mt-1">
+                        <small *ngIf="paymentForm.get('cvv')?.errors?.['required']">CVV is required</small>
+                        <small *ngIf="paymentForm.get('cvv')?.errors?.['pattern']">CVV must be 3 or 4 digits</small>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Save Payment Info -->
+              <div class="col-md-12 mb-3">
+                <div class="form-check">
+                  <input type="checkbox" class="form-check-input" formControlName="savePaymentInfo" id="savePaymentInfo">
+                  <label class="form-check-label" for="savePaymentInfo">Save payment information for future use</label>
+                </div>
+              </div>
+
+              <!-- Additional Frontend Fields -->
+              <div class="mb-4">
+                <h5 class="mb-3">Additional Information</h5>
+                <div class="row">
+                  <div class="col-md-6 mb-3">
+                    <label class="form-label">Status</label>
+                    <select class="form-select" formControlName="status">
+                      <option *ngFor="let status of paymentStatuses" [value]="status">{{status}}</option>
+                    </select>
+                  </div>
+
+                  <div class="col-md-6 mb-3">
+                    <label class="form-label">Reference</label>
+                    <input type="text" class="form-control" formControlName="reference" placeholder="Payment reference">
+                  </div>
+
+                  <div class="col-md-6 mb-3">
+                    <label class="form-label">Expense ID</label>
+                    <input type="number" class="form-control" formControlName="expenseId" placeholder="Associated expense">
+                  </div>
+
+                  <div class="col-md-6 mb-3">
+                    <label class="form-label">Invoice ID</label>
+                    <input type="number" class="form-control" formControlName="invoiceId" placeholder="Associated invoice">
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="d-flex justify-content-end gap-2 mt-4">
+              <button type="button" class="btn btn-outline-secondary" (click)="cancelEdit()">Cancel</button>
+              <button type="submit" class="btn btn-primary" [disabled]="!paymentForm.valid || isLoading">
+                <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
+                {{ isLoading ? 'Processing...' : (editingPaymentId ? 'Update Payment' : 'Process Payment') }}
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filter Section -->
+  <div class="row mb-4">
+    <div class="col-md-4 mb-2">
+      <input type="text" class="form-control" [(ngModel)]="searchKeyword" (input)="search()"
+             placeholder="Search by description or email">
+    </div>
+    <div class="col-md-3 mb-2">
+      <select class="form-select" [(ngModel)]="selectedStatus" (change)="search()">
+        <option value="">All Statuses</option>
+        <option *ngFor="let status of paymentStatuses" [value]="status">{{status}}</option>
+      </select>
+    </div>
+    <div class="col-md-3 mb-2">
+      <button class="btn btn-outline-secondary w-100" (click)="clearSearch()">Clear Filters</button>
+    </div>
+    <div class="col-md-2 mb-2">
+      <button class="btn btn-primary w-100" (click)="createNewPayment()">New Payment</button>
+    </div>
+  </div>
+
+  <!-- Payments Table -->
+  <div class="row">
+    <div class="col-12">
+      <div class="card shadow-sm">
+        <div class="table-responsive">
+          <table class="table table-hover mb-0">
+            <thead class="table-light">
+              <tr>
+                <th>Description</th>
+                <th>Amount</th>
+                <th>Email</th>
+                <th>Method</th>
+                <th>Status</th>
+                <th>Date</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngIf="isLoading">
+                <td colspan="7" class="text-center py-4">
+                  <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                  </div>
+                </td>
+              </tr>
+              <tr *ngFor="let payment of filteredPayments">
+                <td>{{ payment.description }}</td>
+                <td>{{ payment.amount | currency }}</td>
+                <td>{{ payment.email }}</td>
+                <td>{{ payment.paymentMethod }}</td>
+                <td>
+                  <span class="badge"
+                    [ngClass]="{
+                      'bg-success': payment.status === 'Completed',
+                      'bg-warning text-dark': payment.status === 'Pending',
+                      'bg-danger': payment.status === 'Failed'
+                    }">
+                    {{ payment.status }}
+                  </span>
+                </td>
+                <td>{{ payment.createdAt | date: 'medium' }}</td>
+                <td>
+                  <div class="d-flex gap-2">
+                    <button class="btn btn-sm btn-outline-primary" (click)="editPayment(payment)">
+                      Edit
+                    </button>
+                    <button class="btn btn-sm btn-outline-danger" (click)="deletePayment(payment.id)">
+                      Delete
+                    </button>
+                  </div>
+                </td>
+              </tr>
+              <tr *ngIf="filteredPayments.length === 0 && !isLoading">
+                <td colspan="7" class="text-center py-4">
+                  <i class="bi bi-inbox me-2"></i>
+                  {{ errorMessage || 'No payments found' }}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

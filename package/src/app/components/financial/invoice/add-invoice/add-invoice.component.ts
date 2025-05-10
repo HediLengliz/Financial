@@ -3,14 +3,34 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { ToastrService } from 'ngx-toastr';
 import { InvoiceService } from "../../../../services/invoice.service";
 import { Invoice } from "../../../../models/invoice";
-import { Router } from "@angular/router"; // Change Route to Router
+import { Router } from "@angular/router";
+import {MatProgressSpinner} from "@angular/material/progress-spinner";
+import {MatButton} from "@angular/material/button";
+import {NgIf} from "@angular/common";
+import {MatFormField, MatLabel} from "@angular/material/form-field";
+import {MatOption, MatSelect} from "@angular/material/select";
+import {MatInput} from "@angular/material/input";
+import {MatCard, MatCardContent, MatCardTitle} from "@angular/material/card";
+import {MatIcon} from "@angular/material/icon"; // Change Route to Router
 
 @Component({
   selector: 'app-add-invoice',
   templateUrl: './add-invoice.component.html',
   styleUrls: ['./add-invoice.component.scss'],
   imports: [
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    MatProgressSpinner,
+    MatButton,
+    NgIf,
+    MatFormField,
+    MatSelect,
+    MatOption,
+    MatInput,
+    MatCardContent,
+    MatCardTitle,
+    MatCard,
+    MatIcon,
+    MatLabel
   ]
 })
 export class AddInvoiceComponent implements OnInit {

@@ -2,6 +2,15 @@ import { Component, OnInit } from '@angular/core';
 import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {ActivatedRoute, Router, RouterLink} from '@angular/router';
 import {InvoiceService} from "../../../../services/invoice.service";
+import {MatButton} from "@angular/material/button";
+import {MatDatepicker, MatDatepickerInput, MatDatepickerToggle} from "@angular/material/datepicker";
+import {MatFormField, MatInput} from "@angular/material/input";
+import {MatOption, MatSelect} from "@angular/material/select";
+import {MatCard, MatCardContent, MatCardTitle} from "@angular/material/card";
+import {MatLabel} from "@angular/material/form-field";
+import {MatProgressSpinner} from "@angular/material/progress-spinner";
+import {NgIf} from "@angular/common";
+import {MatIcon} from "@angular/material/icon";
 
 
 @Component({
@@ -9,13 +18,29 @@ import {InvoiceService} from "../../../../services/invoice.service";
   templateUrl: './edit-invoice.component.html',
   imports: [
     ReactiveFormsModule,
-    RouterLink
+    RouterLink,
+    MatButton,
+    MatDatepickerToggle,
+    MatInput,
+    MatDatepickerInput,
+    MatDatepicker,
+    MatFormField,
+    MatSelect,
+    MatOption,
+    MatCard,
+    MatLabel,
+    MatProgressSpinner,
+    MatCardTitle,
+    MatCardContent,
+    NgIf,
+    MatIcon
   ],
   styleUrl:'./edit-invoice.component.scss',
 })
 export class EditInvoiceComponent implements OnInit {
   invoiceForm: FormGroup;
   invoiceId: number;
+  loading: unknown;
 
   constructor(
     private fb: FormBuilder,

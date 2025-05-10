@@ -26,6 +26,7 @@ import {
   FinanceApprovalFormComponent
 } from "./components/financial/approval/finance-approval-form/finance-approval-form.component";
 import {ApprovalHistoryComponent} from "./components/financial/approval-history/approval-history.component";
+import {PaymentComponent} from "./components/payment/payment.component";
 // import {
 //   ApprovalDashboardComponent
 // } from "./components/financial/approval/approval-dashbaord/approval-dashboard.component";
@@ -63,6 +64,7 @@ export const routes: Routes = [
         path: 'financial',
         component: FinancialComponent,
         children: [
+          { path: 'payment', component: PaymentComponent},
           { path: 'budget', component: BudgetComponent, children: [
               { path: 'new', component: AddBudgetComponent },
               { path: ':id', component: ShowBudgetComponent },

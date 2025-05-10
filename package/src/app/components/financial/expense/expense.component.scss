@@ -16,6 +16,66 @@ h3 {
   text-align: center;
 }
 
+/* Chart Card Styles */
+.cardWithShadow {
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+  border-radius: 10px;
+  background-color: #fff;
+  transition: transform 0.3s ease;
+}
+
+.cardWithShadow:hover {
+  transform: translateY(-5px);
+}
+
+mat-card-title {
+  font-size: 1.2rem;
+  font-weight: 500;
+  margin-bottom: 1rem;
+  color: #333;
+}
+
+.m-l-auto {
+  margin-left: auto;
+}
+
+.d-flex {
+  display: flex;
+}
+
+.w-100 {
+  width: 100%;
+}
+
+/* Chart customizations */
+::ng-deep {
+  .apexcharts-legend-text {
+    color: #707070 !important;
+  }
+
+  .apexcharts-tooltip {
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+  }
+
+  .apexcharts-tooltip-title {
+    background-color: #f8f8f8 !important;
+    border-bottom: 1px solid #eee !important;
+  }
+
+  .apexcharts-xaxis-label, .apexcharts-yaxis-label {
+    fill: #707070 !important;
+  }
+
+  .apexcharts-menu {
+    background-color: #fff !important;
+    border: 1px solid #f0f0f0 !important;
+  }
+
+  .apexcharts-menu-item:hover {
+    background-color: #f8f9fa !important;
+  }
+}
+
 /* Filter Section Styles */
 .form-control, .form-select {
   border: 1px solid #ced4da;
@@ -27,6 +87,7 @@ h3 {
   border-color: #007bff;
   box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
 }
+
 /* Buttons */
 .btn {
   border-radius: 5px;
@@ -61,11 +122,6 @@ h3 {
 .btn-outline-danger:hover {
   background-color: #dc3545;
   color: white;
-}
-/* Button Styles */
-.btn {
-  border-radius: 5px;
-  transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
 .btn-outline-secondary {
@@ -190,5 +246,114 @@ h3 {
 
   .table th, .table td {
     padding: 8px;
+  }
+
+  .cardWithShadow {
+    margin-bottom: 15px;
+  }
+}
+
+.expense-dialog {
+  padding: 20px;
+
+  .expense-details {
+    padding: 20px;
+
+    .detail-item {
+      margin-bottom: 15px;
+
+      .detail-label {
+        font-weight: 500;
+        margin-right: 10px;
+        color: #666;
+      }
+
+      .detail-value {
+        color: #333;
+      }
+    }
+
+    .chart-container {
+      margin-top: 30px;
+      border-top: 1px solid #eee;
+      padding-top: 20px;
+    }
+  }
+}
+
+.status-badge {
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+
+  &.status-active { background: #d4edda; color: #155724; }
+  &.status-closed { background: #f8d7da; color: #721c24; }
+  &.status-adjusted { background: #fff3cd; color: #856404; }
+  &.status-cancelled { background: #d6d8d9; color: #1b1e21; }
+}
+table {
+  width: 100%;
+
+  th {
+    font-weight: 500;
+    font-size: 14px;
+  }
+
+  td {
+    font-size: 13px;
+  }
+}
+
+.sort-icon {
+  font-size: 16px;
+  height: 16px;
+  width: 16px;
+  vertical-align: middle;
+}
+
+.mat-chip {
+  font-size: 12px;
+  font-weight: 500;
+  border-radius: 16px;
+  padding: 4px 12px;
+
+  &.pending { background: #fff3e0; color: #ef6c00; }
+  &.approved { background: #e8f5e9; color: #2e7d32; }
+  &.rejected { background: #ffebee; color: #c62828; }
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
+}
+
+.empty-state {
+  padding: 40px 0;
+  text-align: center;
+  color: rgba(0, 0, 0, 0.54);
+
+  .empty-icon {
+    font-size: 48px;
+    width: 48px;
+    height: 48px;
+    margin-bottom: 16px;
+  }
+}
+
+.loading-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+
+  .loading-text {
+    margin-top: 16px;
+    color: #3f51b5;
   }
 }

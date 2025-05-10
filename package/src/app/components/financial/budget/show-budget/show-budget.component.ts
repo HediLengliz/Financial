@@ -7,6 +7,9 @@ import { BudgetService } from "../../../../services/budget.service";
 import { Budget } from "../../../../models/budget";
 import { Chart } from 'chart.js/auto';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
+import {MatCard, MatCardContent, MatCardTitle} from "@angular/material/card";
+import {MatIcon} from "@angular/material/icon";
+import {MatButton, MatIconButton} from "@angular/material/button";
 @Component({
   selector: 'app-show-budget',
   standalone: true,
@@ -16,6 +19,12 @@ import ChartDataLabels from 'chartjs-plugin-datalabels';
     RouterLink,
     NgCircleProgressModule,
     RouterOutlet,
+    MatCard,
+    MatCardContent,
+    MatCardTitle,
+    MatIcon,
+    MatIconButton,
+    MatButton,
   ],
   templateUrl: './show-budget.component.html',
   styleUrls: ['./show-budget.component.scss']
@@ -32,7 +41,8 @@ export class ShowBudgetComponent implements OnInit {
     private router: Router,
     private route: ActivatedRoute,
     private budgetService: BudgetService
-  ) {}
+  ) {
+  }
 
   ngOnInit(): void {
     const budgetId = this.route.snapshot.paramMap.get('id');
@@ -110,37 +120,56 @@ export class ShowBudgetComponent implements OnInit {
     const chartData = {
       labels: ['Allocated', 'Spent', 'Remaining', 'Forecast'],
       datasets: [{
-        label: 'Budget Overview',
+        label: 'Amount',
         data: [this.budget.allocatedAmount, spent, remaining, this.forecast],
-        backgroundColor: ['#007bff', '#dc3545', '#28a745', '#ffc107'],
-        borderColor: ['#007bff', '#dc3545', '#28a745', '#ffc107'],
-        borderWidth: 1
+        backgroundColor: ['#4e73df', '#e74a3b', '#1cc88a', '#f6c23e'],
+        borderRadius: 10,
+        barThickness: 40
       }]
     };
-
-    // Destroy existing chart if it exists to prevent overlap
-    if (this.chart) {
-      this.chart.destroy();
-    }
 
     this.chart = new Chart(ctx, {
       type: 'bar',
       data: chartData,
       options: {
         responsive: true,
+        plugins: {
+          legend: {display: false},
+          tooltip: {
+            callbacks: {
+              label: (context) => `${context.dataset.label}: ${this.budget?.currency} ${context.parsed.y}`
+            }
+          },
+          title: {
+            display: true,
+            text: 'Forecasted Budget Analysis',
+            font: {
+              size: 18
+            }
+          },
+          datalabels: {
+            anchor: 'end',
+            align: 'end',
+            formatter: (value: number) => `${this.budget?.currency} ${value}`,
+            font: {
+              weight: 'bold'
+            }
+          }
+        },
         scales: {
           y: {
             beginAtZero: true,
-            title: { display: true, text: `Amount (${this.budget.currency})` }
+            title: {
+              display: true,
+              text: `Amount (${this.budget.currency})`
+            }
           }
-        },
-        plugins: {
-          legend: { display: true },
-          title: { display: true, text: 'Budget Summary with Forecast' }
         }
-      }
+      },
+      plugins: [ChartDataLabels]
     });
   }
+
 
   /** Returns CSS class based on budget status */
   getStatusClass(status: string): string {

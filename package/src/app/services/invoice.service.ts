@@ -75,4 +75,9 @@ export class InvoiceService extends AbstractService{
   exportAsExcel(id: string): Observable<Blob> {
     return this.http.get(`${this.apiGatewayUrl}/export/excel/${id}`, { responseType: 'blob' });
   }
+  getAllInvoicesPdfQrCode(): Observable<Blob> {
+    return this.http.get(`${this.apiGatewayUrl}/all/pdf/qrcode`, {
+      responseType: 'blob'
+    });
+  }
 }

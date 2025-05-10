@@ -12,7 +12,6 @@ import { AppBlogComponent } from 'src/app/components/apps-blog/apps-blog.compone
 @Component({
   selector: 'app-starter',
   imports: [
-    MaterialModule,
     AppProfitExpensesComponent,
     AppTrafficDistributionComponent,
     AppProductSalesComponent,

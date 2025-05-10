@@ -1,5 +1,5 @@
-import {Component, OnInit} from '@angular/core';
-import {CurrencyPipe, DatePipe, NgClass, NgForOf, NgIf, TitleCasePipe} from "@angular/common";
+import {Component, OnInit, TemplateRef, ViewChild} from '@angular/core';
+import {CurrencyPipe, DatePipe, LowerCasePipe, NgClass, NgForOf, NgIf, TitleCasePipe} from "@angular/common";
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import { Router, RouterLink, RouterOutlet } from '@angular/router';
 import {StatusPipe} from "../../../pipe/status.pipe";
@@ -9,12 +9,31 @@ import { ToastrService } from "ngx-toastr";
 import {id} from "@swimlane/ngx-charts";
 import {AppTopEmployeesComponent} from "../../top-employees/top-employees.component"; // Make sure to import ToastrService
 type SortableColumn = keyof Invoice;
-import { MatCardModule } from '@angular/material/card';
-import { MatTableModule } from '@angular/material/table';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
+import {MatCard, MatCardContent, MatCardModule, MatCardTitle} from '@angular/material/card';
+import {
+  MatCell, MatCellDef,
+  MatColumnDef,
+  MatHeaderCell,
+  MatHeaderCellDef, MatHeaderRow, MatHeaderRowDef, MatNoDataRow, MatRow, MatRowDef,
+  MatTable,
+  MatTableModule
+} from '@angular/material/table';
+import {MatButton, MatButtonModule, MatIconButton} from '@angular/material/button';
+import {MatIcon, MatIconModule} from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import {debounceTime, Subject} from "rxjs";
+import {MatError, MatFormField, MatLabel} from "@angular/material/form-field";
+import {MatOption, MatSelect} from "@angular/material/select";
+import {MatProgressSpinner} from "@angular/material/progress-spinner";
+import {MatInput} from "@angular/material/input";
+import {
+  MatDialog,
+  MatDialogActions,
+  MatDialogClose,
+  MatDialogContent,
+  MatDialogModule,
+  MatDialogTitle
+} from "@angular/material/dialog";
 @Component({
   selector: 'app-invoice',
   imports: [
@@ -26,13 +45,46 @@ import {debounceTime, Subject} from "rxjs";
     RouterLink,
     FormsModule,
     RouterOutlet,
-    NgClass
+    NgClass,
+    MatIcon,
+    MatCardTitle,
+    MatCard,
+    MatCardContent,
+    MatError,
+    MatButton,
+    MatFormField,
+    MatSelect,
+    MatOption,
+    MatProgressSpinner,
+    MatTable,
+    MatColumnDef,
+    MatHeaderCellDef,
+    MatHeaderCell,
+    MatCell,
+    MatCellDef,
+    LowerCasePipe,
+    MatIconButton,
+    MatHeaderRow,
+    MatRow,
+    MatRowDef,
+    MatHeaderRowDef,
+    MatNoDataRow,
+    MatInput,
+    MatLabel,
+    MatDialogContent,
+    MatDialogActions,
+    MatDialogClose,
+    MatDialogTitle,
+    MatDialogModule
   ],
   templateUrl: './invoice.component.html',
   styleUrl: './invoice.component.scss'
 })
 export class InvoiceComponent implements OnInit {
+  displayedColumns: string[] = ['invoiceNumber', 'totalAmount', 'issuedBy', 'issuedTo', 'dueDate', 'issueDate', 'status', 'actions'];
   filteredInvoices: Invoice[] = [];
+  qrCodeUrl: string | null = null;
+  @ViewChild('qrDialogTemplate') qrDialogTemplate!: TemplateRef<any>;
   private invoices: Invoice[] = [];
   isLoading: boolean = false;
   errorMessage: string | null = null;
@@ -51,7 +103,7 @@ export class InvoiceComponent implements OnInit {
   private invoiceToDeleteId: number | undefined;
   private toastr: any;
 
-  constructor(private invoiceService: InvoiceService, private route: Router) {}
+  constructor(private invoiceService: InvoiceService, private route: Router, private dialog: MatDialog) {}
 
   ngOnInit(): void {
     // Set up debounce for other filters (e.g., dueDateFilter, selectedStatus) if needed
@@ -176,6 +228,23 @@ export class InvoiceComponent implements OnInit {
       }
     }).catch(error => {
       console.error('Error during navigation to invoice details:', error);
+    });
+  }
+
+  openQrDialog(invoiceId: number): void {
+    this.invoiceService.getAllInvoicesPdfQrCode().subscribe(blob => {
+      if (this.qrCodeUrl) {
+        URL.revokeObjectURL(this.qrCodeUrl); // Cleanup previous URL
+      }
+      this.qrCodeUrl = URL.createObjectURL(blob);
+      const dialogRef = this.dialog.open(this.qrDialogTemplate);
+
+      dialogRef.afterClosed().subscribe(() => {
+        if (this.qrCodeUrl) {
+          URL.revokeObjectURL(this.qrCodeUrl);
+          this.qrCodeUrl = null;
+        }
+      });
     });
   }
 }

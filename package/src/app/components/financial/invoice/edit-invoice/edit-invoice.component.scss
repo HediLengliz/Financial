@@ -1,103 +1,103 @@
-/* Container Styles */
-.container {
-  max-width: 600px;
-  margin: 30px auto;
-  padding: 20px;
-}
-
-/* Header Styles */
-h3 {
-  font-size: 28px;
-  color: rgba(6, 152, 125, 0.47);
-  text-align: center;
-  margin-bottom: 30px;
-  text-transform: uppercase;
-}
-
-/* Card Styles */
-.card {
-  background: linear-gradient(135deg, rgba(9, 255, 186, 0.06), rgba(255, 255, 255, 0.53));
-  border: none;
-  border-radius: 15px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.02);
-  padding: 30px;
-  color: rgb(0, 0, 0);
-  animation: fadeIn 0.5s ease-in-out;
-}
-
-/* Form Group Styles */
-.form-group {
-  margin-bottom: 20px;
-}
-
-/* Form Label Styles */
-.form-label {
-  color: #0039ff;
-  font-weight: bold;
-  margin-bottom: 10px;
-}
-
-/* Input and Select Styles */
-.form-control, .form-select {
-  background-color: rgba(2, 250, 166, 0.11);
-  border: 1px solid #ffffff;
-  color: rgb(46, 46, 46);
-  padding: 15px;
-  border-radius: 10px;
-  transition: all 0.3s ease;
-}
-
-.form-control:focus, .form-select:focus {
-  border-color: #00ff99;
-  box-shadow: 0 0 10px #00ff99;
-  transform: scale(1.02);
-}
-
-/* Button Styles */
-.btn-primary {
-  background-color: #333;
-  border:  #00ffcc;
-  color: #00ffcc;
-  padding: 15px 30px;
-  border-radius: 10px;
-  transition: all 0.3s ease;
-}
-
-.btn-primary:hover {
-  background-color: rgba(0, 131, 107, 0.47);
-  box-shadow: 0 0 20px rgb(2, 255, 207);
-  color: #000000;
-  transform: translateY(-5px);
-}
-
-/* Back Button Styles */
-button {
-  background-color: #333;
-  border: 1px solid #00ffcc;
-  color: #00ffcc;
-  padding: 15px 30px;
-  border-radius: 10px;
-  transition: all 0.3s ease;
-}
-
-button:hover {
-  background-color: rgba(6, 152, 125, 0.47);
-  color: #000;
-  box-shadow: 0 0 20px #00ffcc;
-  transform: translateY(-5px);
-}
-
-/* Animation */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
+///* Container Styles */
+//.container {
+//  max-width: 600px;
+//  margin: 30px auto;
+//  padding: 20px;
+//}
+//
+///* Header Styles */
+//h3 {
+//  font-size: 28px;
+//  color: rgba(6, 152, 125, 0.47);
+//  text-align: center;
+//  margin-bottom: 30px;
+//  text-transform: uppercase;
+//}
+//
+///* Card Styles */
+//.card {
+//  background: linear-gradient(135deg, rgba(9, 255, 186, 0.06), rgba(255, 255, 255, 0.53));
+//  border: none;
+//  border-radius: 15px;
+//  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.02);
+//  padding: 30px;
+//  color: rgb(0, 0, 0);
+//  animation: fadeIn 0.5s ease-in-out;
+//}
+//
+///* Form Group Styles */
+//.form-group {
+//  margin-bottom: 20px;
+//}
+//
+///* Form Label Styles */
+//.form-label {
+//  color: #0039ff;
+//  font-weight: bold;
+//  margin-bottom: 10px;
+//}
+//
+///* Input and Select Styles */
+//.form-control, .form-select {
+//  background-color: rgba(2, 250, 166, 0.11);
+//  border: 1px solid #ffffff;
+//  color: rgb(46, 46, 46);
+//  padding: 15px;
+//  border-radius: 10px;
+//  transition: all 0.3s ease;
+//}
+//
+//.form-control:focus, .form-select:focus {
+//  border-color: #00ff99;
+//  box-shadow: 0 0 10px #00ff99;
+//  transform: scale(1.02);
+//}
+//
+///* Button Styles */
+//.btn-primary {
+//  background-color: #333;
+//  border:  #00ffcc;
+//  color: #00ffcc;
+//  padding: 15px 30px;
+//  border-radius: 10px;
+//  transition: all 0.3s ease;
+//}
+//
+//.btn-primary:hover {
+//  background-color: rgba(0, 131, 107, 0.47);
+//  box-shadow: 0 0 20px rgb(2, 255, 207);
+//  color: #000000;
+//  transform: translateY(-5px);
+//}
+//
+///* Back Button Styles */
+//button {
+//  background-color: #333;
+//  border: 1px solid #00ffcc;
+//  color: #00ffcc;
+//  padding: 15px 30px;
+//  border-radius: 10px;
+//  transition: all 0.3s ease;
+//}
+//
+//button:hover {
+//  background-color: rgba(6, 152, 125, 0.47);
+//  color: #000;
+//  box-shadow: 0 0 20px #00ffcc;
+//  transform: translateY(-5px);
+//}
+//
+///* Animation */
+//@keyframes fadeIn {
+//  from {
+//    opacity: 0;
+//    transform: translateY(20px);
+//  }
+//  to {
+//    opacity: 1;
+//    transform: translateY(0);
+//  }
+//}
 
 /* Responsive Styles */
 @media (max-width: 768px) {

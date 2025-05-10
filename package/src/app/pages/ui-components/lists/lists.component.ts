@@ -13,7 +13,7 @@ export interface Section {
 
 @Component({
   selector: 'app-lists',
-  imports: [MatListModule, MatCardModule, DatePipe,MatIconModule, MaterialModule ],
+  imports: [MatListModule, MatCardModule, DatePipe,MatIconModule ],
   templateUrl: './lists.component.html',
 })
 export class AppListsComponent {

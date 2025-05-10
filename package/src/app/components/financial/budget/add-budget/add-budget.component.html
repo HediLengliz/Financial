@@ -1,93 +1,113 @@
-<div class="add-budget-container">
-  <h3 class="form-title">Create New Budget</h3>
+<mat-card class="cardWithShadow">
+  <mat-card-title>Create New Budget</mat-card-title>
+  <mat-card-content>
+    <form (ngSubmit)="addBudget()" #form="ngForm" class="budget-form">
+      <div class="row g-3">
+        <div class="col-md-6">
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>Project Name</mat-label>
+            <input matInput name="projectName" required [(ngModel)]="newBudget.projectName">
+          </mat-form-field>
+        </div>
+        <div class="col-md-6">
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>Currency</mat-label>
+            <mat-select name="currency" required [(ngModel)]="newBudget.currency">
+              <mat-option value="USD">USD</mat-option>
+              <mat-option value="EUR">EUR</mat-option>
+              <mat-option value="GBP">GBP</mat-option>
+              <mat-option value="JPY">JPY</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
 
-  <form #form="ngForm" (ngSubmit)="addBudget()" class="budget-form">
-    <div class="form-group">
-      <label for="projectName">Project Name <span class="text-danger">*</span></label>
-      <input type="text" id="projectName" class="form-control" name="projectName"
-             placeholder="Enter project name" required [(ngModel)]="newBudget.projectName">
-    </div>
+        <div class="col-md-4">
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>Allocated Amount</mat-label>
+            <input matInput type="number" name="allocatedAmount" required [(ngModel)]="newBudget.allocatedAmount">
+          </mat-form-field>
+        </div>
+        <div class="col-md-4">
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>Spent Amount</mat-label>
+            <input matInput type="number" name="spentAmount" required [(ngModel)]="newBudget.spentAmount">
+          </mat-form-field>
+        </div>
+        <div class="col-md-4">
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>Remaining Amount</mat-label>
+            <input matInput type="number" name="remainingAmount" required [(ngModel)]="newBudget.remainingAmount">
+          </mat-form-field>
+        </div>
 
-    <div class="form-group">
-      <label for="allocatedAmount">Allocated Amount <span class="text-danger">*</span></label>
-      <input type="number" id="allocatedAmount" class="form-control" name="allocatedAmount"
-             placeholder="Enter allocated amount" required [(ngModel)]="newBudget.allocatedAmount">
-    </div>
+        <div class="col-md-4">
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>Status</mat-label>
+            <mat-select name="status" required [(ngModel)]="newBudget.status">
+              <mat-option value="Active">Active</mat-option>
+              <mat-option value="Adjusted">Adjusted</mat-option>
+              <mat-option value="Closed">Closed</mat-option>
+              <mat-option value="Cancelled">Cancelled</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+        <div class="col-md-4">
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>Transaction</mat-label>
+            <mat-select name="transaction" required [(ngModel)]="newBudget.transaction">
+              <mat-option value="Pending">Pending</mat-option>
+              <mat-option value="Failed">Failed</mat-option>
+              <mat-option value="Success">Success</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+        <div class="col-md-4">
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>Budget Status</mat-label>
+            <mat-select name="budgetStatus" required [(ngModel)]="newBudget.budgetStatus">
+              <mat-option value="Insufficient">Insufficient</mat-option>
+              <mat-option value="Sufficient">Sufficient</mat-option>
+              <mat-option value="Exceeded">Exceeded</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
 
-    <div class="form-group">
-      <label for="spentAmount">Spent Amount <span class="text-danger">*</span></label>
-      <input type="number" id="spentAmount" class="form-control" name="spentAmount"
-             placeholder="Enter spent amount" required [(ngModel)]="newBudget.spentAmount">
-    </div>
+        <div class="col-md-6">
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>Approval</mat-label>
+            <mat-select name="approval" required [(ngModel)]="newBudget.approval">
+              <mat-option value="APPROVED">APPROVED</mat-option>
+              <mat-option value="PENDING">PENDING</mat-option>
+              <mat-option value="REJECTED">REJECTED</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
 
-    <div class="form-group">
-      <label for="remainingAmount">Remaining Amount <span class="text-danger">*</span></label>
-      <input type="number" id="remainingAmount" class="form-control" name="remainingAmount"
-             placeholder="Enter remaining amount" required [(ngModel)]="newBudget.remainingAmount">
-    </div>
+        <div class="col-md-6">
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>Created At</mat-label>
+            <input matInput [matDatepicker]="picker1" name="createdAt" required [(ngModel)]="newBudget.createdAt">
+            <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+            <mat-datepicker #picker1></mat-datepicker>
+          </mat-form-field>
+        </div>
+        <div class="col-md-6">
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>Updated At</mat-label>
+            <input matInput [matDatepicker]="picker2" name="updatedAt" required [(ngModel)]="newBudget.updatedAt">
+            <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
+            <mat-datepicker #picker2></mat-datepicker>
+          </mat-form-field>
+        </div>
 
-    <div class="form-group">
-      <label for="currency">Currency <span class="text-danger">*</span></label>
-      <select id="currency" class="form-select" name="currency" required [(ngModel)]="newBudget.currency">
-        <option value="">Select Currency</option>
-        <option value="USD">USD</option>
-        <option value="EUR">EUR</option>
-        <option value="GBP">GBP</option>
-        <option value="JPY">JPY</option>
-      </select>
-    </div>
+      </div>
 
-    <div class="form-group">
-      <label for="status">Status <span class="text-danger">*</span></label>
-      <select id="status" class="form-select" name="status" required [(ngModel)]="newBudget.status">
-        <option value="Active">Active</option>
-        <option value="Adjusted">Adjusted</option>
-        <option value="Closed">Closed</option>
-        <option value="Cancelled">Cancelled</option>
-      </select>
-    </div>
-
-    <div class="form-group">
-      <label for="createdAt">Created At</label>
-      <input id="createdAt" class="form-control" name="createdAt" type="date" required [(ngModel)]="newBudget.createdAt">
-    </div>
-
-    <div class="form-group">
-      <label for="updatedAt">Updated At</label>
-      <input id="updatedAt" class="form-control" name="updatedAt" type="date" required [(ngModel)]="newBudget.updatedAt">
-    </div>
-
-    <div class="form-group">
-      <label for="transaction">Transaction <span class="text-danger">*</span></label>
-      <select id="transaction" class="form-select" name="transaction" required [(ngModel)]="newBudget.transaction">
-        <option value="Pending">Pending</option>
-        <option value="Failed">Failed</option>
-        <option value="Success">Success</option>
-      </select>
-    </div>
-
-    <div class="form-group">
-      <label for="budgetStatus">Budget Status <span class="text-danger">*</span></label>
-      <select id="budgetStatus" class="form-select" name="budgetStatus" required [(ngModel)]="newBudget.budgetStatus">
-        <option value="Insufficient">Insufficient</option>
-        <option value="Sufficient">Sufficient</option>
-        <option value="Exceeded">Exceeded</option>
-      </select>
-    </div>
-
-    <div class="form-group">
-      <label for="approval">Approval <span class="text-danger">*</span></label>
-      <select id="approval" class="form-select" name="approval" required [(ngModel)]="newBudget.approval">
-        <option value="APPROVED">APPROVED</option>
-        <option value="PENDING">PENDING</option>
-        <option value="REJECTED">REJECTED</option>
-      </select>
-    </div>
-
-    <div class="mt-4 d-flex justify-content-end">
-      <button type="submit" class="btn-submit" [disabled]="form.invalid">
-        Create Budget
-      </button>
-    </div>
-  </form>
-</div>
+      <div class="mt-4 text-right">
+        <button mat-raised-button color="primary" type="submit" [disabled]="form.invalid">
+          <mat-icon>add_circle</mat-icon>
+          Create Budget
+        </button>
+      </div>
+    </form>
+  </mat-card-content>
+</mat-card>

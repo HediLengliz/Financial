@@ -60,6 +60,15 @@ export const navItems: NavItem[] = [
         chipClass: 'bg-primary text-white',
         bgcolor: 'alert',
       },
+      {
+        displayName: 'Payment',
+        iconName: 'notebook',
+        route: '/financial/payment',  // Adjust this route as needed
+        chip: true,
+        chipClass: 'bg-primary text-white',
+        bgcolor: 'warning',
+
+      },
     ],
   },
 

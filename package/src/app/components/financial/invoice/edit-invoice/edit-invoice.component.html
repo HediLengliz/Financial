@@ -1,48 +1,124 @@
-<div class="container mt-4">
-  <h3>Edit Invoice</h3>
-  <form [formGroup]="invoiceForm" (ngSubmit)="onSubmit()" class="card p-4 shadow-sm">
-    <div class="form-group mb-3">
-      <label for="invoiceNumber">Invoice Number</label>
-      <input id="invoiceNumber" formControlName="invoiceNumber" class="form-control" placeholder="Enter invoice number"/>
-    </div>
-    <div class="form-group mb-3">
-      <label for="totalAmount">Total Amount</label>
-      <input id="totalAmount" formControlName="totalAmount" type="number" class="form-control" placeholder="Enter total amount"/>
-    </div>
-    <div class="form-group">
-      <label for="issuedBy">Issued By</label>
-      <input id="issuedBy" formControlName="issuedBy" class="form-control" type="text" placeholder="Enter issuer name" />
-    </div>
-    <div class="form-group">
-      <label for="issuedTo">Issued To</label>
-      <input id="issuedTo" formControlName="issuedTo" class="form-control" type="text" placeholder="Enter recipient name" />
-    </div>
-    <div class="form-group mb-3">
-      <label for="issueDate">Issue Date</label>
-      <input id="issueDate" formControlName="issueDate"  type="date" class="form-control"/>
-    </div>
-    <div class="form-group mb-3">
-      <label for="status">Status</label>
-      <select id="status" formControlName="status" class="form-control">
-        <option value="Active">Active</option>
-        <option value="Closed">Closed</option>
-        <option value="Adjusted">Adjusted</option>
-        <option value="Cancelled">Cancelled</option>
-      </select>
-    </div>
-    <div class="form-group mb-3">
-      <label for="dueDate">Due Date</label>
-      <input id="dueDate" formControlName="dueDate" type="date" class="form-control"/>
-    </div>
-    <div class="form-group mb-3">
-      <label for="tax">Tax</label>
-      <input id="tax" formControlName="tax" type="number" class="form-control" placeholder="Enter tax amount"/>
-    </div>
-    <div class="form-group mb-3">
-      <label for="createdAt">Created At</label>
-      <input id="createdAt" formControlName="createdAt" type="date" class="form-control"/>
-    </div>
-    <button type="submit" class="btn btn-primary" [disabled]="invoiceForm.invalid">Update Invoice</button>
-    <button (click)="goBack()">Back to Invoice Management</button>
-  </form>
-</div>
+<mat-card class="cardWithShadow">
+  <mat-card-title>Edit Invoice</mat-card-title>
+  <mat-card-content>
+    <form [formGroup]="invoiceForm" (ngSubmit)="onSubmit()" class="form-layout">
+
+      <div class="row gx-3">
+        <!-- Invoice Number -->
+        <div class="col-md-6">
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>Invoice Number</mat-label>
+            <input matInput formControlName="invoiceNumber" placeholder="Enter invoice number" />
+          </mat-form-field>
+        </div>
+
+        <!-- Total Amount -->
+        <div class="col-md-6">
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>Total Amount</mat-label>
+            <input matInput type="number" formControlName="totalAmount" placeholder="Enter total amount" />
+          </mat-form-field>
+        </div>
+
+        <!-- Issue Date -->
+        <div class="col-md-6">
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>Issue Date</mat-label>
+            <input matInput type="date" formControlName="issueDate" />
+          </mat-form-field>
+        </div>
+
+        <!-- Due Date -->
+        <div class="col-md-6">
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>Due Date</mat-label>
+            <input matInput type="date" formControlName="dueDate" />
+          </mat-form-field>
+        </div>
+
+        <!-- Budget ID -->
+        <div class="col-md-6">
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>Budget ID</mat-label>
+            <input matInput type="number" formControlName="budgetId" placeholder="Enter budget ID" />
+          </mat-form-field>
+        </div>
+
+        <!-- Project ID -->
+        <div class="col-md-6">
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>Project ID</mat-label>
+            <input matInput type="number" formControlName="project_id" placeholder="Enter project ID" />
+          </mat-form-field>
+        </div>
+
+        <!-- Tax -->
+        <div class="col-md-6">
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>Tax</mat-label>
+            <input matInput type="number" formControlName="tax" placeholder="Enter tax amount" />
+          </mat-form-field>
+        </div>
+
+        <!-- Amount -->
+        <div class="col-md-6">
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>Amount</mat-label>
+            <input matInput type="number" formControlName="amount" placeholder="Enter amount" />
+          </mat-form-field>
+        </div>
+
+        <!-- Issued By -->
+        <div class="col-md-6">
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>Issued By</mat-label>
+            <input matInput formControlName="issued_by" placeholder="Enter issuer name" />
+          </mat-form-field>
+        </div>
+
+        <!-- Issued To -->
+        <div class="col-md-6">
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>Issued To</mat-label>
+            <input matInput formControlName="issued_to" placeholder="Enter recipient name" />
+          </mat-form-field>
+        </div>
+
+        <!-- Status -->
+        <div class="col-md-6">
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>Status</mat-label>
+            <mat-select formControlName="status">
+              <mat-option value="Active">Active</mat-option>
+              <mat-option value="Closed">Closed</mat-option>
+              <mat-option value="Adjusted">Adjusted</mat-option>
+              <mat-option value="Cancelled">Cancelled</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+
+        <!-- Approval Status -->
+        <div class="col-md-6">
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>Approval Status</mat-label>
+            <mat-select formControlName="approvalStatus">
+              <mat-option value="PENDING">Pending</mat-option>
+              <mat-option value="APPROVED">Approved</mat-option>
+              <mat-option value="REJECTED">Rejected</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="d-flex justify-content-end m-t-20 gap-2">
+        <button mat-stroked-button color="accent" type="button" (click)="goBack()">Back</button>
+        <button mat-raised-button color="primary" type="submit" [disabled]="loading">
+          <mat-icon *ngIf="!loading">save</mat-icon>
+          <mat-progress-spinner *ngIf="loading" diameter="20" mode="indeterminate"></mat-progress-spinner>
+          {{ loading ? 'Updating...' : 'Update Invoice' }}
+        </button>
+      </div>
+    </form>
+  </mat-card-content>
+</mat-card>
