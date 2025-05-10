@@ -4,18 +4,20 @@
   <component name="MavenProjectsManager">
     <option name="originalFiles">
       <list>
-        <option value="$PROJECT_DIR$/Backend/services/Configservice/pom.xml" />
-        <option value="$PROJECT_DIR$/Backend/services/discovery/pom.xml" />
-        <option value="$PROJECT_DIR$/Backend/services/configservice/pom.xml" />
-        <option value="$PROJECT_DIR$/Backend/services/projects/pom.xml" />
         <option value="$PROJECT_DIR$/Backend/services/projets/pom.xml" />
+        <option value="$PROJECT_DIR$/Backend/services/discovery/pom.xml" />
+        <option value="$PROJECT_DIR$/Backend/services/Financial/pom.xml" />
         <option value="$PROJECT_DIR$/Backend/services/api-gateway/pom.xml" />
+        <option value="$PROJECT_DIR$/Backend/services/configservice/pom.xml" />
+        <option value="$PROJECT_DIR$/Backend/buildini-parent/pom.xml" />
+        <option value="$PROJECT_DIR$/buildini-parent/pom.xml" />
+        <option value="$PROJECT_DIR$/Backend/services/user-service/pom.xml" />
       </list>
     </option>
     <option name="ignoredFiles">
       <set>
-        <option value="$PROJECT_DIR$/Backend/services/Configservice/pom.xml" />
-        <option value="$PROJECT_DIR$/Backend/services/projects/pom.xml" />
+        <option value="$PROJECT_DIR$/Backend/services/projets/pom.xml" />
+        <option value="$PROJECT_DIR$/Backend/services/user-service/pom.xml" />
       </set>
     </option>
   </component>

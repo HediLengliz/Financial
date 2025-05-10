@@ -6,3 +6,9 @@
 # Datasource local storage ignored files
 /dataSources/
 /dataSources.local.xml
+# Ignore workspace settings but keep project configurations
+/.idea/*
+!/idea/misc.xml
+!/idea/modules.xml
+!/idea/compiler.xml
+!/idea/vcs.xml

@@ -1,0 +1,50 @@
+name: CI/CD Pipeline
+on:
+  push:
+    branches:
+      - main
+      - Financial
+  pull_request:
+    branches:
+      - main
+      - Financial
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+      
+      - name: Build Parent POM
+        run: mvn clean install -f buildini-parent/pom.xml
+      
+      - name: Build Config Server
+        run: mvn clean package -f Backend/services/configservice/pom.xml
+        
+      - name: Build Discovery Service
+        run: mvn clean package -f Backend/services/discovery/pom.xml
+        
+      - name: Build API Gateway
+        run: mvn clean package -f Backend/services/api-gateway/pom.xml
+
+      
+#      - name: Build Financial Service
+#        run: mvn clean package -f Backend/services/Financial/pom.xml
+      
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+      
+      - name: Install Robot Framework dependencies
+        run: |
+          pip install robotframework
+          pip install robotframework-requests
+#      - name: Run Robot Framework tests
+#        run: robot Backend/services/Financial/src/RobotTest/forecastEndpoint.robot

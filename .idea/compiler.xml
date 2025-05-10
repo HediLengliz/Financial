@@ -16,30 +16,30 @@
         <module name="discovery" />
         <module name="configservice" />
       </profile>
-      <profile name="Annotation profile for projets" enabled="true">
+      <profile name="Annotation profile for Financial" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <processorPath useClasspath="false">
-          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/unknown/lombok-unknown.jar" />
-          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/unknown/lombok-unknown.jar" />
+          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.36/lombok-1.18.36.jar" />
         </processorPath>
-        <module name="projets" />
+        <module name="Financial" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="Configservice" target="17" />
-      <module name="demo" target="17" />
+      <module name="projets" target="17" />
+      <module name="user-service" target="17" />
     </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
-      <module name="Configservice" options="-parameters" />
+      <module name="Financial" options="-parameters" />
       <module name="api-gateway" options="-parameters" />
+      <module name="buildini-parent" options="-parameters" />
       <module name="configservice" options="-parameters" />
-      <module name="demo" options="-parameters" />
       <module name="discovery" options="-parameters" />
       <module name="projets" options="-parameters" />
+      <module name="user-service" options="-parameters" />
     </option>
   </component>
 </project>
